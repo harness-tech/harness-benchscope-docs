@@ -1,0 +1,113 @@
+<!-- BenchScope 金色主题 —— 全局样式覆盖（VuePress defaultTheme） -->
+<style>
+:root {
+  /* 金色品牌色系 */
+  --bs-gold: #c8a24a;
+  --bs-gold-light: #d9bb70;
+  --bs-gold-dark: #b08a34;
+  --bs-gold-soft: #f6edd9;
+  --bs-ink: #23201a;
+  --bs-ink-2: #5a564d;
+  --bs-line: #e8e2d3;
+  --bs-header-bg: #16130d;
+
+  /* 覆盖 defaultTheme 变量 */
+  --c-brand: var(--bs-gold);
+  --c-brand-light: var(--bs-gold-light);
+  --c-brand-dark: var(--bs-gold-dark);
+  --c-bg: #ffffff;
+  --c-bg-navbar: #ffffff;
+  --c-text: #23201a;
+}
+
+/* ---------- 统一字体（官网 + 文档） ---------- */
+html, body, #app {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Noto Sans SC", "Source Han Sans SC", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { font-family: inherit; letter-spacing: .2px; }
+
+/* ---------- 导航链接点击/访问后不改变颜色 ---------- */
+.navbar a:visited,
+.sidebar .nav-links a:visited,
+.navbar a.active:visited,
+.sidebar a:visited,
+.theme-container footer a:visited,
+a.navbar-title:visited { color: inherit; }
+
+/* ---------- 导航栏细调 ---------- */
+.navbar { border-bottom: 1px solid var(--bs-line); }
+.navbar .site-name { color: var(--bs-ink); font-weight: 700; letter-spacing: .3px; }
+.navbar .site-name:hover { color: var(--bs-gold-dark); }
+.navbar .nav-item > .nav-link { font-weight: 500; }
+.navbar .nav-link:hover, .navbar .nav-link.router-link-active { color: var(--bs-gold-dark); }
+
+/* 顶栏 logo 圆形圆角 */
+.navbar .logo { border-radius: 6px; }
+
+/* ---------- 侧边栏（可折叠） ---------- */
+.sidebar-group .sidebar-heading { color: var(--bs-ink); font-weight: 600; }
+.sidebar-heading:focus, .sidebar-heading:hover, .sidebar-heading.open { color: var(--bs-gold-dark); }
+.sidebar .nav-link.router-link-active { color: var(--bs-gold-dark); font-weight: 600; }
+
+/* ---------- 链接/正文 ---------- */
+.theme-default-content a { color: var(--bs-gold-dark); }
+.theme-default-content a:hover { color: var(--bs-gold); }
+.theme-default-content code {
+  background: var(--bs-gold-soft); color: #7a5b12;
+  border-radius: 4px; padding: .15em .4em; font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+}
+.theme-default-content:not(.custom) { max-width: 860px; }
+div[class*="language-"] {
+  background: #1d1a13 !important;
+  border-radius: 10px;
+}
+div[class*="language-"] pre, .theme-default-content pre {
+  font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  font-size: 13.5px;
+}
+.token.keyword { color: var(--bs-gold-light) !important; }
+
+/* ---------- 页脚（default footer 微调） ---------- */
+.footer { border-top: 1px solid var(--bs-line); color: var(--bs-ink-2); }
+.footer a { color: var(--bs-gold-dark); }
+.footer a:hover { color: var(--bs-gold); }
+
+/* ---------- 文档页右侧「本页」导航（可隐藏） ---------- */
+.bs-right-toc { display: none; }
+@media (min-width: 1140px) {
+  .bs-right-toc { display: block; }
+}
+
+/* ---------- 匹配文档容器，右上角添加隐藏按钮 ---------- */
+</style>
+
+/* ---------- 右侧「本页」导航（可隐藏） ---------- */
+.bs-right-toc-wrap {
+  position: fixed;
+  right: 18px;
+  top: 96px;
+  width: 190px;
+  max-height: calc(100vh - 140px);
+  overflow: auto;
+  background: #fff;
+  border: 1px solid var(--bs-line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+  z-index: 40;
+}
+.bs-right-toc-wrap.hidden { display: none; }
+.bs-right-toc-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.bs-right-toc-title { font-size: 12px; font-weight: 700; color: var(--bs-ink-2); text-transform: uppercase; letter-spacing: 1px; }
+.bs-right-toc-hide { border: 0; background: none; cursor: pointer; font-size: 15px; color: var(--bs-ink-2); line-height: 1; padding: 2px 4px; }
+.bs-right-toc-hide:hover { color: var(--bs-gold-dark); }
+.bs-right-toc-link { display: block; font-size: 12.5px; color: var(--bs-ink-2); text-decoration: none; padding: 2px 4px; line-height: 1.5; border-left: 2px solid transparent; }
+.bs-right-toc-link:hover { color: var(--bs-gold-dark); border-left-color: var(--bs-gold); }
+
+/* 页面内容宽一点，给右侧目录让位 */
+@media (min-width: 1180px) {
+  .theme-default-content:not(.custom) { max-width: 880px; margin-right: 220px; }
+}

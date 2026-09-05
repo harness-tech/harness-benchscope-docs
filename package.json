@@ -1,0 +1,45 @@
+{
+  "name": "benchscope-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vuepress dev docs",
+    "build": "vuepress build docs",
+    "test:links": "node scripts/check-links.mjs"
+  },
+  "devDependencies": {
+    "vuepress": "2.0.0-rc.30",
+    "@vuepress/bundler-vite": "2.0.0-rc.30",
+    "@vuepress/theme-default": "2.0.0-rc.30",
+    "vue": "^3.4.0",
+    "@vuepress/plugin-search": "2.0.0-rc.30"
+  },
+  "overrides": {
+    "@vuepress/plugin-palette": "2.0.0-rc.30",
+    "@vuepress/plugin-prismjs": "2.0.0-rc.30",
+    "@vuepress/plugin-search": "2.0.0-rc.30",
+    "@vuepress/plugin-docsearch": "2.0.0-rc.30",
+    "@vuepress/plugin-theme-data": "2.0.0-rc.30",
+    "@vuepress/plugin-active-header-links": "2.0.0-rc.30",
+    "@vuepress/plugin-nprogress": "2.0.0-rc.30",
+    "@vuepress/plugin-git": "2.0.0-rc.30",
+    "@vuepress/plugin-medium-zoom": "2.0.0-rc.30",
+    "@vuepress/plugin-copy-code": "2.0.0-rc.30",
+    "@vuepress/shared": "2.0.0-rc.30",
+    "@vuepress/utils": "2.0.0-rc.30",
+    "@vuepress/markdown": "2.0.0-rc.30",
+    "@vuepress/helper": "2.0.0-rc.30",
+    "@vuepress/bundler-vite": "2.0.0-rc.30",
+    "@vuepress/bundlerutils": "2.0.0-rc.30",
+    "@vuepress/cli": "2.0.0-rc.30",
+    "@vuepress/client": "2.0.0-rc.30",
+    "@vuepress/core": "2.0.0-rc.30",
+    "@vuepress/plugin-back-to-top": "2.0.0-rc.30",
+    "@vuepress/plugin-links-check": "2.0.0-rc.30",
+    "@vuepress/plugin-markdown-container": "2.0.0-rc.30",
+    "@vuepress/plugin-seo": "2.0.0-rc.30",
+    "@vuepress/plugin-sitemap": "2.0.0-rc.30",
+    "@vuepress/theme-default": "2.0.0-rc.30"
+  }
+}
