@@ -1,6 +1,6 @@
 ---
 interface Props { lang: 'zh' | 'en'; version?: string }
-const { lang, version = '1.0.0.dev' } = Astro.props
+const { lang, version = '1.0.0' } = Astro.props
 const other = lang === 'zh' ? 'en' : 'zh'
 
 let url = Astro.url.pathname

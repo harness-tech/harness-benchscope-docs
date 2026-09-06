@@ -1,24 +1,33 @@
 ---
-title: "Quick Start"
+title: "Overview"
+description: "Get BenchScope running in minutes and visually test the performance and accuracy of your deployed vLLM / SGLang or OpenAI-compatible inference service."
 ---
 
-# Quick Start
+# Overview
 
 BenchScope is an open-source LLM inference testing platform built on top of Harness Coding. It is a **visual testing platform for LLM performance and accuracy** that supports model inference based on **vLLM / SGLang**, as well as any **OpenAI-compatible** interface.
 
-Instead of juggling raw `benchmark` scripts and scattered log files, BenchScope gives you a browser-based Dashboard, real-time performance dashboards, an accuracy evaluation suite, session chat, and persistent records — all from a single command.
+Instead of juggling raw `benchmark` scripts and scattered log files, BenchScope lets you start a complete Web platform with a single command and run concurrency stress tests, threshold probing, and accuracy evaluation in minutes.
 
 ![Performance testing main interface](/images/benchscope-performance_default.png)
 
-## Overview
+<div class="tip">
 
-At a glance, BenchScope lets you:
+**tip**：
 
-- **Performance testing** — stress an inference service with two modes: *Concurrency Mode* (fixed concurrency levels) and *Threshold Mode* (automatic search for the maximum sustainable concurrency).
+BenchScope itself does **not** need a local GPU or an inference framework. What gets tested is the inference service you have already deployed (vLLM / SGLang, e.g. at `http://127.0.0.1:8000`); BenchScope sends the stress-test and evaluation requests, collects the data, and visualizes the results.
+
+</div>
+
+## What You Can Do
+
+Once running, BenchScope lets you:
+
+- **Performance testing** — stress an inference service in two modes: *Concurrency Mode* (fixed concurrency levels) and *Threshold Mode* (automatic search for the maximum sustainable concurrency).
 - **Accuracy testing** — evaluate model outputs against built-in datasets and scorers, in *Native* (local weights) or *Serving* (deployed service) mode.
 - **Sessions** — an interactive, SSE-streaming chat-like workspace with Markdown rendering and sampling-parameter control.
 - **Datas** — persistent records of every performance and accuracy run, with import / export and analysis.
-- **Settings** — centralized configuration across 7 panels.
+- **Settings** — centralized configuration across multiple panels.
 
 ```mermaid
 graph LR
@@ -27,82 +36,29 @@ graph LR
   C --> D[vLLM / SGLang / OpenAI-compatible service]
 ```
 
-## Prerequisites
+## Quick Install
 
-Before you begin, make sure you have:
-
-- **Python 3.9+** installed on your machine (the package is pure Python).
-- A **model inference service** you want to test. It can be:
-  - a local **vLLM / SGLang** server (for example at `http://127.0.0.1:8000`), or
-  - any **OpenAI-compatible** remote endpoint (provider Base URL + API key).
-- (Optional) A GPU machine if you plan to run **Native accuracy** mode with local weights.
-
-You do **not** need a GPU to run BenchScope itself — you only need one for the inference service you are testing.
-
-## Installation
-
-Install BenchScope from PyPI:
+Install BenchScope from PyPI (preferably in a dedicated virtual environment):
 
 ```bash
 pip install benchscope
 ```
 
-<div class="tip">
+After installation, verify the version and available commands:
 
-**tip**：
-
-We recommend installing into a dedicated virtual environment (for example with `python -m venv .venv && source .venv/bin/activate`) to keep dependencies isolated from other projects.
-
-</div>
-
-If you plan to use **Native accuracy** evaluation that loads local model weights (transformers / HF id), install the optional extra as well:
-
-```bash
-pip install benchscope[accuracy-native]
+```console
+$ benchscope --version
+benchscope 1.1.0
+$ benchscope --help
+usage: benchscope [-h] [--version] {serve,perf,eval} ...
 ```
 
-## Start
+## In This Section
 
-Start the entire Web platform with a single command:
+- [Requirements](/en/docs/quickstart/requirements/) — Python, the inference service under test, network / browser, and optional GPU
+- [Starting the Platform](/en/docs/quickstart/platform/) — launch the Web platform with one command and tour the Dashboard overview
 
-```bash
-benchscope
-```
-
-After a few seconds the platform opens your default browser at `http://127.0.0.1:8080`. If the browser is not available (for example on a headless server), start it without auto-opening:
-
-```bash
-benchscope --port 8080 --no-browser
-```
-
-### Common options
-
-| Option | Default | Description |
-| --- | --- | --- |
-| `--host` | `0.0.0.0` | Listening address (use `127.0.0.1` to restrict to local access) |
-| `--port` | `8080` | Listening port |
-| `--no-browser` | off | Do not automatically open the browser when starting |
-| `--debug` | off | Enable debug logging |
-
-You can also pass the same options through the explicit `serve` subcommand (see the [CLI Reference](/en/docs/cli/reference/) for details):
-
-```bash
-benchscope serve --host 127.0.0.1 --port 8080 --no-browser
-```
-
-## First Launch: the Dashboard
-
-Open `http://127.0.0.1:8080` in your browser. You first land on the **Dashboard** overview, which gives you a summary of the whole platform.
-
-![BenchScope Dashboard overview](/images/benchscope-dashboard.png)
-
-From the Dashboard you can see:
-
-- **Count panels** — quick numbers for Performance / Accuracy / Sessions / Skills / Models / Datasets / Providers.
-- **Environment info** — network interfaces (MAC / IP / subnet / mask), framework version, hardware, and operating-system details.
-- **Recent records** — latest performance and accuracy runs, with quick links into each page.
-
-Use the top navigation bar to jump between **Dashboard · Performance · Accuracy · Sessions · Datas · Settings**.
+For a more detailed installation flow, see [Install](/en/docs/install/).
 
 ## What Next?
 
@@ -111,19 +67,22 @@ Once the platform is running:
 1. Go to **Settings → Providers** and configure the inference service endpoint (Base URL and API key).
 2. Open **Performance** and create your first concurrency test — see the [Performance Testing](/en/docs/performance/) guide.
 3. Try the step-by-step walkthroughs in [Concurrency Testing](/en/docs/performance/concurrency/) and [Accuracy Evaluation](/en/docs/accuracy/guide/).
+4. Open **Sessions** to interact with the model directly in a chat-like workspace.
 
-<div class="tip">
+## FAQ
 
-**tip**：
+**Q: Does BenchScope require a GPU?**
+No. BenchScope only sends requests and collects results; a GPU is needed only by the inference service under test, or for Native accuracy evaluation.
 
-All task artifacts and configuration are stored under `~/.benchscope`. Learn how to move or back it up in [Configuration](/en/docs/install/configuration/).
+**Q: How do I update to the latest version / uninstall?**
+See [Update & Uninstall](/en/docs/install/update-uninstall/).
 
-</div>
+**Q: Where can I learn about the data root and configuration?**
+See [Configuration](/en/docs/install/configuration/).
 
-## Related
+## Related Docs
 
-- [Configuration](/en/docs/install/configuration/) — data root directory, subdirectories, and built-in configs
-- [CLI Reference](/en/docs/cli/reference/) — the `serve` / `perf` / `eval` subcommands
-- [Performance Testing](/en/docs/performance/) — core feature overview
-- [Accuracy Testing](/en/docs/accuracy/) — core feature overview
-- [Update & Uninstall](/en/docs/install/update-uninstall/) — upgrade and cleanup
+- [Install](/en/docs/install/) — requirements, configuration, update & uninstall
+- [CLI](/en/docs/cli/) — overview of the `serve` / `perf` / `eval` subcommands
+- [Performance Testing](/en/docs/performance/) — concurrency and threshold modes
+- [Accuracy Testing](/en/docs/accuracy/) — Native / Serving dual-mode evaluation

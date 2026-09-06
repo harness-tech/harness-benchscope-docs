@@ -228,29 +228,102 @@ font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont,
   - **Col 1**（左）：金色 Logo + BenchScope + 介绍文字，上下居中。
   - **Col 2**（左）：超链接（HarnessTek / BenchScope / BenchScope Docs），上下居中 + 左对齐。HarnessTek 用网站 Logo 小图标（`logo-ht-dark.png` / `logo-ht-light.png`，13px，无内边距），BenchScope / Docs 用 GitHub SVG 图标。图标颜色 = 文字颜色（`var(--ft-text)`），hover 时图标 + 文字均变为金色。
   - **Col 3**：弹性空白（`flex: 1`），撑开左右间距。
-  - **Col 4**（右）：自上而下——语言下拉选框（默认简体中文，含国旗 emoji）→ 空白间距（8px）→ `BenchScope v1.1.1` → `BenchScope Docs v1.0.0.dev`。版本文字更小（`10.5px`），右对齐。
+  - **Col 4**（右）：自上而下——语言下拉选框（默认简体中文，含国旗 emoji）→ 空白间距（8px）→ `BenchScope v1.1.1` → `BenchScope Docs v1.0.0`。版本文字更小（`10.5px`），右对齐。
 - **Row2**：版权 `© 2026 HarnessTek. All rights reserved.` 靠右 + 上下居中。
 - **颜色**：Footer 所有文字使用 `var(--ft-text)`（比页面文字更暗，与导航/内容区区分）。hover 统一金色 `var(--gold-text)`。
 - **响应式**：`≤880px` 隐藏 Col3 空白列，Col4 左对齐；`≤560px` 单列。
 
-### 4.6 文档页（默认主题）
+### 4.6 文档站 DESIGN 规范（Docs）
 
-> 参照 **docs.openclaw.ai**：**近黑文档主题 + 金色强调**（阅读区深色，非白底）。
+> 参照 **docs.openclaw.ai**：**近黑文档主题 + 金色强调**（阅读区深色，非白底）。本节是文档站唯一视觉口径，所有文档页面统一遵循。
 
-- **顶栏**：近黑玻璃（`#19191c` + blur）+ 金 LOGO + 搜索 + 中英切换。
-- **左侧可折叠目录 + 右侧可隐藏「本页」导航**（`bs-right-toc-*`）。
-- **阅读区**：深背景 `#101012`、正文 `#bcbcc4`、大标题 `#ededed`；正文链接金 `#e8c76a`；表格/引用/提示块统一深色 `#19191c` + 金强调。
-- **代码块**：近黑 `#131316` + `1px #ededed1f` 边框；mono 字体；关键字金、字符串绿、注释灰。
-- 内容区 `max-width: 860px`（宽屏右侧目录时右移留白）。
-- 字体：文档正文 `Inter/Segoe UI/PingFang`；代码 `SF Mono / JetBrains Mono`。
+#### 4.6.1 目录结构（Content Collections）
+
+- 内容按语言分目录：`src/content/docs/{zh,en}/`。
+- 每个**一级分区**一个目录，目录内 `index.md` 为分区落地页（html 折叠为 `/docs/<sec>/`），其余 `.md` 为子页。示例如下：
+
+```
+src/content/docs/
+├── zh/
+│   ├── README.md               # 文档首页（docs 概览，渲染所有分区）
+│   ├── quickstart/index.md     # 快速开始
+│   ├── install/                # 安装（index / configuration / update-uninstall）
+│   ├── accuracy/               # 精度（index / guide）
+│   ├── performance/            # 性能（index / concurrency / threshold）
+│   ├── data/                   # 数据（index）
+│   ├── tools/                  # 工具（高级）（index / sessions / settings / architecture / bench-engine）
+│   ├── cli/                    # CLI（index / reference）
+│   ├── api/                    # API（index）
+│   ├── releases/               # 发布（index / v1-x-y）
+│   └── help/                   # 帮助（index / contributing）
+└── en/                         # 与 zh 一一对应
+```
+
+- **双语强制对齐**：改 `zh` 必须同步改 `en`，反之亦然；文件集合与内部结构必须一致。
+- **前置元数据**：文件名用 `kebab-case`；frontmatter 至少含 `title`（`# ` 一级标题与 `title` 一致）。
+- **分区顺序（副导航）**：`quickstart → performance → accuracy → data → tools → cli → api → releases → help`（`src/lib/sidebar.ts` 的 `ORDER` 维护；install 并入 quickstart，不作为一级分区）。
+
+#### 4.6.2 页面骨架（三层栅格）
+
+- 由 `src/layouts/DocLayout.astro` 提供，`grid-template-columns: 左栏(200–250px) 正文 右栏(170–210px)`，`max-width: 80rem`，居中。
+- **左栏（侧边目录）**：`position: sticky; top: 118px`；**只显示当前分区**内容（随副导航切换），不再堆叠全部分区；分区可含**子分组**（如 quickstart 下并入「安装」子分组）；文档主页（`/docs/`）侧栏只显示「主页」自身。
+- **中栏（正文）**：`.prose`，`max-width: 60rem`。
+- **右栏（本页 TOC）**：`position: sticky; top: 118px`；标题「本页目录」+ 列表 + 底部「返回文档」（返回文档 → 主页）。
+- 响应式：`≤1000px` 隐藏右栏；`≤760px` 隐藏左栏（正文章列）。
+
+#### 4.6.3 文档主页（/docs/）与两级别导航
+
+- **文档主页**（`/docs/`，`src/components/DocsHome.astro`）：BenchScope 介绍 + 功能概览卡片 + 文档分类入口卡片 + 开始使用 CTA；左侧栏只显示「主页」自身。官网「文档」入口 / 各页「返回文档」均进入主页。
+- **顶栏**（一级）：毛玻璃 + 金 LOGO + BenchScope + `DOCS` 徽标；居中搜索（圆角胶囊内联输入框，支持 `/` 快捷键；图标 idle 灰、有输入/聚焦时金色）；右侧 GitHub + 主题切换 + 语言切换。高度 `52px`。
+- **副导航**（二级，`.subnav`）：九个分区链接（**无「概览」tab**），每个 = 分区金色图标（15px）+ 文字（13.5px），hover / active 金色下划线；高度 `40px`。**首个 tab 与主导航 BenchScope 名称左缘对齐**（`padding-left: 38px`，logo 30px + gap 8px）。
+- **激活态**：`--gold-text` + `--gold` 下划线；副导航当前分区高亮。
+- **发布（releases）**：分区内版本子页**倒序**展示（最新在上，v1.1.0 → … → v1.0.5）。
+
+#### 4.6.4 标题层级（H 缩放）
+
+统一收敛字号，正文基调 **14.5px**（`--font-body`）：
+
+| 元素 | 字号 | 字重 | 备注 |
+| --- | --- | --- | --- |
+| `h1` | 1.7rem | 800 | 页首标题，`margin 0 0 6px` |
+| `h2` | 1.3rem | 750 | 带底部 `1px` 分隔线 |
+| `h3` | 1.12rem | 700 | |
+| `h4` | 1rem | 650 | |
+| 正文 `p` | 14.5px | — | `line-height 1.75`，`--text-2` |
+| 列表 `li` | 14.5px | — | `line-height 1.7` |
+
+#### 4.6.5 代码块（代码高亮 ✓）
+
+- **头部**（`.code-meta`）：左语言标签（mono 10.5px，金色），右复制按钮（`Copy`/`Copied`）。
+- **行号 + 正文**：`.code-body` 左侧行号 gutter（mono 9px，行高 1.8，与代码行对齐），正文 Shiki 双主题高亮（`github-light`/`github-dark`），预 `font-size: 9px`，`line-height 1.8`，内边距 `.7rem 1rem .7rem .85rem`，圆角 8px。
+- **主题差异**：黑色主题 → 深色代码块（`--code-bg:#0d0d10`，token 用 `--shiki-dark`）；银色主题 → 亮色代码块（`--code-bg:#f6f6f9`，token 用内联亮色值）。
+- **行内代码**：`--bg-float` 底 + `--gold-text` 文字，圆角 4px。
+
+#### 4.6.6 引用 / 提示块 / 表格
+
+- **引用（blockquote）**：`--surface` 底 + 左侧 3px 金竖线，`font-size: .95em`。
+- **提示块**（`.tip/.info/.warning/.danger`）：金描边 + 渐变底，`font-size: .96em`，圆角 6px；标签行 `**tip**：` 等保留。
+- **表格**：`font-size: 13px`，表头 `--bg-float`，隔行 `--bg-surface`，金 `li::marker`。
+
+#### 4.6.7 内容组织约定（按副导航分区）
+
+- 每个分区聚焦单一主题；落地页 `index.md` 统一命名为**「概述 / Overview」**并作为侧栏第一个文档，提供「总览 + 子页导航」。
+- **长文档拆分原则**：单页超过约 **150 行** 或包含多个明显可独立成节的模块（如不同子命令 / 不同模式）时，拆分为独立子页（如 CLI reference 拆 `serve` / `perf` / `eval`）。
+- 文档命名**不要**用「教程 / Tutorial」等前缀，用洁净的文档名（如「并发压测 / Concurrency Testing」「阈值压测 / Threshold Testing」）。
+- **发布（releases）顺序**：落地页「概述」置顶，版本子页**倒序**（最新在上）。
+- 每页推荐包含「常见问题 / FAQ」与「相关文档 / Related Docs」小节，提升可读性与交叉导航。
+- 内链一律**绝对路由**（`/zh/docs/...`、`/en/docs/...`），不引入相对 `.md` 或 `::: ` 旧容器。
 
 ### 4.7 右侧「本页」导航（TOC）
 
-由 `src/layouts/DocLayout.astro` 的内联 `<script>` 构建（扫描 `.prose` 内 h2/h3，映射锚点链接）：
+由 `src/layouts/DocLayout.astro` 内联 `<script>` 构建（扫描 `.prose` 内 `h2/h3`，映射锚点）：
 
-- 固定右侧（`position: sticky; top: 60px`），仅当文档页存在多级标题时渲染。
-- 二级标题 `lv1`（600 字重）、三级标题 `lv2`（缩进 14px）。
-- 左侧金竖线引导，hover 金色。响应式：`≤1000px` 隐藏。
+- 固定右侧（`position: sticky; top: 118px`），仅当文档存在多级标题时渲染。
+- 顶部标题「本页目录」（mono 11.5px，uppercase）+ 列表 + 底部「返回文档」入口。
+- 二级标题 `lv1`（600 字重）、三级标题 `lv2`（缩进）。
+- **滚动高亮**：`IntersectionObserver` 在当前章节进入视口时高亮对应目录项（金色竖线 + 金色文字）。
+- **标题锚点**：正文 `h2/h3` hover 时左侧显示 `#` 锚点，点击即可定位。
+- 响应式：`≤1000px` 隐藏。
 
 ---
 

@@ -13,7 +13,7 @@ The **engine abstraction** (Bench Engine) unifies how different stress-testing b
 | `benchscope` (self-developed) | Built-in self-developed engine with streaming timeline collection and metric definitions aligned with vLLM |
 | `vllm-<ver>` | Official vLLM bench engine (version-pinned, e.g. `vllm-0.23`) |
 | `sglang-<ver>` | Official SGLang bench engine (version-pinned, e.g. `sglang-0.5.10`) |
-| Custom Engines | Custom engines registered through skills / plugins (`bs-engine-create`) |
+| Custom | Custom engines registered through skills / plugins (`bs-engine-create`) |
 
 The self-developed `benchscope` engine is the default for `benchscope perf` — it needs **no local framework environment** and can stress **remote OpenAI-compatible services** directly.
 
@@ -21,9 +21,20 @@ The self-developed `benchscope` engine is the default for `benchscope perf` — 
 
 Every engine is composed of the same three parts, which the platform uses to integrate it without special-casing:
 
-- **Environment validation** — validates the engine’s dependencies and runtime environment *before* starting. Native vLLM / SGLang engines require the matching framework version; the self-developed engine needs nothing special.
-- **Parameter description** — each engine declares its parameters (cluster / generation / request parameters), surfaced as dropdowns with descriptions in the UI.
-- **Metric availability** — *available → value*, *unavailable → N/A*, *missing → gray dash*, under a **fixed 11-metric snapshot contract**.
+### Environment validation
+
+- Validates the engine’s dependencies and runtime environment **before** starting.
+- Native vLLM / SGLang engines require a validated `torch` and matching framework version, or the task is blocked. The self-developed engine needs nothing special.
+
+### Parameter description
+
+- Each engine declares its parameters (**cluster / generation / request parameters**).
+- Parameters are surfaced in the UI as **dropdowns with descriptions** under Settings → Bench Engines.
+
+### Metric availability
+
+- **Available → value (blue)** · **Unavailable → N/A (gray-black)** · **Missing → gray dash**.
+- A **fixed 11-metric snapshot contract** keeps the structure consistent across engines.
 
 ## Metric Definitions
 
@@ -31,20 +42,10 @@ The throughput / TTFT / TPOT / ITL metric definitions of the self-developed engi
 
 | Metric | Definition |
 | --- | --- |
-| Throughput | Output (`output_mean`) / total (`total_mean`) throughput in tok/s |
+| Throughput | Output (`output_mean`) / total (`total_mean`) throughput, in tok/s |
 | TTFT | First-token latency, ms |
 | TPOT | Per-output-token latency, ms |
 | ITL | Inter-token latency, ms |
-
-## The 11-metric snapshot contract
-
-Every engine reports a fixed set of 11 metrics per snapshot. If a third-party engine cannot provide one of them, it is marked explicitly:
-
-- **Available** → the value is shown (blue).
-- **Unavailable** → shown as `N/A` (gray-black).
-- **Missing** → shown as a gray dash.
-
-This keeps the real-time panel and the record schema consistent no matter which engine produced the data.
 
 ## Custom Engines (Advanced)
 
@@ -57,8 +58,27 @@ Custom engines are **created through the `bs-engine-create` skill** and must fol
 
 Once a custom engine passes **import validation**, it can be enabled under **Settings → Bench Engines**. Each engine (including custom ones) has a **Mock switch** for integration testing.
 
+<div class="tip">
+
+**tip**：
+
+For stress-testing backends that are not yet officially supported (for example a custom inference framework or a gateway proxy), a custom engine is the most flexible path. Start from the skill template and see [Contributing](/en/docs/help/contributing/) for the implementation conventions.
+
+</div>
+
+## FAQ
+
+**Q: Why can I not proceed after selecting an engine?**
+
+Native vLLM / SGLang engines run environment validation — if `torch` and the matching framework version are not installed, the step is blocked. Switch to the self-developed `benchscope` engine to stress a remote API directly from your machine.
+
+**Q: Why do some metrics show N/A for a third-party engine?**
+
+That engine does not support the metric; availability is made explicit (N/A / gray dash). Use the self-developed engine if you need the full metric set.
+
 ## See Also
 
-- [Architecture](/en/docs/tools/architecture/) — where engines fit in the platform
 - [Settings → Bench Engines](/en/docs/tools/settings/) — configuring engines in the UI
+- [Architecture](/en/docs/tools/architecture/) — where engines fit in the platform
 - [Performance Testing](/en/docs/performance/) — how engines drive load tests
+- [v1.0.7 release](/en/docs/releases/v1-0-7/) — the engine-rework background

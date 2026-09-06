@@ -18,19 +18,28 @@ Settings 中的所有修改都会**自动持久化**到 `~/.benchscope/settings.
 
 ## General（通用）
 
-- **数据根目录与 Cache Paths**：Root Dir **即时生效（无需重启）**，各子目录默认只读展示。
-- **运行参数**等全局配置项。
+- **数据根目录与 Cache Paths**：Root Dir **即时生效（无需重启）**，各子目录默认只读展示（由平台管理）。
 
 | 配置 | 说明 |
 | --- | --- |
-| Root Dir | 数据根目录，修改即时生效 |
-| perfs / evals / logs / ... | 各子目录映射（只读展示） |
+| Root Dir | 数据根目录（默认 `~/.benchscope`），修改即时生效 |
+| perfs / evals / logs / sessions / datasets / models / plugins / ... | 各子目录映射（只读展示） |
+
+<div class="info">
+
+**info**：
+
+Cache Paths 视图会列出数据根目录下的每个子目录（`perfs`、`evals`、`logs`、`sessions`、`datasets`、`models`、`plugins` 等），让你清楚每种数据存于何处、新数据将写入哪里。
+
+</div>
 
 ## Providers（服务提供方）
 
 - 配置 OpenAI 兼容 / vLLM / SGLang 等推理服务提供方的 **Base URL** 与 **API Key**。
 - 服务**可用状态**在顶栏与 Dashboard 展示。
 - 精度 Serving 模式**缺省使用全局 Provider 配置**（无需每次重复填写地址）。
+
+一个 Provider 即一个推理服务端点，例如：
 
 ```json
 {
@@ -41,6 +50,14 @@ Settings 中的所有修改都会**自动持久化**到 `~/.benchscope/settings.
 }
 ```
 
+<div class="tip">
+
+**tip**：
+
+在这里**一次性添加** vLLM / SGLang 或 OpenAI 兼容端点后，它即可作为目标用于性能测试、会话与精度（Serving 模式）。
+
+</div>
+
 ## Models（模型）
 
 - 维护**内置模型清单**；
@@ -49,7 +66,7 @@ Settings 中的所有修改都会**自动持久化**到 `~/.benchscope/settings.
 ## Datasets（数据集）
 
 - **内置数据集**管理与下载目录（`datasets_dir`）；
-- 数据集由 `datasets.yaml` 定义，可通过 modelscope 或 url 源下载，并缓存到 `~/.benchscope/datasets/{id}/`。
+- 数据集由 `datasets.yaml` 定义，可从 **modelscope** 或 **url 源**下载，并缓存到数据根目录的 `datasets/{id}/`（默认 `~/.benchscope/datasets/{id}/`）。
 
 ## Bench Engines（引擎）
 
@@ -73,11 +90,12 @@ Settings 中的所有修改都会**自动持久化**到 `~/.benchscope/settings.
 
 ## Skills / Plugins（技能与插件）
 
-- **技能包**与**插件**的安装、加载目录（`plugins_dir`）；
+- **技能包**与**插件**的安装与加载目录（`plugins_dir`）；
 - 例如通过 `bs-engine-create` 技能创建自定义引擎。
 
 ## 相关文档
 
 - [配置说明](/zh/docs/install/configuration/) — 数据目录与 settings.json
-- [性能测试](/zh/docs/performance/) — 使用 Bench Engines 压测
 - [Bench 引擎](/zh/docs/tools/bench-engine/) — 引擎架构与自定义
+- [性能测试](/zh/docs/performance/) — 使用 Bench Engines 压测
+- [概述](/zh/docs/accuracy/) — 数据集 / 基线在评测中的使用

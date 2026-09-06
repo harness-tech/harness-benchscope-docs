@@ -1,8 +1,8 @@
 ---
-title: "HTTP API"
+title: "概述"
 ---
 
-# HTTP API
+# 概述
 
 BenchScope 的 Web 后端基于 FastAPI 构建，提供 **OpenAI 兼容推理接口**、**平台 REST API** 与 **WebSocket** 三类接口。默认服务地址（Base URL）为：
 
@@ -10,7 +10,13 @@ BenchScope 的 Web 后端基于 FastAPI 构建，提供 **OpenAI 兼容推理接
 http://127.0.0.1:8080
 ```
 
-> 服务地址取决于启动时的 `--host` / `--port`（默认 `0.0.0.0:8080`），见 [安装](/zh/docs/install/)。大多数接口返回 JSON，错误时使用标准的 HTTP 状态码。
+<div class="info">
+
+**info**：
+
+服务地址取决于启动时的 `--host` / `--port`（默认 `0.0.0.0:8080`），见 [安装](/zh/docs/install/)。大多数接口返回 JSON，错误时使用标准的 HTTP 状态码。
+
+</div>
 
 ## 会话式推理（OpenAI 兼容）
 
@@ -26,6 +32,14 @@ curl http://127.0.0.1:8080/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model":"Qwen2.5-7B","messages":[{"role":"user","content":"Hello"}],"stream":true}'
 ```
+
+<div class="tip">
+
+**tip**：
+
+将 `"stream":true` 改为 `false` 即可关闭流式输出，一次性返回完整响应。任何标准 OpenAI 客户端（如 `openai` SDK、curl）都可直接对接。
+
+</div>
 
 ## 健康与版本
 
@@ -56,6 +70,14 @@ curl http://127.0.0.1:8080/api/version
 | `/api/accuracy/tasks/{task_id}/benchmark` | GET | 基线对标结果 |
 | `/api/accuracy/estimate` | GET | Token 消耗预估算 |
 
+<div class="tip">
+
+**tip**：
+
+任务也可通过 [CLI](/zh/docs/cli/) 创建：`benchscope perf` 与 `benchscope eval` 与网页任务产物完全等价，可按需选择终端或 HTTP 方式。
+
+</div>
+
 ## 配置与会话
 
 | 接口 | 方法 | 说明 |
@@ -71,6 +93,30 @@ curl http://127.0.0.1:8080/api/version
 ## 鉴权
 
 本地默认**无鉴权**。若被测服务需要 API Key，请通过 [Settings → Providers](/zh/docs/tools/settings/) 配置；接口本身默认不要求额外令牌。
+
+## 常见问题
+
+**Q：如何确认服务是否正常启动？**
+
+A：访问 `http://127.0.0.1:8080/api/version`（或刷新可用的根地址），返回版本号即表明服务已就绪。
+
+**Q：能否直接用 curl 调用会话接口？**
+
+A：可以。上面的 `/v1/chat/completions` 示例即为可直接运行的 curl 命令，支持 OpenAI 兼容的请求体与 SSE 流式输出。
+
+**Q：如何让第三方服务使用我的 API Key？**
+
+A：在 [Settings → Providers](/zh/docs/tools/settings/) 中为对应 Provider 配置 Base URL 与 API Key。被测服务的鉴权与 BenchScope 自身的接口鉴权是分开的。
+
+**Q：如何通过 HTTP 创建并预览一个性能任务？**
+
+A：向 `POST /api/tasks/preview` 提交任务条件即可预览将执行的命令；确认后通过 `POST /api/tasks` 创建任务，再用 `POST /api/tasks/{task_id}/start` 启动。
+
+<div class="info">
+
+**info**：
+
+上述接口与 Web 创建的任务完全兼容，产物可在 **Datas → Perfs** 查看 / 导入。
 
 ## 相关文档
 

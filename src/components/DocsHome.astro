@@ -1,0 +1,143 @@
+---
+import DocLayout from '../layouts/DocLayout.astro'
+import Icon from './Icons.astro'
+import { buildSidebar, ORDER, LABELS, SECTION_ICONS } from '../lib/sidebar'
+
+interface Props { lang: 'zh' | 'en' }
+const { lang } = Astro.props
+
+const { groups } = await buildSidebar(lang)
+
+const hero = lang === 'zh'
+  ? { badge: 'Open Source · LLM 性能与精度测试平台', title: 'BenchScope', sub: '对模型及 OpenAI 兼容推理服务进行性能压测与精度评测的可视化测试平台。' }
+  : { badge: 'Open Source · LLM Performance & Accuracy Testing', title: 'BenchScope', sub: 'A visual testing platform that benchmarks performance and evaluates accuracy for models and OpenAI-compatible inference services.' }
+
+const featureCards = (lang === 'zh'
+  ? [
+      { icon: 'gauge', t: '性能压测', d: '并发 / 阈值双模式，实时吞吐、延迟与进度可视化。' },
+      { icon: 'target', t: '精度评测', d: '原生 / 服务双模式，内置数据集与判分器，基线对标。' },
+      { icon: 'database', t: '数据分析', d: '历史压测与评测产物的记录、统计、备份与导入。' },
+      { icon: 'chat', t: '会话交互', d: 'SSE 流式对话与采样参数控制的交互式工作区。' },
+      { icon: 'gear', t: '高级工具', d: '会话、设置、数据架构与 Bench 引擎的深度配置。' },
+      { icon: 'terminal', t: 'CLI / API', d: '命令行与 OpenAI 兼容 HTTP 接口的完整能力。' },
+    ]
+  : [
+      { icon: 'gauge', t: 'Performance', d: 'Concurrency & threshold modes with real-time throughput, latency and progress.' },
+      { icon: 'target', t: 'Accuracy', d: 'Native & serving modes, built-in datasets and scorers, baseline comparison.' },
+      { icon: 'database', t: 'Data', d: 'Record, aggregate, back up and import historical run artifacts.' },
+      { icon: 'chat', t: 'Sessions', d: 'Interactive SSE streaming chat with sampling-parameter control.' },
+      { icon: 'gear', t: 'Advanced Tools', d: 'Deep configuration of sessions, settings, architecture and bench engines.' },
+      { icon: 'terminal', t: 'CLI / API', d: 'Full command-line and OpenAI-compatible HTTP interfaces.' },
+    ])
+
+const getStarted = lang === 'zh'
+  ? { title: '开始使用', desc: '从这里安装并启动 BenchScope，几分钟即可第一次压测。', cta: '快速开始' }
+  : { title: 'Get Started', desc: 'Install and launch BenchScope here — run your first benchmark in minutes.', cta: 'Quick Start' }
+const ctaHome = lang === 'zh' ? '了解功能' : 'Explore Features'
+const ctaInstall = lang === 'zh' ? '开始使用' : 'Get Started'
+
+// 分类入口：用 quickstart(含 install) 的落地页作为开始，其余分区各自链接
+const categoryOrder = ORDER
+const introHref = `/${lang}/docs/quickstart/`
+---
+
+<DocLayout
+  lang={lang}
+  entry={{ id: `${lang}/README`, data: { title: lang === 'zh' ? '主页' : 'Home', description: hero.sub } }}
+  slug={[]}
+  groups={groups}
+  prev={null}
+  next={null}
+>
+  <div class="home-hero">
+    <p class="eyebrow">{hero.badge}</p>
+    <h1 class="home-title">{hero.title}</h1>
+    <p class="home-sub">{hero.sub}</p>
+    <div class="home-actions">
+      <a class="btn home-btn-primary" href={introHref}>{ctaInstall}</a>
+      <a class="btn home-btn-ghost" href="#features">{ctaHome}</a>
+    </div>
+  </div>
+
+  <section id="features" class="home-features">
+    <h2 class="home-h2">{lang === 'zh' ? '功能概览' : 'Features'}</h2>
+    <div class="home-grid">
+      {featureCards.map((f) => (
+        <div class="home-card">
+          <div class="home-card-icon">
+            <Icon name={f.icon} size={17} />
+          </div>
+          <h3>{f.t}</h3>
+          <p>{f.d}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="home-categories">
+    <h2 class="home-h2">{lang === 'zh' ? '文档分类' : 'Documentation'}</h2>
+    <p class="home-cat-desc">{lang === 'zh' ? '按主题浏览文档，从入门到高级。' : 'Browse docs by topic, from getting started to advanced.'}</p>
+    <div class="home-cat-list">
+      {groups.map((g) => (
+        <a class="home-cat" href={`/${lang}/docs/${g.key}/`}>
+          <span class="home-cat-icon"><Icon name={g.icon} size={15} /></span>
+          <div>
+            <span class="home-cat-name">{g.label}</span>
+            <span class="home-cat-count">{g.children.length + (g.subgroups?.reduce((n, s) => n + s.children.length, 0) ?? 0)} {lang === 'zh' ? '篇' : 'docs'}</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <div class="home-cta">
+    <h2>{getStarted.title}</h2>
+    <p>{getStarted.desc}</p>
+    <a class="btn home-btn-primary" href={introHref}>{getStarted.cta}</a>
+  </div>
+</DocLayout>
+
+<style>
+  .home-hero { padding: 40px 0 16px; }
+  .home-title { font-size: clamp(2rem, 1.4rem + 3vw, 3rem); font-weight: 850; letter-spacing: -.02em; margin: 0 0 10px; }
+  .home-sub { max-width: 52ch; color: var(--text-2); font-size: 15.5px; line-height: 1.7; margin: 0 0 22px; }
+  .home-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 9px 18px; border-radius: 8px; font-size: 14px; font-weight: 650; cursor: pointer; text-decoration: none; transition: background .16s, color .16s, border-color .16s; border: 1px solid var(--gold); }
+  .home-btn-primary { background: var(--gold); color: var(--bg); }
+  .home-btn-primary:hover { background: var(--gold-light); color: var(--bg); }
+  .home-btn-ghost { background: transparent; color: var(--gold-text); }
+  .home-btn-ghost:hover { background: var(--bs-gold-soft); }
+
+  .home-features { margin-top: 28px; }
+  .home-h2 { font-size: 1.5rem; font-weight: 750; margin: 0 0 16px; }
+  .home-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  .home-card { background: var(--bg-surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; transition: border-color .16s, transform .16s; }
+  .home-card:hover { border-color: var(--gold-line); transform: translateY(-2px); }
+  .home-card-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 9px; color: var(--gold-text);
+    background: var(--bs-gold-soft); border: 1px solid var(--gold-line);
+  }
+  .home-card-icon svg { display: block; }
+  .home-card h3 { font-size: 16px; margin: 12px 0 6px; }
+  .home-card p { color: var(--text-2); font-size: 13.5px; line-height: 1.6; margin: 0; }
+
+  .home-categories { margin-top: 40px; }
+  .home-cat-desc { color: var(--text-3); margin: -8px 0 16px; }
+  .home-cat-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+  .home-cat { display: flex; align-items: center; gap: 12px; background: var(--bg-surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; text-decoration: none; transition: border-color .16s; }
+  .home-cat:hover { border-color: var(--gold-line); }
+  .home-cat-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 8px; color: var(--gold-text);
+    background: var(--bs-gold-soft); border: 1px solid var(--gold-line);
+    flex-shrink: 0;
+  }
+  .home-cat-icon svg { display: block; }
+  .home-cat-name { display: block; color: var(--text-1); font-weight: 650; font-size: 14.5px; }
+  .home-cat-count { display: block; color: var(--text-3); font-size: 12px; margin-top: 2px; }
+
+  .home-cta { margin-top: 44px; background: var(--bg-surface); border: 1px solid var(--gold-line); border-radius: 12px; padding: 26px 24px; text-align: center; }
+  .home-cta h2 { font-size: 1.4rem; margin-bottom: 8px; }
+  .home-cta p { color: var(--text-2); margin: 0 0 16px; }
+</style>

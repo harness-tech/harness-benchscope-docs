@@ -1,30 +1,37 @@
 ---
-title: "教程：并发压测"
+title: "并发压测"
 ---
 
-# 教程：并发压测
+# 并发压测
 
-本教程演示如何对已部署的 OpenAI 兼容推理服务做**并发压测**，观察系统在不同并发负载下的吞吐与延迟变化曲线。
+本节演示如何对已部署的 OpenAI 兼容推理服务做**并发压测**，观察系统在不同并发负载下的吞吐与延迟变化曲线，从而找到**最佳工作区间**。
 
 ## 前置条件
 
-- 已安装 benchscope（见 [快速入门](/zh/docs/quickstart/)）
-- 已有一个可用的推理服务（如 vLLM / SGLang，地址 `http://127.0.0.1:8000`）
+- 已安装 benchscope（见 [快速入门](/zh/docs/quickstart/)）；
+- 已有一个可用的推理服务（如 vLLM / SGLang，地址 `http://127.0.0.1:8000`）。
+
+## 操作步骤
+
+### 步骤 1：确认服务可用
+
+开始前先用 curl 快速确认服务可用：
+
+```bash
+curl http://127.0.0.1:8000/v1/models
+```
 
 <div class="tip">
 
 **tip**：
 
-先用 curl 快速确认服务可用：
-
-```bash
-curl http://127.0.0.1:8000/v1/models
-```
 返回模型列表即表示服务可用。
 
 </div>
 
-## 方式一：网页操作
+### 步骤 2：创建压测任务
+
+**网页方式**
 
 1. 进入 **性能测试** → **创建任务**；
 2. 配置**被测模型**与**服务地址**（Provider）；
@@ -34,24 +41,28 @@ curl http://127.0.0.1:8000/v1/models
 
 ![BenchScope 性能测试创建任务](/images/benchscope-performance_create.png)
 
-## 方式二：CLI
+**CLI 方式**
+
+同一压测也可直接在命令行运行：
 
 ```bash
 benchscope perf --model Qwen2.5-7B --base-url http://127.0.0.1:8000 \
   --concurrency 8 --num-prompts 100 --input-len 1024 --output-len 1024
 ```
 
+参数说明：
+
 | 参数 | 说明 |
 | --- | --- |
 | `--model` | 被测模型名 |
 | `--base-url` | 服务地址（默认 `http://127.0.0.1:8000`） |
-| `--concurrency` | 并发数（本教程为 8） |
+| `--concurrency` | 并发数（本示例为 8） |
 | `--num-prompts` | 请求总数（100） |
 | `--input-len` / `--output-len` | 输入 / 输出 token 数（各 1024） |
 
-### 多档并发对比
+### 步骤 3：多档并发对比
 
-要观察负载变化曲线，建议跑多组不同并发（如 1 / 2 / 4 / 8 / 16），逐档记录指标并绘制对比：
+要观察负载变化曲线，建议跑多组不同并发（如 1 / 2 / 4 / 8 / 16），逐档记录指标并对比：
 
 ```bash
 for c in 1 2 4 8 16; do
@@ -61,12 +72,12 @@ for c in 1 2 4 8 16; do
 done
 ```
 
-## 解读结果
+### 步骤 4：解读结果
 
 观察输出指标：
 
 - **吞吐**（`output_mean` / `total_mean`）：**越高越好**；
-- **TTFT / TPOT / ITL**：**越低越好**；
+- **TTFT / TPOT / ITL**：**越低越好**，其中 TTFT 影响首字响应，TPOT / ITL 影响流式流畅度；
 - 关注实测值与**预期 SLA** 的差距，据此调整并发或服务配置。
 
 ```console
@@ -93,5 +104,5 @@ ITL  (mean):         33.9 ms
 ## 相关文档
 
 - [性能测试](/zh/docs/performance/) — 双模式详解
-- [CLI 参考](/zh/docs/cli/reference/) — `perf` 完整参数
-- [教程：阈值压测](/zh/docs/performance/threshold/) — 自动求最优并发
+- [perf 命令](/zh/docs/cli/perf/) — `perf` 完整参数
+- [阈值压测](/zh/docs/performance/threshold/) — 自动求最优并发

@@ -1,10 +1,12 @@
 ---
 import Base from './Base.astro'
 import SiteFooter from '../components/SiteFooter.astro'
-import { LABELS } from '../lib/sidebar'
+import Icon from '../components/Icons.astro'
+import { LABELS, SECTION_GROUP } from '../lib/sidebar'
 
 interface LinkItem { href: string; title: string }
-interface Group { label: string; children: LinkItem[] }
+interface SubGroup { label: string; icon?: string; children: LinkItem[] }
+interface Group { key: string; label: string; icon: string; children: LinkItem[]; subgroups?: SubGroup[] }
 interface Props {
   lang: 'zh' | 'en'
   entry: { id: string; data: { title?: string; description?: string } }
@@ -29,43 +31,93 @@ const currentRoutes = [
 
 // 面包屑：含语言前缀的路径，取顶层 section
 const parts = entry.id.split('/') // [zh, <section>, ...]
+
+// 是否为主页（docs 首页 /docs/，由 README 渲染）
+const isHome = parts.length === 2 && parts[1].toLowerCase() === 'readme'
 const sectionKey = parts.length > 1 ? parts[1] : ''
-const sectionLabel = sectionKey && LABELS[sectionKey] ? LABELS[sectionKey][lang] : ''
-const crumb = ['首页', '文档']
-const enCrumb = ['Home', 'Docs']
-const crumbArr = lang === 'zh' ? crumb : enCrumb
+const groupKey = SECTION_GROUP[sectionKey] ?? sectionKey
+const hasGroup = !!groupKey && groupKey !== 'readme'
+// 面包屑/标签：优先取自身 section；install 用其自身「安装」标签
+const sectionLabel = hasGroup ? (LABELS[sectionKey]?.[lang] ?? LABELS[groupKey]?.[lang] ?? '') : ''
+
+// 非主页：侧栏只显示当前分组（含 install 子分组）；主页：侧栏只显示「主页」自身
+const activeGroups = hasGroup ? groups.filter((g) => g.key === groupKey) : []
+const crumbArr = lang === 'zh' ? ['文档'] : ['Docs']
+const onThisPage = lang === 'zh' ? '本页目录' : 'On this page'
+const backToDocs = lang === 'zh' ? '返回文档' : 'Back to docs'
+const homeLabel = lang === 'zh' ? '主页' : 'Home'
+const homeDocLabel = lang === 'zh' ? '概述' : 'Overview'
 ---
 
 <Base lang={lang} path={`/${lang}/docs/`} title={`${title} | BenchScope Docs`} description={description} mode="docs">
   <div class="doc-shell">
     <aside class="sidebar">
       <div class="sidebar-inner">
-        {groups.map((g) =>
-          g.children.length ? (
+        {isHome ? (
+          <div class="sgroup">
+            <p class="sgroup-label">
+              <Icon name="book" size={14} class="sgroup-icon" />
+              <span>{homeLabel}</span>
+            </p>
+            <a class:list={{ 's-link': true, active: true }} href={`/${lang}/docs/`}>{homeDocLabel}</a>
+          </div>
+        ) : (
+          activeGroups.map((g) => (
             <div class="sgroup">
-              <p class="sgroup-label">{g.label}</p>
-              {g.children.map((c) => (
-                <a class:list={{ 's-link': true, active: currentRoutes.includes(c.href) }} href={c.href}>{c.title}</a>
+              {g.subgroups?.length ? (
+                <>
+                  <p class="sgroup-label">
+                    <Icon name={g.icon} size={14} class="sgroup-icon" />
+                    <span>{g.label}</span>
+                  </p>
+                  {g.children.map((c) => (
+                    <a class:list={{ 's-link': true, active: currentRoutes.includes(c.href) }} href={c.href}>{c.title}</a>
+                  ))}
+                </>
+              ) : (
+                // 单分组分区：不显示与副导航同名的大标题，直接以「概述」为首项
+                g.children.map((c) => (
+                  <a class:list={{ 's-link': true, active: currentRoutes.includes(c.href) }} href={c.href}>{c.title}</a>
+                ))
+              )}
+              {g.subgroups?.map((sg) => (
+                <div class="s-subgroup">
+                  <p class="s-subgroup-label">
+                    {sg.icon && <Icon name={sg.icon} size={13} class="sgroup-icon" />}
+                    <span>{sg.label}</span>
+                  </p>
+                  {sg.children.map((c) => (
+                    <a class:list={{ 's-link': true, active: currentRoutes.includes(c.href) }} href={c.href}>{c.title}</a>
+                  ))}
+                </div>
               ))}
             </div>
-          ) : null
+          ))
         )}
       </div>
     </aside>
 
     <main class="article">
       <div class="crumbbar">
-        <a class="crumb crumb-link" href={`/${lang}/`}>{crumbArr[0]}</a>
-        <span class="crumb-sep">/</span>
-        <a class="crumb crumb-link" href={`/${lang}/docs/`}>{crumbArr[1]}</a>
-        {sectionLabel && (
+        {isHome ? (
+          <span class="crumb crumb-current">{homeLabel}</span>
+        ) : (
           <>
-            <span class="crumb-sep">/</span>
-            <a class="crumb crumb-link" href={`/${lang}/docs/${sectionKey}/`}>{sectionLabel}</a>
+            <a class="crumb crumb-link" href={`/${lang}/docs/`}>{crumbArr[0]}</a>
+            {sectionLabel && (
+              <>
+                <span class="crumb-sep">/</span>
+                <a class="crumb crumb-link" href={`/${lang}/docs/${sectionKey}/`}>{sectionLabel}</a>
+              </>
+            )}
+            {hasGroup && (
+              <>
+                <span class="crumb-sep">/</span>
+                <span class="crumb crumb-current">{title}</span>
+              </>
+            )}
           </>
         )}
-        <span class="crumb-sep">/</span>
-        <span class="crumb crumb-current">{title}</span>
       </div>
 
       <article class="prose">
@@ -90,53 +142,166 @@ const crumbArr = lang === 'zh' ? crumb : enCrumb
       </nav>
     </main>
 
-    <aside class="toc" id="tocCol"></aside>
+    <aside class="toc" id="tocCol">
+      <p class="toc-title">
+        <Icon name="list" size={14} />
+        <span>{onThisPage}</span>
+      </p>
+      <nav id="tocNav"></nav>
+      <a class="toc-back" href={`/${lang}/docs/`}>
+        <Icon name="arrow-left" size={14} />
+        <span>{backToDocs}</span>
+      </a>
+    </aside>
   </div>
 
   <SiteFooter lang={lang} />
 </Base>
 
 <script>
+  // —— 目录（TOC）构建 + 滚动高亮 + 标题锚点 ——
   const article = document.querySelector('.prose')
   const toc = document.getElementById('tocCol')
-  if (article && toc) {
+  const nav = document.getElementById('tocNav')
+  if (article && nav) {
     const heads = article.querySelectorAll('h2, h3')
-    if (heads.length) {
-      const nav = document.createElement('nav')
-      heads.forEach((h) => {
-        if (!h.id) h.id = h.textContent!.trim().toLowerCase().replace(/\s+/g, '-')
-        const a = document.createElement('a')
-        a.textContent = h.textContent || ''
-        a.href = '#' + h.id
-        a.className = h.tagName === 'H3' ? 'toc-link lv2' : 'toc-link lv1'
-        nav.appendChild(a)
+    const links: HTMLAnchorElement[] = []
+    heads.forEach((h) => {
+      if (!h.id) h.id = h.textContent!.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\u4e00-\u9fa5-]/g, '')
+      // 目录项文本在追加锚点前读取，避免把 # 带进去
+      const headText = (h.textContent || '').trim()
+      // 标题锚点
+      const anchor = document.createElement('a')
+      anchor.href = '#' + h.id
+      anchor.className = 'h-anchor'
+      anchor.textContent = '#'
+      anchor.setAttribute('aria-hidden', 'true')
+      h.appendChild(anchor)
+      // 目录项
+      const a = document.createElement('a')
+      a.textContent = headText
+      a.href = '#' + h.id
+      a.className = h.tagName === 'H3' ? 'toc-link lv2' : 'toc-link lv1'
+      nav.appendChild(a)
+      links.push(a)
+    })
+    // 滚动高亮
+    const observed = Array.from(heads)
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          const h = e.target as HTMLElement
+          links.forEach((l) => l.classList.toggle('active', l.getAttribute('href') === '#' + h.id))
+        }
       })
-      toc.appendChild(nav)
-    }
+    }, { rootMargin: '-80px 0px -65% 0px', threshold: 0 })
+    observed.forEach((h) => io.observe(h))
   }
+
+  // —— 代码块：语言标签 + 复制按钮 + 行号 ——
+  document.querySelectorAll('.prose .astro-code').forEach((block) => {
+    const wrapper = document.createElement('div')
+    wrapper.className = 'code-block'
+    block.parentNode!.insertBefore(wrapper, block)
+
+    const meta = document.createElement('div')
+    meta.className = 'code-meta'
+    const lang = block.getAttribute('data-language') || block.querySelector('code')?.getAttribute('data-language') || 'text'
+    const label = document.createElement('span')
+    label.className = 'code-lang'
+    label.textContent = lang || 'text'
+    const copy = document.createElement('button')
+    copy.className = 'code-copy'
+    copy.type = 'button'
+    copy.textContent = 'Copy'
+    copy.addEventListener('click', async () => {
+      const text = block.textContent || ''
+      try {
+        await navigator.clipboard.writeText(text.trim())
+        copy.textContent = 'Copied'
+        setTimeout(() => (copy.textContent = 'Copy'), 1600)
+      } catch {}
+    })
+    meta.appendChild(label)
+    meta.appendChild(copy)
+
+    // 行号 gutter + 代码正文容器
+    const body = document.createElement('div')
+    body.className = 'code-body'
+    const codeEl = block.querySelector('code')
+    if (codeEl) {
+      const lines = (codeEl.textContent || '').replace(/\n$/, '').split('\n').length
+      const gutter = document.createElement('div')
+      gutter.className = 'code-gutter'
+      for (let i = 1; i <= lines; i++) {
+        const ln = document.createElement('span')
+        ln.className = 'ln'
+        ln.textContent = String(i)
+        gutter.appendChild(ln)
+      }
+      body.appendChild(gutter)
+    }
+    body.appendChild(block)
+
+    wrapper.appendChild(meta)
+    wrapper.appendChild(body)
+  })
 </script>
 
 <style>
   .doc-shell {
     display: grid;
-    grid-template-columns: minmax(180px, 240px) minmax(0, 1fr) minmax(160px, 200px);
-    gap: 28px;
-    max-width: 76rem;
+    grid-template-columns: minmax(200px, 250px) minmax(0, 1fr) minmax(170px, 210px);
+    gap: 32px;
+    max-width: 80rem;
     margin: 0 auto;
     padding: 30px 24px 80px;
     width: 100%;
   }
-  .sidebar { position: sticky; top: 118px; align-self: start; max-height: calc(100vh - 130px); overflow: auto; padding-right: 6px; }
+  .sidebar { position: sticky; top: 118px; align-self: start; max-height: calc(100vh - 130px); overflow: auto; padding-right: 8px; scrollbar-width: thin; }
+  .sidebar::-webkit-scrollbar { width: 6px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
+  .sidebar-home {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px; margin-bottom: 18px;
+    border: 1px solid var(--line-strong); border-radius: 8px;
+    color: var(--text-2); font-size: 13px; text-decoration: none;
+    transition: color var(--dur-fast), border-color var(--dur-fast);
+  }
+  .sidebar-home:hover { color: var(--gold-text); border-color: var(--gold-line); }
+  .sidebar-home svg { color: var(--gold); }
   .sgroup { margin-bottom: 22px; }
-  .sgroup-label { font: 750 12px / 1.2 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-3); margin: 0 0 10px; }
-  .s-link { display: block; padding: 5px 8px; border-radius: 6px; color: var(--text-2); font-size: 13.5px; text-decoration: none; }
+  .sgroup-label {
+    display: flex; align-items: center; gap: 9px;
+    padding: 7px 10px; margin: 0 0 10px;
+    border-radius: 8px;
+    background: var(--bs-gold-soft); border: 1px solid var(--gold-line);
+    font: 750 12px / 1.2 var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+    color: var(--gold-text);
+  }
+  .sgroup-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 7px; color: var(--gold-text);
+    background: var(--bg-surface); border: 1px solid var(--gold-line); flex-shrink: 0;
+  }
+  .sgroup-icon svg { display: block; }
+  .s-subgroup { margin: 14px 0 4px; }
+  .s-subgroup-label {
+    display: flex; align-items: center; gap: 9px;
+    padding: 6px 10px; margin: 0 0 8px;
+    border-radius: 8px;
+    background: var(--bs-gold-soft); border: 1px solid var(--gold-line);
+    font: 700 12px / 1.2 var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+    color: var(--gold-text);
+  }
+  .s-link { display: block; padding: 5px 10px; border-radius: 7px; color: var(--text-2); font-size: 13.5px; text-decoration: none; transition: color .14s, background .14s; }
   .s-link:hover { color: var(--gold-text); }
   .s-link.active { color: var(--gold-text); background: var(--bs-gold-soft); font-weight: 650; }
   .article { min-width: 0; }
 
   .crumbbar {
     display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-    margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--line);
+    margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--line);
     font-size: 13px;
   }
   .crumb { color: var(--text-3); text-decoration: none; }
@@ -147,26 +312,43 @@ const crumbArr = lang === 'zh' ? crumb : enCrumb
   .doc-meta {
     display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
     margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--line);
-    color: var(--text-3); font-size: 13px; font: 500 12.5px var(--font-mono);
+    color: var(--text-3); font-size: 12.5px; font-family: var(--font-mono); font-weight: 500;
   }
   .meta-item { display: inline-flex; align-items: center; gap: 6px; color: var(--text-3); }
   .meta-item svg { color: var(--gold); }
   .meta-dot { color: var(--text-3); }
 
-  .toc { position: sticky; top: 118px; align-self: start; max-height: calc(100vh - 130px); overflow: auto; }
-  .toc nav { border-left: 1px solid var(--line); padding-left: 12px; }
-  .toc-link { display: block; color: var(--text-3); font-size: 12.5px; line-height: 1.6; padding: 2px 4px; text-decoration: none; }
-  .toc-link.lv1 { font-weight: 600; color: var(--text-2); }
-  .toc-link.lv2 { padding-left: 14px; }
-  .toc-link:hover { color: var(--gold-text); }
+  .toc { position: sticky; top: 118px; align-self: start; max-height: calc(100vh - 130px); overflow: auto; scrollbar-width: thin; }
+  .toc-title { display: flex; align-items: center; gap: 6px; margin-bottom: 9px; color: var(--text-3); font: 700 11px / 1 var(--font-mono); letter-spacing: .09em; text-transform: uppercase; }
+  .toc-title svg { color: var(--gold); }
+  /* JS 动态生成的目录项：必须用 :global 才能命中 Astro scoped CSS */
+  .toc :global(nav) { border-left: 1px solid var(--line); padding-left: 11px; }
+  .toc :global(.toc-link) { display: block; color: var(--text-3); font-size: 11px; line-height: 1.55; padding: 2px 4px; text-decoration: none; border-left: 2px solid transparent; margin-left: -13px; padding-left: 13px; transition: color .14s, border-color .14s; opacity: .92; }
+  .toc :global(.toc-link.lv1) { font-weight: 500; color: var(--text-3); }
+  .toc :global(.toc-link.lv2) { padding-left: 26px; margin-left: -13px; font-weight: 400; opacity: .8; }
+  .toc :global(.toc-link:hover) { color: var(--gold-text); opacity: 1; }
+  .toc :global(.toc-link.active) { color: var(--gold-text); border-left-color: var(--gold); opacity: 1; }
+  .toc-back { display: flex; align-items: center; gap: 6px; margin-top: 18px; padding: 4px; color: var(--text-3); font-size: 11.5px; text-decoration: none; }
+  .toc-back:hover { color: var(--gold-text); }
+  .toc-back svg { transition: transform .2s var(--ease-out); }
+  .toc-back:hover svg { transform: translateX(-2px); }
 
   .pagenav { display: flex; justify-content: space-between; gap: 16px; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); }
   .pn-prev, .pn-next { color: var(--text-2); font-size: 14px; text-decoration: none; }
   .pn-prev:hover, .pn-next:hover { color: var(--gold-text); }
 
+  /* 标题锚点 */
+  .prose :global(h2), .prose :global(h3) { position: relative; }
+  .prose :global(.h-anchor) {
+    position: absolute; left: -1.05em; top: 50%; transform: translateY(-50%);
+    opacity: 0; color: var(--gold); font-weight: 700; text-decoration: none;
+    transition: opacity .14s;
+  }
+  .prose :global(h2:hover .h-anchor), .prose :global(h3:hover .h-anchor) { opacity: 1; }
+
   @media (max-width: 1000px) {
     .toc { display: none; }
-    .doc-shell { grid-template-columns: minmax(180px, 220px) minmax(0, 1fr); }
+    .doc-shell { grid-template-columns: minmax(190px, 230px) minmax(0, 1fr); }
   }
   @media (max-width: 760px) {
     .sidebar { display: none; }

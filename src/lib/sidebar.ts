@@ -1,54 +1,128 @@
 import { getCollection } from 'astro:content'
 
 export interface LinkItem { id: string; href: string; title: string }
-export interface Group { label: string; children: LinkItem[] }
+export interface SubGroup { label: string; icon?: string; children: LinkItem[] }
+export interface Group { key: string; label: string; icon: string; children: LinkItem[]; subgroups?: SubGroup[] }
 
 export const LABELS: Record<string, { zh: string; en: string }> = {
   quickstart: { zh: '快速开始', en: 'Quick Start' },
   install: { zh: '安装', en: 'Install' },
-  accuracy: { zh: '精度', en: 'Accuracy' },
-  performance: { zh: '性能', en: 'Performance' },
-  data: { zh: '数据', en: 'Data' },
-  tools: { zh: '工具（高级）', en: 'Tools' },
+  performance: { zh: '性能测试', en: 'Performance' },
+  accuracy: { zh: '精度测试', en: 'Accuracy' },
+  data: { zh: '数据分析', en: 'Data' },
+  tools: { zh: '高级工具', en: 'Tools' },
   cli: { zh: 'CLI', en: 'CLI' },
   api: { zh: 'API', en: 'API' },
   releases: { zh: '发布', en: 'Releases' },
   help: { zh: '帮助', en: 'Help' },
 }
-export const ORDER = ['quickstart', 'install', 'accuracy', 'performance', 'data', 'tools', 'cli', 'api', 'releases', 'help']
+
+/** 每个一级分区对应的图标（见 Icons.astro 名称） */
+export const SECTION_ICONS: Record<string, string> = {
+  quickstart: 'rocket',
+  install: 'download',
+  performance: 'gauge',
+  accuracy: 'target',
+  data: 'database',
+  tools: 'gear',
+  cli: 'terminal',
+  api: 'code',
+  releases: 'package',
+  help: 'chat',
+}
+
+/** 副导航 / 侧栏的一级分区顺序（install 并入 quickstart，不作为一级分区） */
+export const ORDER = ['quickstart', 'performance', 'accuracy', 'data', 'tools', 'cli', 'api', 'releases', 'help']
+
+/** 页面 section 目录 → 所属一级分组 key（install 归入 quickstart） */
+export const SECTION_GROUP: Record<string, string> = {
+  quickstart: 'quickstart',
+  install: 'quickstart',
+  performance: 'performance',
+  accuracy: 'accuracy',
+  data: 'data',
+  tools: 'tools',
+  cli: 'cli',
+  api: 'api',
+  releases: 'releases',
+  help: 'help',
+}
+
+type CollectionEntry = { id: string; data: { title?: string } }
+
+function landingItem(all: CollectionEntry[], lang: string, dir: string): LinkItem | null {
+  const landing = all.find((e) => e.id === `${lang}/${dir}`)
+  return landing ? { id: landing.id, href: `/${lang}/docs/${dir}/`, title: landing.data.title || dir } : null
+}
+
+function itemsFor(all: CollectionEntry[], lang: string, dir: string, isEn: boolean): LinkItem[] {
+  return all
+    .filter((e) => e.id.startsWith(`${lang}/${dir}/`))
+    .map((e) => {
+      const rest = e.id.slice(`${lang}/${dir}/`.length)
+      const title = e.data.title || rest.replace(/[-_]/g, ' ')
+      return { id: e.id, href: `/${lang}/docs/${dir}/${rest}/`, title }
+    })
+    .sort((a, b) => a.title.localeCompare(b.title, isEn ? 'en' : 'zh'))
+}
+
+function groupChildren(all: CollectionEntry[], lang: string, dir: string, isEn: boolean): LinkItem[] {
+  const landing = landingItem(all, lang, dir)
+  const items = itemsFor(all, lang, dir, isEn)
+  return landing ? [landing, ...items] : items
+}
+
+/** 版本号正则：从 "v1.0.5" / "v1-0-5" 提取 → [1,0,5] */
+function versionNum(t: string): number[] {
+  const m = t.match(/(\d+)[._-]?(\d+)[._-]?(\d+)/)
+  return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : [0, 0, 0]
+}
+/** 发布页按版本倒序（最新在上） */
+function sortReleases(items: LinkItem[]): LinkItem[] {
+  return [...items].sort((a, b) => {
+    const va = versionNum(a.title)
+    const vb = versionNum(b.title)
+    for (let i = 0; i < 3; i++) if (va[i] !== vb[i]) return vb[i] - va[i]
+    return a.title.localeCompare(b.title)
+  })
+}
 
 export async function buildSidebar(lang: 'zh' | 'en') {
   const all = await getCollection('docs', (e) => e.id.startsWith(`${lang}/`) && !e.id.toLowerCase().endsWith('/readme'))
   const isEn = lang === 'en'
 
   const groups: Group[] = ORDER.map((p) => {
-    // `dir/index.md` -> id === `${lang}/${p}`（Astro 把 index 折叠为目录根 id）
-    const landing = all.find((e) => e.id === `${lang}/${p}`)
-    const landingItem = landing
-      ? { id: landing.id, href: `/${lang}/docs/${p}/`, title: landing.data.title || p }
-      : null
-    const items = all
-      .filter((e) => e.id.startsWith(`${lang}/${p}/`))
-      .map((e) => {
-        const rest = e.id.slice(`${lang}/${p}/`.length)
-        const title = e.data.title || rest.replace(/[-_]/g, ' ')
-        return { id: e.id, href: `/${lang}/docs/${p}/${rest}/`, title }
-      })
-      .sort((a, b) => a.title.localeCompare(b.title, isEn ? 'en' : 'zh'))
-    return { label: LABELS[p][lang], children: landingItem ? [landingItem, ...items] : items }
+    const children = groupChildren(all, lang, p, isEn)
+    // 发布：落地页（概述）置顶，版本子页按倒序（最新在上）
+    let kids = children
+    if (p === 'releases') {
+      const landingChildren = children[0] ? [children[0]] : []
+      const rest = children.slice(1)
+      kids = [...landingChildren, ...sortReleases(rest)]
+    }
+    // 快速开始：把 install 作为独立子分组并入（保留独立「安装」分组信息）
+    const subgroups: SubGroup[] = []
+    if (p === 'quickstart') {
+      const instLanding = landingItem(all, lang, 'install')
+      const instItems = itemsFor(all, lang, 'install', isEn)
+      const instChildren = instLanding ? [instLanding, ...instItems] : instItems
+      subgroups.push({ label: LABELS.install[lang], icon: SECTION_ICONS.install, children: instChildren })
+    }
+    return {
+      key: p,
+      label: LABELS[p][lang],
+      icon: SECTION_ICONS[p] ?? 'doc',
+      children: kids,
+      subgroups: subgroups.length ? subgroups : undefined,
+    }
   })
 
-  // 扁平化 prev/next 顺序
-  const flat = all
-    .map((e) => {
-      const rest = e.id.slice(`${lang}/`.length)
-      const seg = rest.split('/')
-      const isIndex = seg.length > 1 && seg[seg.length - 1] === 'index'
-      const title = e.data.title || rest.replace(/[-_]/g, ' ')
-      const routeRest = isIndex ? seg.slice(0, -1).join('/') : rest
-      return { id: e.id, href: `/${lang}/docs/${routeRest}/`, title }
-    })
-    .sort((a, b) => a.id.localeCompare(b.id, isEn ? 'en' : 'zh'))
+  // 扁平化 prev/next 顺序（依 ORDER + install 并入 quickstart）
+  const flat: LinkItem[] = []
+  for (const g of groups) {
+    for (const c of g.children) flat.push(c)
+    if (g.subgroups) for (const s of g.subgroups) for (const c of s.children) flat.push(c)
+  }
 
   return { groups, flat }
 }

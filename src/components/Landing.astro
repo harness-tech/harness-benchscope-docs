@@ -75,7 +75,7 @@ const navIconNames = ['home', 'sparkles', 'bolt', 'target', 'folder', 'terminal'
 
   <!-- Footer：作为 snap 的一部分 -->
   <section class="footer-screen" id="footerScreen">
-    <SiteFooter lang={lang} version="1.0.0.dev" />
+    <SiteFooter lang={lang} version="1.0.0" />
   </section>
 </div>
 
@@ -104,14 +104,23 @@ const navIconNames = ['home', 'sparkles', 'bolt', 'target', 'folder', 'terminal'
     dotsWrap.appendChild(topBtn)
   }
 
+  // ── 滚动方向追踪 ──
+  let lastY = window.scrollY
+  let lastDir = 0
+  window.addEventListener('scroll', () => { lastDir = window.scrollY - lastY; lastY = window.scrollY }, { passive: true })
+
   // ── 当前屏追踪 ──
-  let currentScreen = 0
+  let currentScreen = -1
 
   function updateDots(idx: number) {
     dotsWrap?.childNodes.forEach((n, i) => {
       (n as HTMLElement).classList.toggle('on', i === idx)
     })
   }
+
+  // ── 格子翻书效果（已关闭）──
+  // 关闭翻书：不再生成 .fx 覆盖层，滚动切换仅更新右侧指示点
+  let firstRun = true
 
   const io = new IntersectionObserver((entries) => {
     let best = -1, bestRatio = 0
@@ -209,7 +218,7 @@ const navIconNames = ['home', 'sparkles', 'bolt', 'target', 'folder', 'terminal'
     box-shadow: 0 6px 22px -16px rgb(0 0 0 / .4);
   }
   .nav-inner { max-width: 76rem; margin: 0 auto; height: 52px; padding: 0 24px; display: flex; align-items: center; gap: 20px; }
-  .brand { display: flex; align-items: center; gap: 9px; color: var(--gold-text); }
+  .brand { display: flex; align-items: center; gap: 9px; color: var(--gold-text); margin-left: -2px; }
   .brand-logo { height: 34px; width: 34px; border-radius: 6px; }
   .brand-name { font-size: 16px; font-weight: 750; letter-spacing: -.01em; }
   .mainnav { display: flex; gap: 2px; margin-left: auto; align-items: center; }

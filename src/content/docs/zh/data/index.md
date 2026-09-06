@@ -1,10 +1,10 @@
 ---
-title: "数据与统计（Datas）"
+title: "概述"
 ---
 
-# 数据与统计（Datas）
+# 概述
 
-Datas 记录并组织历史测试产物与结果，支持导入恢复、查看与分析，是所有性能压测与精度评测结果的「档案馆」。
+**Datas** 记录并组织历史测试产物与结果，支持导入恢复、查看与分析，是所有性能压测与精度评测结果的「档案馆」。
 
 ![BenchScope Datas 性能记录详情](/images/benchscope-datas-perfs_detail.png)
 
@@ -12,13 +12,13 @@ Datas 记录并组织历史测试产物与结果，支持导入恢复、查看�
 
 **tip**：
 
-Datas 是你所有历史测试的持久化视图：在网页或 [CLI](/zh/docs/cli/reference/) 产生的性能 / 精度产物，都会在这里登记、可查看、可导入、可导出。
+Datas 是你所有历史测试的持久化视图：在网页或 [CLI](/zh/docs/cli/) 产生的性能 / 精度产物，都会在这里登记，可查看、可导入、可导出。
 
 </div>
 
 ## 记录面板
 
-Datas 提供以下记录面板：
+Datas 按类型提供多个记录面板，每个面板对应一类测试产物：
 
 ### Perfs（性能测试记录）
 
@@ -39,6 +39,8 @@ Datas 提供以下记录面板：
 
 ## 导入备份
 
+Datas 支持从打包备份中恢复历史记录：
+
 - **性能**：打包为**扁平 zip**（含 `run.json` + 日志 + 可选 `metrics.json`），在 **Datas → Perfs → 导入备份** 导入。
 - **精度**：导入 `evals` 产物目录打包文件。
 
@@ -47,6 +49,14 @@ Datas 提供以下记录面板：
 cd ~/.benchscope/perfs/<run_id>
 zip -r perf-backup.zip run.json perf_<run_id>_*.log metrics.json
 ```
+
+<div class="info">
+
+**info**：
+
+CLI 命令 `benchscope perf` / `benchscope eval` 落盘的产物与 Web UI 完全一致。因此你可以在无界面的机器上跑测试、打包 zip，再导入到本机 BenchScope 实例以图形方式查看。
+
+</div>
 
 <div class="warning">
 
@@ -57,6 +67,8 @@ zip -r perf-backup.zip run.json perf_<run_id>_*.log metrics.json
 </div>
 
 ## 记录详情
+
+每条记录都支持深入查看：
 
 - **单请求实时快照**可回看（性能页第二行实时面板 + Datas / Perfs 详情弹窗）。
 - **日志**在线预览与下载。
@@ -96,6 +108,6 @@ zip -r perf-backup.zip run.json perf_<run_id>_*.log metrics.json
 ## 相关文档
 
 - [性能测试](/zh/docs/performance/) — 产生 Perfs 记录
-- [精度测试](/zh/docs/accuracy/) — 产生 Evals 记录
+- [概述](/zh/docs/accuracy/) — 产生 Evals 记录
 - [配置说明](/zh/docs/install/configuration/) — 产物落盘目录
 - [设置（Settings）](/zh/docs/tools/settings/) — 数据目录与 Cache Paths

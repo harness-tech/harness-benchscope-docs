@@ -35,7 +35,7 @@ BenchScope is a **monolithic web platform** that combines a **Python (FastAPI) b
  Inference service (vLLM / SGLang / any OpenAI-compatible API)
 ```
 
-The browser talks to the FastAPI backend over **HTTP / SSE / WebSocket**. The backend dispatches task execution to the bench / accuracy engines and persists configuration to `settings.json` under the data root.
+The browser talks to the FastAPI backend over **HTTP / SSE / WebSocket**. The backend dispatches task execution to the bench / accuracy engines and persists configuration under the data root.
 
 ## Core Modules
 
@@ -61,9 +61,33 @@ The backend exposes a set of API groups that the frontend consumes:
 - `api_tasks` — task scheduling
 - `api_skills` / `api_plugins` — skill and plugin management
 
-## Config Persistence
+### Performance module (`benches`)
 
-Configuration is persisted by `config.py` to `~/.benchscope/settings.json`. The **data root** can be overridden via `BENCHSCOPE_DATA_DIR`. All task artifacts and cache directories live under the data root — see [Configuration](/en/docs/install/configuration/) for the full layout.
+- `runner` — the task runner: launches tasks, collects and aggregates metrics;
+- `builtin_bench` — the self-developed engine (streaming timeline collection, metric definitions aligned with vLLM);
+- `vllm` / `sglang` — thin wrappers over the upstream official bench engines, version-pinned.
+
+### Accuracy module (`accuracy`)
+
+- `executor` — the evaluation executor;
+- `metrics` — metric computation (accuracy / pass_rate / special metrics);
+- `baselines` — open-source baseline library and tier ratings;
+- `scorers` — graders (choice / math / code / judge);
+- `datasets` — built-in dataset definitions and loading;
+- `estimator` — token estimation.
+
+### Config & scheduling
+
+- Configuration is persisted by `config.py` to `settings.json` under the **data root** (default `~/.benchscope/settings.json`). The data root can be overridden via the `BENCHSCOPE_DATA_DIR` environment variable — see [Configuration](/en/docs/install/configuration/) for the full layout.
+- Task scheduling is handled by `task_manager`; session management by `session_manager`.
+
+<div class="info">
+
+**info**：
+
+The architecture deliberately keeps the **performance and accuracy modules decoupled** — independent tasks, results, and scheduling that do not depend on each other, so each can be extended and maintained on its own.
+
+</div>
 
 ## Bench Engine Abstraction
 
@@ -73,14 +97,20 @@ The engine abstraction supports:
 - upstream **vLLM / SGLang engines** (version-pinned, e.g. `vllm-0.23`, `sglang-0.5.10`),
 - **custom engines** registered through skills / plugins.
 
-It includes **environment validation** and **parameter descriptions**, with **explicit metric availability** for third-party engines. See [Bench Engine](/en/docs/tools/bench-engine/) for details.
+It includes **environment validation** and **parameter descriptions** (surfaced as dropdowns with descriptions in the UI), with **explicit metric availability** for third-party engines. See [Bench Engine](/en/docs/tools/bench-engine/) for details.
 
-## Performance vs. Accuracy separation
+## Technology Stack
 
-The performance module (`benches/`) and the accuracy module (`accuracy/`) are **fully decoupled** — independent tasks, results, and scheduling. The accuracy module contains no performance metrics, keeping concerns cleanly separated.
+| Layer | Technology |
+| --- | --- |
+| Frontend | Vue 3 + antd |
+| Backend | Python + FastAPI |
+| Real-time | HTTP / SSE / WebSocket |
+| Config | settings.json (with YAML built-in manifests) |
+| Inference | vLLM / SGLang / any OpenAI-compatible API |
 
 ## See Also
 
-- Repository docs: `docs/rules/Architecture.md`, `docs/rules/Software.md`
-- [Bench Engine](/en/docs/tools/bench-engine/) — the engine abstraction
+- [Bench Engine](/en/docs/tools/bench-engine/) — where engines fit in the abstraction
+- [Configuration](/en/docs/install/configuration/) — data root and persistence
 - [Contributing](/en/docs/help/contributing/) — how to develop against this architecture

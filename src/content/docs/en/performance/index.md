@@ -1,12 +1,28 @@
 ---
-title: "Performance Testing"
+title: "Overview"
 ---
 
-# Performance Testing
+# Overview
 
-The performance testing page stress-tests an inference service and supports **two modes**: *Concurrency Mode* and *Threshold Mode*. It is the core tool for understanding how a model service scales under load and whether it can meet a business SLA.
+The performance testing page stress-tests an inference service and provides **two modes** — *Concurrency Mode* and *Threshold Mode* — while visualizing throughput, latency, and progress in real time.
 
-![Performance testing main interface](/images/benchscope-performance_default.png)
+- **Concurrency Mode** answers: *how does throughput and latency change as concurrency grows?*
+- **Threshold Mode** answers: *given a business SLA, what is the maximum concurrency this setup can sustain?*
+
+![Performance testing main interface](/images/benchscope-performance_perf_running.png)
+
+<div class="tip">
+
+**tip**：
+
+Performance testing targets the **service chain** — whether the target is served by vLLM, SGLang, or any other OpenAI-compatible backend, you can stress-test and compare results through the same unified interface.
+
+</div>
+
+## In This Section
+
+- [Concurrency Testing](/en/docs/performance/concurrency/) — apply pressure level by level and read the results to find the best operating range
+- [Threshold Testing](/en/docs/performance/threshold/) — given a business SLA, search automatically for the maximum sustainable concurrency
 
 ## Mode Overview
 
@@ -15,107 +31,71 @@ The performance testing page stress-tests an inference service and supports **tw
 | **Concurrency Mode** | Applies pressure step by step at fixed concurrency levels, recording metrics for each concurrency in real time | Observe how the system’s curves change with load |
 | **Threshold Mode** | Starts from 1 concurrency, increases by powers of 2 plus bisection, to automatically find the maximum concurrency satisfying the threshold conditions | Given a business SLA, find the optimal sustainable concurrency |
 
-## Concurrency Mode
+## Creating a Task
 
-Concurrency Mode applies pressure **level by level by concurrency**, feeding back in real time to the running interface:
+Open **Performance** and click **Create Task**. A **three-step form** (Step 1 Conditions / Step 2 Parameters / Step 3 Command Preview) drives the whole run:
 
-- **Table** — throughput / TTFT / TPOT / ITL for each concurrency.
-- **Curves** — multi-dimensional real-time statistics charts.
-- **Progress** — progress updates in real time while running.
+![Create task form](/images/benchscope-performance_create.png)
 
-The per-concurrency panel updates in real time while running; within a single concurrency point, **continuous scrolling** is supported so you can watch the stream of requests live.
-
-![Performance running view](/images/benchscope-performance_perf_running.png)
-
-![Performance running statistics](/images/benchscope-performance_perf_running_statistics.png)
-
-### Typical flow
-
-1. Open **Performance** → create a task.
-2. Configure the model and service address (Provider) under test.
-3. Select **Concurrency Mode** and fill in the concurrency levels and request parameters.
-4. Review the generated command and start.
-5. Watch the table / curves / progress while it runs, then export the artifacts when it finishes.
-
-## Threshold Mode
-
-When the business SLA is known, Threshold Mode probes for the maximum concurrency that still satisfies the conditions (`best_concurrency`):
-
-- Starts from **1 concurrency**, increasing by **powers of 2** (1, 2, 4, 8, …) for step-by-step stress testing.
-- If **1 concurrency** already fails the threshold → the best concurrency is **1**, and probing ends.
-- If `hi = 2^k` fails the threshold (while `lo = 2^(k-1)` satisfies it) → **bisect** within `(lo, hi]` until two adjacent values remain, where `lo` is the maximum concurrency satisfying the threshold.
-- If the search upper limit is still satisfied → the upper-limit concurrency is the best (normal termination).
-
-### Evaluation conditions
-
-A concurrency level is considered to satisfy the thresholds when **all** of the following hold:
-
-- **TTFT ≤ threshold** (evaluated with the chosen statistic: mean / median / p99)
-- **TPOT ≤ threshold** (mean / median / p99)
-- **Output throughput ≥ threshold**
+1. **Step 1 — Conditions**: choose the model and service address (Provider), engine, and mode (concurrency / threshold).
+2. **Step 2 — Parameters**: set concurrency levels, request counts, input/output token lengths (threshold mode also needs the SLA thresholds and search cap).
+3. **Step 3 — Command preview**: review the exact command that will be executed, then start.
 
 <div class="tip">
 
 **tip**：
 
-Threshold search is efficient: instead of testing every concurrency between 1 and the cap, it doubles up to the first failure and then bisects — typically only a handful of stress-test runs are needed.
-
-</div>
-
-## Metric Definitions
-
-| Metric | Meaning |
-| --- | --- |
-| Throughput (`output_mean` / `total_mean`) | Output / total throughput (tok/s) |
-| TTFT (`ttft_mean`) | First-token latency (ms) |
-| TPOT (`tpot_mean`) | Latency per output token (ms) |
-| ITL (`itl_mean`) | Inter-token latency (ms) |
-
-For third-party engines, metric availability is made explicit:
-
-- **Available** → value is shown (blue).
-- **Unavailable** → shown as **N/A** (gray-black).
-- **Missing** → shown as a **gray dash**.
-
-A fixed **11-metric snapshot contract** guarantees that every engine reports a well-defined set of metrics, even when some are not supported.
-
-## Creating a Task
-
-![Create task form](/images/benchscope-performance_create.png)
+If you use a token-estimation capability, the create page shows an estimated token consumption (see the token display below):
 
 ![Create task — token configuration](/images/benchscope-performance_create_token.png)
 
-Creating a performance task uses a **three-step form**:
+</div>
 
-1. **Step 1 — Conditions**: choose the mode (concurrency / threshold) and the model / provider under test.
-2. **Step 2 — Parameters**: set concurrency levels, request counts, input/output token lengths, and (for threshold mode) the SLA thresholds and search cap.
-3. **Step 3 — Command preview**: review the exact command that will be executed, then start.
+## Concurrency Mode
 
-## Artifacts and Import
+Concurrency Mode applies pressure **level by level by concurrency**, feeding real-time results back to the running interface so you can observe how the service scales with load — and locate its **best operating range**. For a step-by-step walkthrough, see [Concurrency Testing](/en/docs/performance/concurrency/).
 
-- Each run is saved as `run.json` plus logs `perf_<run_id>_*.log`.
-- Package the artifacts as a **flat zip** (containing `run.json` + logs + optional `metrics.json`).
-- Import the zip under **Datas → Perfs → Import Backup**, or run the CLI equivalent (`benchscope perf`) and import its output.
+Running view:
+
+![Performance running statistics](/images/benchscope-performance_perf_running_statistics.png)
+
+## Threshold Mode
+
+When the business SLA is known, Threshold Mode probes for the maximum concurrency that still satisfies the conditions (`best_concurrency`).
+
+**Evaluation conditions** (all must hold for a level to pass):
+
+- **TTFT ≤ threshold** (evaluated with the chosen statistic: mean / median / p99)
+- **TPOT ≤ threshold** (mean / median / p99)
+- **Output throughput ≥ threshold**
+
+The probing strategy **starts from 1 concurrency and increases by powers of 2**, then **bisects** within the adjacent interval once the first failing point is found. For a step-by-step walkthrough, see [Threshold Testing](/en/docs/performance/threshold/).
 
 <div class="info">
 
 **info**：
 
-Performance records are persisted and remain viewable and downloadable on the **Datas** page even after you close the task. See [Datas](/en/docs/data/) for record management.
+The statistic used for each threshold is configurable (for example `--ttft-statistic p99`) to match different business criteria. See [perf command](/en/docs/cli/perf/).
 
 </div>
 
-## Troubleshooting
+## Artifacts and Import
 
-- **No metrics for a third-party engine** — check whether the metric is *unavailable* (`N/A`) or *missing* (gray dash); the engine may simply not report it.
-- **Concurrency mode returns immediately** — verify `--num-prompts` is not `0` unless you intend one request per worker.
-- **Threshold mode finds 1 as best concurrency** — your service is already failing the SLA at a single concurrency; inspect TTFT / TPOT at level 1.
-- **Timeouts counted as failures** — raise `--timeout` if your service is slow under load and failures are unexpected.
+- Each run is saved as `run.json` plus logs `perf_<run_id>_*.log`.
+- Package the artifacts as a **flat zip**, importable under **Datas → Perfs → Import Backup** to restore historical runs across environments.
+
+<div class="warning">
+
+**warning**：
+
+If the target address is wrong, requests time out, or the engine is unavailable, a run may fail or some requests may be counted as failed. Confirm the service is reachable (browser or `curl`) before starting a run.
+
+</div>
 
 ## Related
 
-- [CLI Reference](/en/docs/cli/reference/) — the `benchscope perf` command
-- [Concurrency Testing](/en/docs/performance/concurrency/) — step-by-step tutorial
-- [Threshold Testing](/en/docs/performance/threshold/) — step-by-step tutorial
-- [Datas](/en/docs/data/) — where performance records are stored and analyzed
+- [Concurrency Testing](/en/docs/performance/concurrency/) — step-by-step walkthrough
+- [Threshold Testing](/en/docs/performance/threshold/) — finding `best_concurrency`
+- [perf command](/en/docs/cli/perf/) — the `benchscope perf` command
 - [Settings](/en/docs/tools/settings/) — providers and bench engines
+- [Datas](/en/docs/data/) — records, export, and import

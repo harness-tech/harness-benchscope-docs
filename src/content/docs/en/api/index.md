@@ -1,8 +1,8 @@
 ---
-title: "HTTP API"
+title: "Overview"
 ---
 
-# HTTP API
+# Overview
 
 BenchScope's web backend is built on FastAPI and exposes three kinds of HTTP interfaces: an **OpenAI-compatible inference API**, the **platform REST API**, and a **WebSocket**. The default server Base URL is:
 
@@ -10,7 +10,13 @@ BenchScope's web backend is built on FastAPI and exposes three kinds of HTTP int
 http://127.0.0.1:8080
 ```
 
-> The address depends on the `--host` / `--port` used at startup (default `0.0.0.0:8080`) — see [Install](/en/docs/install/). Most endpoints return JSON and use standard HTTP status codes for errors.
+<div class="info">
+
+**info**：
+
+The address depends on the `--host` / `--port` used at startup (default `0.0.0.0:8080`) — see [Install](/en/docs/install/). Most endpoints return JSON and use standard HTTP status codes for errors.
+
+</div>
 
 ## Session-style inference (OpenAI-compatible)
 
@@ -26,6 +32,14 @@ curl http://127.0.0.1:8080/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model":"Qwen2.5-7B","messages":[{"role":"user","content":"Hello"}],"stream":true}'
 ```
+
+<div class="tip">
+
+**tip**：
+
+Set `"stream":false` to disable streaming and receive the full response in one shot. Any standard OpenAI client (the `openai` SDK, curl, etc.) can connect directly.
+
+</div>
 
 ## Health & version
 
@@ -56,6 +70,14 @@ Performance and accuracy tasks can be created and managed over REST (fully compa
 | `/api/accuracy/tasks/{task_id}/benchmark` | GET | Baseline comparison result |
 | `/api/accuracy/estimate` | GET | Token consumption estimate |
 
+<div class="tip">
+
+**tip**：
+
+Tasks can also be created through the [CLI](/en/docs/cli/): `benchscope perf` and `benchscope eval` produce artifacts fully equivalent to Web tasks, so pick whichever fits your workflow.
+
+</div>
+
 ## Config & sessions
 
 | Endpoint | Method | Description |
@@ -71,6 +93,30 @@ Performance and accuracy tasks can be created and managed over REST (fully compa
 ## Authentication
 
 There is **no authentication by default** locally. If the target service requires an API Key, configure it in [Settings → Providers](/en/docs/tools/settings/); the platform's own HTTP API does not require an extra token by default.
+
+## FAQ
+
+**Q: How can I confirm the service is running?**
+
+A: Visit `http://127.0.0.1:8080/api/version` (or your reachable root address) — a returned version number means the service is ready.
+
+**Q: Can I call the chat endpoint directly with curl?**
+
+A: Yes. The `/v1/chat/completions` example above is a runnable curl command with an OpenAI-compatible request body and SSE streaming.
+
+**Q: How do I let third-party services use my API key?**
+
+A: Configure the Base URL and API Key for the relevant Provider in [Settings → Providers](/en/docs/tools/settings/). Authentication of the service under test is separate from BenchScope's own API authentication.
+
+**Q: How do I create and preview a performance task over HTTP?**
+
+A: Post task conditions to `POST /api/tasks/preview` to preview the command that will run; then create the task with `POST /api/tasks` and start it with `POST /api/tasks/{task_id}/start`.
+
+<div class="info">
+
+**info**：
+
+These endpoints are fully compatible with tasks created in the Web UI, and their artifacts can be viewed or imported under **Datas → Perfs**.
 
 ## Related
 

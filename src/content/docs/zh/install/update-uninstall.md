@@ -1,5 +1,6 @@
 ---
 title: "更新与卸载"
+description: "更新、卸载 BenchScope 以及运行时数据的备份与清理。"
 ---
 
 # 更新与卸载
@@ -17,8 +18,7 @@ pip install --upgrade benchscope
 升级完成后**重启服务**即可生效：
 
 ```bash
-# 停止当前运行的 benchscope（Ctrl+C 或结束进程）
-# 然后重新启动
+# 停止当前运行的 benchscope（Ctrl+C 或结束进程），然后重新启动：
 benchscope
 ```
 
@@ -26,7 +26,7 @@ benchscope
 
 **tip**：
 
-升级前建议先查看[更新日志](/zh/docs/releases/v1-1-0/)，了解新版本的特性与可能的破坏性变更。尤其关注数据目录、配置结构是否有迁移。
+升级前建议先查看[更新日志](/zh/docs/releases/v1-1-0/)，了解新版本的特性与可能的破坏性变更，尤其关注数据目录与配置结构是否有迁移。若跳过多版本升级，请逐个查看中间版本说明。
 
 </div>
 
@@ -53,6 +53,13 @@ pip uninstall benchscope
 rm -rf ~/.benchscope
 ```
 
+若使用 `BENCHSCOPE_DATA_DIR` 覆盖了数据根目录，请删除该目录并取消环境变量：
+
+```bash
+rm -rf "$BENCHSCOPE_DATA_DIR"
+unset BENCHSCOPE_DATA_DIR
+```
+
 <div class="warning">
 
 **warning**：
@@ -73,7 +80,7 @@ tar -czf benchscope-data-backup.tar.gz -C ~ .benchscope
 tar -czf benchscope-results.tar.gz -C ~/.benchscope perfs evals
 ```
 
-备份后可通过网页 **Datas → Perfs / Evals → 导入备份** 将打包产物恢复到新环境。
+备份后可通过网页 **Datas → Perfs / Evals → 导入备份** 将打包产物恢复到新环境（见 [数据与统计（Datas）](/zh/docs/data/)）。
 
 ## 版本兼容
 
@@ -96,6 +103,20 @@ tar -czf benchscope-results.tar.gz -C ~/.benchscope perfs evals
 
 </div>
 
+## 升级 / 卸载清单
+
+**升级：**
+1. 备份 `~/.benchscope`（或自定义数据根目录）；
+2. 停止正在运行的 `benchscope` 进程；
+3. 执行 `pip install --upgrade benchscope`；
+4. 重启服务并确认 Dashboard 正常加载；
+5. 在 **Datas** 中抽查近期记录，确认数据迁移成功。
+
+**卸载：**
+1. 确认是否需要备份数据根目录；
+2. 执行 `pip uninstall benchscope`；
+3. （可选）删除数据根目录以完全清理。
+
 ## 常见问题
 
 **问题：升级后启动报错？**
@@ -109,6 +130,7 @@ tar -czf benchscope-results.tar.gz -C ~/.benchscope perfs evals
 
 ## 相关文档
 
-- [快速入门](/zh/docs/quickstart/) — 安装与启动
+- [安装](/zh/docs/install/) — 环境要求与启动
 - [配置说明](/zh/docs/install/configuration/) — 数据目录与配置迁移
+- [数据与统计（Datas）](/zh/docs/data/) — 产物落盘与导入备份
 - [更新日志](/zh/docs/releases/v1-1-0/) — 各版本变更

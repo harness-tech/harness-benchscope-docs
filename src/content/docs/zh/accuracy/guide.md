@@ -1,10 +1,10 @@
 ---
-title: "教程：精度评测"
+title: "精度评测"
 ---
 
-# 教程：精度评测
+# 精度评测
 
-本教程演示对模型输出做**精度评测**（服务模式与原生模式），并解读结果指标、对标基线与样本级溯源。
+本节演示对模型输出做**精度评测**（服务模式与原生模式），并解读结果指标、对标基线与样本级溯源。
 
 ## 前置条件
 
@@ -14,7 +14,7 @@ title: "教程：精度评测"
 
 ## 服务模式（Serving）
 
-评测已部署服务链路：
+评测已部署服务链路——反映用户线上真实拿到行为，**含服务栈**：
 
 ```bash
 benchscope eval --mode serving --model Qwen2.5-7B \
@@ -83,7 +83,13 @@ conclusion:          合格（优于基线）
 
 ## Web 操作
 
-在网页 **精度测试** 页创建评测任务（原生 / 服务双模式），选择数据集与判分器，Token 预估后启动；结果在 **Datas → Evals** 查看。
+在网页 **精度测试** 页创建评测任务:
+
+1. 选择 **原生 / 服务** 模式；
+2. 选择**数据集**与**判分器**；
+3. （可选）**Token 预估**做成本控制；
+4. 启动评测；
+5. 在 **Datas → Evals** 查看结果。
 
 ![BenchScope 精度测试默认界面](/images/benchscope-accuracy_default.png)
 
@@ -95,8 +101,11 @@ conclusion:          合格（优于基线）
 **问题：能否对比不同模型？**
 可以。分别评测后用 `conclusion` / `diff_pp` 与基线对标，或在 Datas 中对比查看。
 
+**问题：评测中途被阻断？**
+Serving 检查服务可达性、Native 检查本地依赖；缺依赖时按提示安装 `benchscope[accuracy-native]` 后重试。
+
 ## 相关文档
 
-- [精度测试](/zh/docs/accuracy/) — 双模式与判分器详解
-- [CLI 参考](/zh/docs/cli/reference/) — `eval` 完整参数
+- [概述](/zh/docs/accuracy/) — 双模式与判分器详解
+- [eval 命令](/zh/docs/cli/eval/) — `eval` 完整参数
 - [数据与统计（Datas）](/zh/docs/data/) — 结果查看与导入

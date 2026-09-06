@@ -1,17 +1,26 @@
 ---
-title: "安装"
+title: "概述"
+description: "安装 BenchScope、启动 Web 平台并完成基础配置。"
 ---
 
-# 安装
+# 概述
 
 本文介绍如何安装 BenchScope、启动平台并完成基础配置。完整的环境与数据目录说明见 [配置说明](/zh/docs/install/configuration/)，升级 / 卸载见 [更新与卸载](/zh/docs/install/update-uninstall/)。
 
 ## 环境要求
 
-- **Python**：推荐 3.10 及以上版本（同时支持 3.9 / 3.11 / 3.12）。
+- **Python**：推荐 3.10 及以上（同时支持 3.9 / 3.11 / 3.12）。
 - **pip**：建议使用较新的 pip（`pip install --upgrade pip`）。
-- **网络**：安装时需访问 PyPI；压测时需能访问被测推理服务。
+- **网络**：安装时需要访问 PyPI；压测时需要能访问被测推理服务。
 - **浏览器**：Chrome / Edge / Firefox 等现代浏览器（推荐 Chrome）。
+
+<div class="tip">
+
+**tip**：
+
+建议使用**虚拟环境**（如 `python -m venv` / `conda`）安装 BenchScope，避免与系统其他 Python 包相互干扰，也便于版本升级与卸载。
+
+</div>
 
 ## 安装
 
@@ -30,13 +39,19 @@ $ benchscope --help
 usage: benchscope [-h] [--version] {serve,perf,eval} ...
 ```
 
-> 如需**原生精度评测（Native）**能力（本地加载 transformers 权重离线评测），请安装额外可选依赖：`pip install benchscope[accuracy-native]`。
+> 如需**原生精度评测（Native）**能力（本地加载 transformers 权重离线评测，无需外部推理服务），请安装额外可选依赖：`pip install benchscope[accuracy-native]`。若不确定是否需要，可先按基础安装，之后按需补充。
 
-BenchScope 的 Web 前端完全内嵌在 Python 包中，安装后无需额外安装 Node.js 或前端依赖。
+<div class="info">
+
+**info**：
+
+BenchScope 的 Web 前端完全内嵌在 Python 包中，安装后**无需**额外安装 Node.js 或前端依赖，也无需单独启动前后端服务。
+
+</div>
 
 ## 启动平台
 
-一条命令启动整个 Web 平台：
+一条命令即可启动整个 Web 平台：
 
 ```bash
 benchscope
@@ -62,7 +77,13 @@ INFO  BenchScope server started
 INFO  Web UI: http://127.0.0.1:8080
 ```
 
-> **注意**：默认监听 `0.0.0.0`，表示局域网内其他机器也可访问。若仅在本地使用，建议加上 `--host 127.0.0.1`。首次启动会在 `~/.benchscope` 下创建数据根目录（见 [配置说明](/zh/docs/install/configuration/)）。
+<div class="warning">
+
+**warning**：
+
+默认监听 `0.0.0.0`，意味着**局域网内其他机器也能访问**该平台。若仅在本地使用，建议加上 `--host 127.0.0.1`；首次启动会在 `~/.benchscope` 下创建数据根目录（见 [配置说明](/zh/docs/install/configuration/)）。
+
+</div>
 
 ## 下一步
 
@@ -73,9 +94,20 @@ INFO  Web UI: http://127.0.0.1:8080
 3. 进入 **精度测试** 页做量化评测；
 4. 进入 **Sessions** 页与模型交互式对话。
 
+## 常见问题
+
+**问题：端口被占用怎么办？**
+使用 `--port` 指定其他端口，例如 `benchscope --port 9090`，然后访问对应地址。
+
+**问题：启动后没有自动打开浏览器？**
+加 `--host` / `--port` 等显式参数时不会自动打开浏览器；也可使用 `--no-browser` 关闭自动打开，再手动访问控制台打印的地址。
+
+**问题：安装后 `benchscope` 命令找不到？**
+多为虚拟环境未激活或未将 `Scripts` / `bin` 目录加入 PATH，请检查当前环境后重试。
+
 ## 相关文档
 
 - [快速开始](/zh/docs/quickstart/) — 功能总览与上手
 - [配置说明](/zh/docs/install/configuration/) — 数据根目录、settings.json 与内置配置清单
 - [更新与卸载](/zh/docs/install/update-uninstall/) — 升级、卸载与数据清理
-- [CLI](/zh/docs/cli/) — 命令行与参数说明
+- [CLI](/zh/docs/cli/) — `serve` / `perf` / `eval` 子命令与参数

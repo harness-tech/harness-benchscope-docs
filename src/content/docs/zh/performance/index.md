@@ -1,10 +1,13 @@
 ---
-title: "性能测试"
+title: "概述"
 ---
 
-# 性能测试
+# 概述
 
-性能测试页用于对已部署的推理服务进行压测，支持**并发压测（Concurrency Mode）**与**阈值探测（Threshold Mode）**双模式，实时可视化吞吐、延迟与进度。
+性能测试用于对已部署的推理服务进行压测，提供**并发压测（Concurrency Mode）**与**阈值探测（Threshold Mode）**两种模式，实时可视化吞吐、延迟与运行进度。
+
+- **并发压测**：用于回答「随着并发升高，吞吐与延迟如何变化」；
+- **阈值探测**：用于回答「给定业务 SLA，这套配置最多能扛住多少并发」。
 
 ![BenchScope 性能测试主界面（运行中）](/images/benchscope-performance_perf_running.png)
 
@@ -15,6 +18,11 @@ title: "性能测试"
 性能测试针对的是**服务链路**——无论目标服务由 vLLM、SGLang 还是其他兼容 OpenAI 协议的后端提供，都可以用统一的界面进行压测与结果对比。
 
 </div>
+
+## 本页内容
+
+- [并发压测](/zh/docs/performance/concurrency/) — 按并发级别逐档施压、解读结果，找到最佳工作区间
+- [阈值压测](/zh/docs/performance/threshold/) — 给定业务 SLA，自动搜索可承载的最大并发
 
 ## 模式总览
 
@@ -30,7 +38,7 @@ title: "性能测试"
 ![BenchScope 创建性能任务](/images/benchscope-performance_create.png)
 
 1. **Step1 条件**：选择被测模型与服务地址（Provider）、引擎、模式（并发 / 阈值）。
-2. **Step2 参数**：填写并发、输入输出 token、请求数等参数。
+2. **Step2 参数**：填写并发、输入输出 token、请求数等参数（阈值模式还需填写 SLA 阈值与搜索上限）。
 3. **Step3 命令预览**：核对等价的 CLI 命令，确认后启动。
 
 <div class="tip">
@@ -45,71 +53,31 @@ title: "性能测试"
 
 ## 并发压测（Concurrency Mode）
 
-按并发级别逐层施压，每个并发实时反馈到：
-
-- **表格**：每个并发的吞吐 / TTFT / TPOT / ITL；
-- **曲线**：多维度实时统计图；
-- **进度**：运行进度实时更新。
-
-随机并发面板提供运行中实时更新；单并发点内支持「连续滚动」，便于观察长时间运行下的波动。
+按并发级别逐层施压，每个并发实时反馈到表格、曲线与进度，用于观察服务在负载下的变化曲线，找到**最佳工作区间**。分步操作见 [并发压测](/zh/docs/performance/concurrency/)。
 
 运行中的主界面：
 
 ![BenchScope 性能测试运行统计](/images/benchscope-performance_perf_running_statistics.png)
 
-### 使用步骤
-
-1. 选择被测模型与服务地址（Provider）；
-2. 选择 **并发压测（Concurrency）**；
-3. 填入并发级别、输入输出 token、请求总数等参数；
-4. 提交后实时查看表格 / 曲线 / 进度；
-5. 完成后导出或查看历史记录。
-
 ## 阈值探测（Threshold Mode）
 
-在已知业务 SLA（服务水平目标）时，用阈值探测自动寻找满足全部阈值条件的**最大并发**（`best_concurrency`）。
+在已知业务 SLA 时，用阈值探测自动寻找满足全部阈值条件的**最大并发**（`best_concurrency`）。
 
-**判定条件**：
+**判定条件**（全部满足才算达标）：
 
 - TTFT ≤ 阈值（`mean` / `median` / `p99`）；
 - TPOT ≤ 阈值（`mean` / `median` / `p99`）；
 - 输出吞吐 ≥ 阈值。
 
-**探测策略**：
-
-1. 从 **1 并发** 开始，以 **2 的次方递增**（1, 2, 4, 8, …）逐步压测；
-2. 若 1 并发已不满足阈值 → 最佳并发为 1，结束；
-3. 若执行到 `hi = 2^k` 不满足（`lo = 2^(k-1)` 满足）→ 在 `(lo, hi]` 内二分，直到相邻两个值，`lo` 即满足阈值的最大并发；
-4. 达到搜索上限仍满足 → 上限并发为最佳（正常结束）。
+探测策略为**从 1 并发起以 2 的次方递增**，找到首个不满足的点后在相邻区间**二分**收敛。分步操作见 [阈值压测](/zh/docs/performance/threshold/)。
 
 <div class="info">
 
 **info**：
 
-阈值判定所使用的统计量可通过参数调整（如 `--ttft-statistic p99`），以适配不同的业务口径。详见 [CLI 参考](/zh/docs/cli/reference/)。
+阈值判定所使用的统计量可通过参数调整（如 `--ttft-statistic p99`），以适配不同的业务口径。详见 [perf 命令](/zh/docs/cli/perf/)。
 
 </div>
-
-## 指标口径
-
-| 指标 | 含义 |
-| --- | --- |
-| 吞吐（output_mean / total_mean） | 输出 / 总吞吐（tok/s） |
-| TTFT（ttft_mean） | 首 token 延迟（ms） |
-| TPOT（tpot_mean） | 每输出 token 延迟（ms） |
-| ITL（itl_mean） | 令牌间隔延迟（ms） |
-
-### 第三方引擎指标可得性
-
-针对第三方引擎，指标可得性会**显式化**展示：
-
-| 状态 | 展示 | 说明 |
-| --- | --- | --- |
-| 可得 | 蓝色数值 | 指标正常采集到 |
-| 不可得 | N/A（灰黑） | 该引擎不支持 / 无法采集该指标 |
-| 缺失 | 灰色横线 | 指标采集缺失 |
-
-固定的 **11 指标快照契约**保证了不同引擎间指标结构的一致性，便于跨引擎对比。
 
 ## 产物与导入
 
@@ -124,18 +92,10 @@ title: "性能测试"
 
 </div>
 
-## 常见问题
-
-**问题：为什么某个指标显示 N/A 或灰横线？**
-该引擎可能不支持该指标，或指标采集缺失。可切换自研引擎 `benchscope` 获取最完整的指标。
-
-**问题：压测请求大量失败？**
-检查 `--base-url`、API Key、`--timeout` 与并发设置；确认服务负载是否已接近上限。
-
 ## 相关文档
 
-- [CLI 参考](/zh/docs/cli/reference/) — `perf` 命令完整参数
-- [教程：并发压测](/zh/docs/performance/concurrency/) — 分步操作
-- [教程：阈值压测](/zh/docs/performance/threshold/) — 求最优并发
+- [并发压测](/zh/docs/performance/concurrency/) — 分步操作
+- [阈值压测](/zh/docs/performance/threshold/) — 求最优并发
+- [perf 命令](/zh/docs/cli/perf/) — `perf` 命令完整参数
 - [设置（Settings）](/zh/docs/tools/settings/) — 配置 Provider 与 Bench Engines
 - [数据与统计（Datas）](/zh/docs/data/) — 历史记录与导入

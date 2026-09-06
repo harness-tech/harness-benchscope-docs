@@ -4,16 +4,24 @@ title: "Settings"
 
 # Settings
 
-The **Settings** page centrally manages the platform’s global configuration across **seven panels**: General / Providers / Models / Datasets / Bench Engines / Skills / Plugins. The page was panelized since **1.0.7**, which also added a per-engine **Mock** switch. Any change is persisted automatically to `settings.json`.
+The **Settings** page centrally manages the platform’s global configuration across **seven panels**: General / Providers / Models / Datasets / Bench Engines / Skills / Plugins. The page was panelized in **1.0.7**, which also added a per-engine **Mock** switch. Any change is persisted automatically to `settings.json`.
 
 ![Settings page](/images/benchscope-settings_default.png)
 
+<div class="tip">
+
+**tip**：
+
+Every change you make in Settings is **persisted automatically** to `~/.benchscope/settings.json` — no manual config-file editing. See [Configuration](/en/docs/install/configuration/).
+
+</div>
+
 ## General
 
-- **Data root directory and Cache Paths** — the Root Dir takes effect **immediately (no restart needed)**, and the subdirectories are read-only (they are managed by the platform).
+- **Data root directory and Cache Paths** — the Root Dir takes effect **immediately (no restart needed)**; subdirectories are read-only (managed by the platform).
 - **Global configuration items** such as runtime parameters.
 
-The Cache Paths view shows every subdirectory of your data root — `perfs`, `evals`, `analysys`, `logs`, `sessions`, `datasets`, `models`, `plugins` — so you always know where each kind of data lives, and where new data will be written.
+The Cache Paths view lists every subdirectory of your data root — `perfs`, `evals`, `logs`, `sessions`, `datasets`, `models`, `plugins` — so you always know where each kind of data lives and where new data will be written.
 
 <div class="info">
 
@@ -29,11 +37,22 @@ Because the Root Dir takes effect immediately and subdirectories are read-only, 
 - Service **availability** is shown in the **top bar** and on the **Dashboard**.
 - Accuracy **Serving mode** defaults to the global Provider configuration when no explicit service is given.
 
+A Provider is a single inference endpoint. For example:
+
+```json
+{
+  "name": "my-vllm",
+  "type": "vllm",
+  "base_url": "http://127.0.0.1:8000",
+  "api_key": ""
+}
+```
+
 <div class="tip">
 
 **tip**：
 
-Add your vLLM / SGLang or OpenAI-compatible endpoint here once; it will then be available as a target across Performance, Sessions, and Accuracy (Serving mode).
+Add your vLLM / SGLang or OpenAI-compatible endpoint **once** here; it then becomes available as a target across Performance, Sessions, and Accuracy (Serving mode).
 
 </div>
 
@@ -45,7 +64,7 @@ Add your vLLM / SGLang or OpenAI-compatible endpoint here once; it will then be 
 ## Datasets
 
 - **Built-in dataset management** and the **download directory** (`datasets_dir`).
-- Datasets are declared in `datasets.yaml` and downloaded from **modelscope** or a **url source**, cached to `data_dir/datasets/{id}/`.
+- Datasets are declared in `datasets.yaml` and downloaded from **modelscope** or a **url source**, cached under the data root at `datasets/{id}/` (default `~/.benchscope/datasets/{id}/`).
 
 ## Bench Engines
 
@@ -54,17 +73,23 @@ Add your vLLM / SGLang or OpenAI-compatible endpoint here once; it will then be 
 
 | Engine | Notes |
 | --- | --- |
-| `benchscope` | Self-developed engine; no local framework required |
+| `benchscope` (self-developed) | Self-developed engine; no local framework required |
 | `vllm-<ver>` | Official vLLM bench engine (for a specific version) |
 | `sglang-<ver>` | Official SGLang bench engine (for a specific version) |
-| Custom | Registered through skills / plugins (`bs-engine-create`) |
+| Custom | Registered through skills / plugins |
 
-See [Bench Engine](/en/docs/tools/bench-engine/) for the engine abstraction.
+<div class="info">
+
+**info**：
+
+See [Bench Engine](/en/docs/tools/bench-engine/) for the full engine abstraction. Environment-validation convention: native vLLM / SGLang engines must validate `torch` and the matching framework version, or the next step is blocked.
+
+</div>
 
 ## Skills / Plugins
 
 - **Installation and loading directory** for skill packages and plugins (`plugins_dir`).
-- Skills / plugins extend the platform with, for example, custom bench engines and automation.
+- Extend the platform with, for example, custom bench engines (created via the `bs-engine-create` skill) and automation.
 
 ## Related
 

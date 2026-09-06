@@ -1,5 +1,6 @@
 ---
 title: "配置说明"
+description: "数据根目录、默认子目录、settings.json 与内置配置清单。"
 ---
 
 # 配置说明
@@ -23,7 +24,7 @@ benchscope
 
 **warning**：
 
-`BENCHSCOPE_DATA_DIR` 常用于**测试隔离**（例如 CI 中为每次运行创建独立数据目录）。切换数据目录后，之前的性能/精度产物不会自动出现在新目录中。
+`BENCHSCOPE_DATA_DIR` 常用于**测试隔离**（例如 CI 中为每次运行创建独立数据目录）。切换数据目录后，之前的性能 / 精度产物不会自动出现在新目录中。该目录存放所有历史产物，请在卸载或清空前确认是否需要备份。
 
 </div>
 
@@ -118,7 +119,7 @@ BenchScope 内置了多份 YAML 配置文件，作为引擎、参数、数据集
 | `benchscope/configs/baselines.yaml` | 精度基线库 |
 | `benchscope/configs/token_estimates.yaml` | Token 预估参数 |
 
-这些清单与网页 Settings 面板联动，例如 Settings → Datasets 展示的数据集即来自 `datasets.yaml`。
+这些清单与网页 Settings 面板联动，例如 Settings → Datasets 展示的数据集即来自 `datasets.yaml`；`benchs.yaml` 中的引擎注册清单正是 Settings → Bench Engines 面板能识别自研 `benchscope` 引擎及上游 `vllm-*` / `sglang-*` 引擎的来源。
 
 ## 常见问题
 
@@ -133,7 +134,7 @@ General 面板的 Root Dir 即时生效、无需重启；其他面板的配置�
 
 ## 相关文档
 
-- [快速入门](/zh/docs/quickstart/) — 安装与启动
+- [安装](/zh/docs/install/) — 环境要求与启动
 - [设置（Settings）](/zh/docs/tools/settings/) — 七个面板配置详解
 - [数据与统计（Datas）](/zh/docs/data/) — 产物落盘与导入
 - [更新与卸载](/zh/docs/install/update-uninstall/) — 数据清理与备份

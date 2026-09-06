@@ -1,8 +1,8 @@
 ---
-title: "CLI"
+title: "概述"
 ---
 
-# CLI
+# 概述
 
 `benchscope` 命令行把 Web 平台的能力带到终端：启动服务、并发压测、精度评测，全部可通过一条命令完成，并产出与 Web 完全兼容的任务产物。
 
@@ -10,9 +10,23 @@ title: "CLI"
 benchscope [--version] {serve,perf,eval} [子命令选项]
 ```
 
-- **`benchscope`**（或 `benchscope serve`）：启动 Web 服务，默认在 `http://127.0.0.1:8080` 打开完整平台。
-- **`benchscope perf`**：执行一次性能压测（并发 / 阈值双模式），输出吞吐与延迟指标，落盘 `run.json`。
-- **`benchscope eval`**：执行一次精度评测（Serving / Native / Mock），输出 accuracy / pass_rate 等指标，落盘 `evals/eval-<时间>/`。
+<div class="info">
+
+**info**：
+
+**向后兼容行为**：当 `benchscope` 无参数、或首个参数是选项（如 `--port 8080`）时，会走向兼容的「启动服务」行为，等价于 `benchscope serve`。
+
+</div>
+
+## 命令总览
+
+| 命令 | 作用 | 主要产物 |
+| --- | --- | --- |
+| [`benchscope serve`](/zh/docs/cli/serve/) | 启动 Web 服务，默认在 `http://127.0.0.1:8080` 打开完整平台 | — |
+| [`benchscope perf`](/zh/docs/cli/perf/) | 一次性能压测（并发 / 阈值双模式），输出吞吐与延迟指标 | `run.json` |
+| [`benchscope eval`](/zh/docs/cli/eval/) | 一次精度评测（Serving / Native / Mock），输出 accuracy / pass_rate 等指标 | `evals/eval-<时间>/` |
+
+## 快速上手
 
 ```console
 $ benchscope --version
@@ -27,11 +41,31 @@ $ benchscope eval --mode serving --model Qwen2.5-7B \
     --base-url http://127.0.0.1:8000 --dataset gsm8k --limit 200
 ```
 
-所有 CLI 任务产物可打包后在网页 **Datas → Perfs / Evals → 导入备份** 恢复，与 Web 创建的任务完全兼容。
+<div class="tip">
+
+**tip**：
+
+CLI 与 Web 任务产物完全兼容：所有 CLI 产物可打包后在网页 **Datas → Perfs / Evals → 导入备份** 恢复，与在网页创建的任务一致。
+
+</div>
+
+## 常见问题
+
+**Q：`benchscope` 不带参数执行会怎样？**
+
+A：等价于 `benchscope serve`，直接启动 Web 平台。
+
+**Q：产出的任务能在网页里管理吗？**
+
+A：可以。CLI 产物与网页任务完全兼容，可在 **Datas → Perfs / Evals** 查看、打包导入。
+
+**Q：如何按需选择命令？**
+
+A：启动服务用 [`serve`](/zh/docs/cli/serve/)；压测吞吐 / 延迟（含阈值探测）用 [`perf`](/zh/docs/cli/perf/)；评测精度用 [`eval`](/zh/docs/cli/eval/)。
 
 ## 相关文档
 
-- [CLI 参考](/zh/docs/cli/reference/) — `serve` / `perf` / `eval` 完整参数表
 - [安装](/zh/docs/install/) — 环境要求与启动
 - [性能测试](/zh/docs/performance/) — 并发压测与阈值探测
-- [精度测试](/zh/docs/accuracy/) — 双模式评测
+- [概述](/zh/docs/accuracy/) — 双模式评测
+- [数据（Datas）](/zh/docs/data/) — 任务产物的查看与导入

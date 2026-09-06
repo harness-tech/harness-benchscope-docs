@@ -24,6 +24,13 @@
   --line-strong:   #ededed33;
   --nav-text:      #c7c7cf;   /* 导航文字（银色） */
   --ft-text:       #8c8c96;   /* footer 文字（比 text-3 更暗） */
+
+  /* 代码块专用（黑色主题 → 深色底） */
+  --code-bg:       #0d0d10;   /* 代码块正文底 */
+  --code-head-bg:  #151518;   /* 代码块头部底 */
+  --code-border:   #2a2a30;   /* 代码块边框 */
+  --code-text:     #d4d4da;   /* 代码文字 */
+  --code-gutter:   #6f6f78;   /* 行号 */
 }
 
 /* ---------- 银色主题 —— 黑金色字体 ---------- */
@@ -46,6 +53,13 @@
   --line-strong:   #23232e3d;
   --nav-text:      #4c4c55;   /* 导航文字（深灰） */
   --ft-text:       #6e6e76;   /* footer 文字（比 text-3 更暗） */
+
+  /* 代码块专用（银色主题 → 亮色底） */
+  --code-bg:       #f6f6f9;   /* 代码块正文底 */
+  --code-head-bg:  #ececf1;   /* 代码块头部底 */
+  --code-border:   #d4d4dc;   /* 代码块边框 */
+  --code-text:     #33333c;   /* 代码文字 */
+  --code-gutter:   #9a9aa6;   /* 行号 */
 }
 
 /* ---------- 语义映射 & 其它 ---------- */
@@ -103,48 +117,82 @@ code, pre, kbd { font-family: var(--font-mono); }
   margin: 0 0 16px;
 }
 
-/* ---------- 文档正文（prose） ---------- */
-.prose { max-width: 60rem; }
-.prose h1 { font-size: clamp(1.8rem, 1.2rem + 2.4vw, 2.4rem); font-weight: 800; margin: 0 0 8px; }
-.prose h2 { font-size: 1.5rem; font-weight: 750; margin: 2rem 0 .75rem; padding-bottom: .4rem; border-bottom: 1px solid var(--line); }
-.prose h3 { font-size: 1.2rem; font-weight: 700; margin: 1.6rem 0 .6rem; }
-.prose h4 { font-size: 1.05rem; font-weight: 650; margin: 1.3rem 0 .5rem; }
-.prose p { margin: 0 0 1rem; line-height: 1.75; color: var(--text-2); }
-.prose ul, .prose ol { margin: 0 0 1rem; padding-left: 1.4rem; color: var(--text-2); }
-.prose li { margin: .3rem 0; line-height: 1.7; }
+/* ---------- 文档正文（prose）—— 更舒适的阅读字号 ---------- */
+.prose { max-width: 60rem; font-size: 14.5px; line-height: 1.75; color: var(--text-2); }
+.prose h1 { font-size: 1.7rem; font-weight: 800; margin: 0 0 6px; letter-spacing: -.015em; line-height: 1.25; }
+.prose h2 { font-size: 1.3rem; font-weight: 750; margin: 2rem 0 .7rem; padding-bottom: .35rem; border-bottom: 1px solid var(--line); line-height: 1.3; }
+.prose h3 { font-size: 1.12rem; font-weight: 700; margin: 1.5rem 0 .55rem; line-height: 1.35; }
+.prose h4 { font-size: 1rem; font-weight: 650; margin: 1.2rem 0 .45rem; line-height: 1.4; }
+.prose p { margin: 0 0 .85rem; line-height: 1.75; }
+.prose ul, .prose ol { margin: 0 0 .85rem; padding-left: 1.3rem; }
+.prose li { margin: .25rem 0; line-height: 1.7; }
 .prose li::marker { color: var(--gold); }
 .prose a { color: var(--gold-text); }
 .prose a:hover { color: var(--gold-light); text-decoration: underline; }
-.prose img { max-width: 100%; border-radius: 4px; border: 1px solid var(--line); margin: .5rem 0 1rem; }
-.prose hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
+.prose img { display: block; max-width: 66.666%; height: auto; border: 1px solid var(--line); border-radius: 8px; margin: 1.2em auto; }
+.prose hr { border: 0; border-top: 1px solid var(--line); margin: 1.8rem 0; }
 .prose strong { color: var(--text-1); font-weight: 700; }
 
 .prose code:not(.astro-code code) {
   background: var(--bg-float); color: var(--gold-text);
-  border-radius: 4px; padding: .15em .4em;
-  font-size: .88em; border: 1px solid var(--line);
+  border-radius: 4px; padding: .14em .38em;
+  font-size: .86em; border: 1px solid var(--line);
 }
 .prose :not(pre) > code { font-family: var(--font-mono); }
 
-.astro-code { border-radius: 4px; border: 1px solid var(--line); margin: 0 0 1rem; overflow: auto; }
-.astro-code pre { padding: 1rem 1.15rem; font-size: 13px; line-height: 1.7; }
+/* ---------- 代码块（代码高亮 + 行号 + 复制；两主题统一深色底） ---------- */
+.code-block { margin: 0 0 1rem; border-radius: 8px; border: 1px solid var(--code-border); overflow: hidden; background: var(--code-bg); }
+.code-meta {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 14px; background: var(--code-head-bg); border-bottom: 1px solid var(--code-border);
+}
+.code-lang {
+  font: 700 10.5px / 1 var(--font-mono); letter-spacing: .05em; text-transform: uppercase;
+  color: var(--gold-text);
+}
+.code-copy {
+  font: 600 10.5px / 1 var(--font-mono); color: var(--text-3);
+  background: transparent; border: 1px solid var(--code-border); border-radius: 5px;
+  padding: 5px 10px; cursor: pointer; transition: color .14s, border-color .14s, background .14s;
+}
+.code-copy:hover { color: var(--gold-text); border-color: var(--gold-line); background: var(--bs-gold-soft); }
+.code-body { position: relative; display: flex; overflow: auto; }
+.code-gutter {
+  flex: none; user-select: none; padding: .7rem 0 .7rem .7rem; text-align: right;
+  font: 400 9px / 1.8 var(--font-mono); color: var(--code-gutter); opacity: .7;
+  border-right: 1px solid var(--code-border);
+}
+.code-gutter .ln { display: block; height: calc(9px * 1.8); line-height: 1.8; }
+/* <pre class="astro-code"> 本身即是代码块元素 */
+.code-body .astro-code {
+  border: 0; border-radius: 0; margin: 0; flex: 1; min-width: 0;
+  background: var(--code-bg) !important;
+}
+.code-body .astro-code code { padding: .7rem 1rem .7rem .85rem; font-size: 9px !important; line-height: 1.8; color: var(--code-text); font-variant-ligatures: contextual; display: block; }
+.code-body .astro-code .line, .code-body .astro-code code { background: transparent; }
 
-.prose blockquote { margin: 0 0 1rem; padding: .5rem 1rem; border-left: 3px solid var(--gold); background: var(--bg-surface); border-radius: 0 8px 8px 0; color: var(--text-2); }
+/* 语法高亮：银色主题（亮色底）用内联亮色 token；黑色主题（深色底）改用 --shiki-dark 深色 token */
+[data-theme='black'] .code-body .astro-code span[style] { color: var(--shiki-dark) !important; }
+
+.prose blockquote {
+  margin: 0 0 .9rem; padding: .5rem .9rem; font-size: .95em; line-height: 1.6;
+  border-left: 3px solid var(--gold); background: var(--bg-surface); border-radius: 0 7px 7px 0; color: var(--text-2);
+}
 .prose blockquote p { margin: 0; }
 
-.prose table { width: 100%; border-collapse: collapse; margin: 0 0 1.2rem; font-size: 14px; }
-.prose th { text-align: left; background: var(--bg-float); color: var(--text-1); padding: .6rem .8rem; border: 1px solid var(--line); font-weight: 650; }
-.prose td { padding: .55rem .8rem; border: 1px solid var(--line); color: var(--text-2); }
+.prose table { width: 100%; border-collapse: collapse; margin: 0 0 1.1rem; font-size: 13px; }
+.prose th { text-align: left; background: var(--bg-float); color: var(--text-1); padding: .5rem .7rem; border: 1px solid var(--line); font-weight: 650; }
+.prose td { padding: .48rem .7rem; border: 1px solid var(--line); }
 .prose tr:nth-child(2n) td { background: var(--bg-surface); }
 
 /* tip / warning / info 容器 */
 .prose .note, .prose .tip, .prose .warning, .prose .danger, .prose .info {
-  margin: 0 0 1rem; padding: .8rem 1rem; border-radius: 6px; border: 1px solid;
+  margin: 0 0 .9rem; padding: .65rem .9rem; border-radius: 6px; border: 1px solid; font-size: .96em; line-height: 1.6;
 }
 .prose .tip, .prose .note, .prose .info { border-color: var(--gold-line); background: var(--bg-surface); }
 .prose .warning { border-color: var(--gold-text); background: var(--bs-gold-soft); }
 .prose .danger { border-color: #f5654a; background: #c2402818; }
-.prose .tip p, .prose .note p, .prose .info p, .prose .warning p, .prose .danger p { color: var(--text-2); margin: 0; }
+.prose .tip p, .prose .note p, .prose .info p, .prose .warning p, .prose .danger p { margin: 0; }
 
 /* ---------- 主题切换按钮（月亮 / 太阳） ---------- */
 .theme-toggle {

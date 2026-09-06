@@ -4,20 +4,30 @@ title: "Contributing"
 
 # Contributing
 
-You are welcome to contribute to BenchScope as **open source** through Issues / PRs. This page describes how the project is organized and how to contribute cleanly.
+You are welcome to contribute to BenchScope as **open source** through Issues / PRs — whether it is fixing bugs, adding features, improving documentation, or extending tests.
 
 ## Related Links
 
-- **Source repository**: <https://github.com/LABELNET/benchscope>
-- **Download / releases**: <https://pypi.org/project/benchscope>
+- **Source repository**: https://github.com/LABELNET/benchscope
+- **Download / releases**: https://pypi.org/project/benchscope
 - **License**: Apache License 2.0
+
+<div class="info">
+
+**info**：
+
+Before you submit, read the root documentation — it explains how the project is structured and maintained.
+
+</div>
 
 ## Local Development Environment
 
-Read the root documentation before you start — it explains how the project is structured and maintained:
+The repository root is organized as follows:
 
-- `docs/Readme.md` — documentation structure
-- `agents/Readme.md` — project-level maintenance conventions
+| File | Description |
+| --- | --- |
+| `docs/Readme.md` | Documentation structure and planning |
+| `agents/Readme.md` | Project-level maintenance conventions |
 
 While developing, please follow these conventions:
 
@@ -33,13 +43,11 @@ Run the test suite before you commit:
 pytest
 ```
 
-Make sure any changes you make come with tests where appropriate, and that the full suite still passes.
-
 <div class="tip">
 
 **tip**：
 
-Because the project tracks Chinese / English documentation with i18n conventions, keep your user-facing strings and docs bilingual-friendly when adding new UI text.
+Make sure all related tests pass before submitting a PR, and add test cases when you introduce new functionality.
 
 </div>
 
@@ -50,7 +58,15 @@ Because the project tracks Chinese / English documentation with i18n conventions
 3. **Run the tests** to confirm they pass.
 4. **Submit a PR** describing the changes and the test results.
 
+### Checklist
+
+- [ ] Code style and naming follow the repository conventions
+- [ ] New / changed functionality is documented
+- [ ] Related tests cover the changes and pass (`pytest`)
+- [ ] i18n strings are updated
+
 ## See Also
 
 - [Architecture](/en/docs/tools/architecture/) — understand the codebase before you start
 - [Bench Engine](/en/docs/tools/bench-engine/) — how engines are integrated (a common extension point)
+- [Quick Start](/en/docs/quickstart/) — installation and usage
