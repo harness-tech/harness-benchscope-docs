@@ -1,0 +1,212 @@
+---
+import '../styles/global.css'
+import ThemeInit from '../components/ThemeInit.astro'
+import ThemeToggle from '../components/ThemeToggle.astro'
+import Search from '../components/Search.astro'
+
+interface Props {
+  lang: 'zh' | 'en'
+  path: string
+  title?: string
+  description?: string
+  mode: 'landing' | 'docs'
+}
+
+const { lang, path, title = 'BenchScope Docs', description = 'BenchScope —— 大模型推理测试平台官方文档', mode } = Astro.props
+
+const other = lang === 'zh' ? 'en' : 'zh'
+const otherLabel = lang === 'zh' ? 'English' : '中文'
+
+// 官网落地页导航（mode: landing）
+const navItems =
+  lang === 'zh'
+    ? [
+        { href: '/zh/', label: '首页', id: 'home' },
+        { href: '/zh/#features', label: '功能', id: 'features' },
+        { href: '/zh/#workflow', label: '工作流程', id: 'workflow' },
+        { href: '/zh/#modes', label: '测试模式', id: 'modes' },
+        { href: '/zh/docs/', label: '文档', id: 'docs' },
+      ]
+    : [
+        { href: '/en/', label: 'Home', id: 'home' },
+        { href: '/en/#features', label: 'Features', id: 'features' },
+        { href: '/en/#workflow', label: 'Workflow', id: 'workflow' },
+        { href: '/en/#modes', label: 'Modes', id: 'modes' },
+        { href: '/en/docs/', label: 'Docs', id: 'docs' },
+      ]
+
+// 文档副导航（mode: docs）—— 分节路由
+const docsNav =
+  lang === 'zh'
+    ? [
+        { href: '/zh/docs/quickstart/', label: '快速开始' },
+        { href: '/zh/docs/install/', label: '安装' },
+        { href: '/zh/docs/accuracy/', label: '精度' },
+        { href: '/zh/docs/performance/', label: '性能' },
+        { href: '/zh/docs/data/', label: '数据' },
+        { href: '/zh/docs/tools/', label: '工具（高级）' },
+        { href: '/zh/docs/cli/', label: 'CLI' },
+        { href: '/zh/docs/api/', label: 'API' },
+        { href: '/zh/docs/releases/', label: '发布' },
+        { href: '/zh/docs/help/', label: '帮助' },
+      ]
+    : [
+        { href: '/en/docs/quickstart/', label: 'Quick Start' },
+        { href: '/en/docs/install/', label: 'Install' },
+        { href: '/en/docs/accuracy/', label: 'Accuracy' },
+        { href: '/en/docs/performance/', label: 'Performance' },
+        { href: '/en/docs/data/', label: 'Data' },
+        { href: '/en/docs/tools/', label: 'Tools' },
+        { href: '/en/docs/cli/', label: 'CLI' },
+        { href: '/en/docs/api/', label: 'API' },
+        { href: '/en/docs/releases/', label: 'Releases' },
+        { href: '/en/docs/help/', label: 'Help' },
+      ]
+
+const gh = 'https://github.com/harness-tech/harness-benchscope-docs'
+const ghLanding = 'https://github.com/LABELNET/benchscope'
+const docsHref = `/${lang}/docs/`
+const isActive = (href: string) => Astro.url.pathname.startsWith(href)
+const searchHint = lang === 'zh' ? '搜索文档…' : 'Search docs…'
+---
+
+<!doctype html>
+<html lang={lang === 'zh' ? 'zh-CN' : 'en-US'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/png" href="/images/logo-gold.png" />
+    <ThemeInit />
+  </head>
+  <body>
+    {mode === 'docs' ? (
+      <header class="doc-topbar">
+        <div class="doc-nav">
+          <a class="brand" href={`/${lang}/`}>
+            <img class="brand-logo" src="/images/logo-gold.png" alt="BenchScope" />
+            <span class="brand-name">BenchScope</span>
+            <span class="docs-badge">DOCS</span>
+          </a>
+          <div class="nav-search">
+            <span class="nav-search-hint">{searchHint}</span>
+            <Search lang={lang} />
+          </div>
+          <div class="doc-actions">
+            <a class="gh" href={gh} target="_blank" rel="noopener" title="GitHub" aria-label="GitHub">
+              <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+            </a>
+            <ThemeToggle />
+          </div>
+        </div>
+        <nav class="subnav">
+          {docsNav.map((n) => (
+            <a class:list={{ 'subnav-link': true, active: isActive(n.href) }} href={n.href}>{n.label}</a>
+          ))}
+        </nav>
+      </header>
+    ) : (
+      <header class="topbar">
+        <div class="topbar-in">
+          <a class="brand" href={`/${lang}/`}>
+            <img class="brand-logo" src="/images/logo-gold.png" alt="BenchScope" />
+            <span class="brand-name">BenchScope</span>
+          </a>
+          <nav class="topnav">
+            {navItems.map((n) => (
+              <a href={n.href} class:list={{ active: n.id === (mode === 'docs' && n.id === 'docs' ? 'docs' : n.id) }}>{n.label}</a>
+            ))}
+          </nav>
+          <div class="topbar-actions">
+            <Search lang={lang} />
+            <a class="gh" href={ghLanding} target="_blank" rel="noopener" title="GitHub" aria-label="GitHub">
+              <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+            </a>
+            <a class="nav-docs" href={docsHref}>
+              {lang === 'zh' ? '文档' : 'Docs'}
+            </a>
+            <a class="lang-switch" href={`/${other}/`}>{otherLabel}</a>
+          </div>
+        </div>
+      </header>
+    )}
+
+    <slot />
+  </body>
+</html>
+
+<style>
+  /* ---------- 官网顶栏（landing，保持原样） ---------- */
+  .topbar { position: sticky; top: 0; z-index: 90; background: color-mix(in srgb, var(--bg-float) 86%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  .topbar-in { max-width: 76rem; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; gap: 20px; }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--text-1); font-weight: 700; text-decoration: none; }
+  .brand-logo { height: 38px; width: 38px; border-radius: 6px; }
+  .brand-name { font-size: 17px; letter-spacing: -.01em; }
+  .topnav { display: flex; gap: 2px; margin-right: auto; }
+  .topnav a { color: var(--nav-text); padding: 8px 12px; font-size: 14.5px; text-decoration: none; border-radius: 0; transition: color .16s; }
+  .topnav a:hover, .topnav a.active { color: var(--gold-text); }
+  .topbar-actions { display: flex; align-items: center; gap: 6px; }
+  .gh { color: var(--nav-text); display: inline-flex; padding: 6px; }
+  .gh:hover { color: var(--gold-text); }
+  .nav-docs { color: var(--text-2); font-size: 14.5px; text-decoration: none; padding: 8px 12px; transition: color .16s; }
+  .nav-docs:hover { color: var(--gold-text); }
+  .lang-switch { color: var(--nav-text); font-size: 13.5px; text-decoration: none; padding: 6px 8px; }
+  .lang-switch:hover { color: var(--gold-text); }
+
+  /* ---------- 文档两级导航（docs） ---------- */
+  .doc-topbar {
+    position: sticky; top: 0; z-index: 90;
+    background: color-mix(in srgb, var(--bg-float) 82%, transparent);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 1px 0 var(--line), 0 6px 22px -14px rgb(0 0 0 / .35);
+  }
+  .doc-nav {
+    max-width: 76rem; margin: 0 auto; height: 56px; padding: 0 24px;
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px;
+  }
+  .doc-nav .brand { justify-self: start; gap: 8px; }
+  .doc-nav .brand-logo { height: 34px; width: 34px; }
+  .doc-nav .brand-name { font-size: 15.5px; }
+  .docs-badge {
+    font: 700 10px / 1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase;
+    color: var(--text-3); border: 1px solid var(--line-strong);
+    padding: 4px 6px; border-radius: 5px; margin-left: 2px;
+  }
+  .nav-search {
+    display: flex; align-items: center; gap: 8px;
+    width: 240px; height: 34px; padding: 0 6px 0 12px;
+    border: 1px solid var(--line-strong); border-radius: 999px;
+    background: var(--bg-surface); color: var(--text-3);
+  }
+  .nav-search-hint { font-size: 13px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+  .nav-search .search-btn { width: 26px; height: 26px; border: 0; border-radius: 50%; flex: none; }
+  .doc-actions { justify-self: end; display: flex; align-items: center; gap: 8px; }
+  .subnav {
+    border-top: 1px solid var(--line);
+    display: flex; align-items: center; gap: 2px; overflow-x: auto;
+    max-width: 76rem; margin: 0 auto; padding: 0 24px; min-height: 42px;
+  }
+  .subnav-link {
+    position: relative; color: var(--nav-text); font-size: 14px; text-decoration: none;
+    padding: 12px 14px; white-space: nowrap; transition: color .16s;
+  }
+  .subnav-link::after {
+    content: ''; position: absolute; left: 14px; right: 14px; bottom: 9px; height: 2px;
+    background: var(--gold); transform: scaleX(0); transform-origin: left;
+    transition: transform .18s var(--ease-out);
+  }
+  .subnav-link:hover { color: var(--gold-text); }
+  .subnav-link.active { color: var(--gold-text); }
+  .subnav-link.active::after, .subnav-link:hover::after { transform: scaleX(1); }
+
+  @media (max-width: 720px) {
+    .nav-search { width: 150px; }
+    .subnav-link { padding: 12px 10px; }
+  }
+  @media (max-width: 560px) {
+    .doc-nav { grid-template-columns: 1fr auto; }
+    .nav-search { display: none; }
+    .docs-badge { display: none; }
+  }
+</style>

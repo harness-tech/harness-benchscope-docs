@@ -1,0 +1,65 @@
+---
+import Mesh from './Mesh.astro'
+
+interface Props {
+  lang: 'zh' | 'en'
+  docsHref: string
+  ico: (name: string, size?: number) => string
+}
+const { lang, ico } = Astro.props
+const isEn = lang === 'en'
+
+const features = [
+  { i: 'bolt', t: isEn ? 'Performance' : '性能测试', d: isEn ? 'Stress-test throughput & latency of an OpenAI-compatible service.' : '针对 OpenAI 兼容服务压测吞吐与延迟。' },
+  { i: 'barChart', t: isEn ? 'Concurrency' : '并发模式', d: isEn ? 'Multi-concurrency load tests, values recorded in real time.' : '多级并发施压，逐级实时记录结果。' },
+  { i: 'target', t: isEn ? 'Threshold' : '阈值模式', d: isEn ? 'Auto binary-search the max concurrency meeting your SLA.' : '自动二分搜索满足 SLA 的最大并发。' },
+  { i: 'chart', t: isEn ? 'Analysis' : '分析', d: isEn ? 'Charts & comparisons for every single run.' : '为每一次运行提供图表与对比分析。' },
+  { i: 'checkCircle', t: isEn ? 'Accuracy' : '精度', d: isEn ? 'Evaluate output accuracy vs baselines, dual modes.' : '对标基线评估输出精度，双模式评测。' },
+  { i: 'chat', t: isEn ? 'Sessions' : '会话', d: isEn ? 'Interactive SSE streaming sessions with markdown.' : 'SSE 流式交互会话，支持 Markdown 高亮。' },
+  { i: 'folder', t: isEn ? 'Data' : '数据', d: isEn ? 'Every run archived, searchable, comparable, importable.' : '每次运行归档，可搜索、对比、导入。' },
+  { i: 'brain', t: isEn ? 'Skills' : '技能', d: isEn ? 'Built-in benchmarks, datasets & scorer skills.' : '内置基准、数据集与判分技能。' },
+]
+---
+
+<section id="features" class="screen sec">
+  <Mesh density={16} className="screen-mesh" />
+  <div class="sec-in">
+    <div class="sec-panel">
+      <div class="sec-panel-head">
+        <p class="eyebrow">{isEn ? 'Features' : '功能'}</p>
+        <h2 class="sec-title">{isEn ? 'Everything you need to test an LLM service' : '功能亮点'}</h2>
+        <p class="sec-lead">{isEn ? 'Everything you need to test an LLM inference service, in one clean grid.' : '测试一个 LLM 推理服务所需的一切，整齐地排列在一个网格里。'}</p>
+      </div>
+      <div class="fgrid">
+        {features.map((f) => (
+          <div class="fcell flowcell">
+            <div class="fblock" aria-hidden="true"></div>
+            <div class="ficon"><Fragment set:html={ico(f.i, 20)} /></div>
+            <h3 class="fct">{f.t}</h3>
+            <p class="fcd">{f.d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  /* 屏2 功能网格 */
+  .fgrid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 1fr; gap: 12px; flex: 1; min-height: 0; }
+  .fcell { display: flex; flex-direction: column; overflow: hidden; }
+  .fblock {
+    position: absolute; inset: 0; opacity: .5; z-index: 0;
+    background: linear-gradient(140deg, rgba(214,177,90,.15), rgba(214,177,90,0));
+  }
+  .fblock::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(140deg, rgba(232,200,118,.3), rgba(214,177,90,0));
+    opacity: 0; transition: opacity .4s;
+  }
+  .fcell:hover .fblock::after { opacity: 1; }
+  .fct { position: relative; z-index: 1; font-size: 14px; font-weight: 700; color: var(--text-1); margin: 0 0 4px; }
+  .fcd { position: relative; z-index: 1; color: var(--text-3); font-size: 12px; line-height: 1.5; margin: 0; }
+  @media (max-width: 1000px) { .fgrid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 720px) { .fgrid { grid-template-columns: 1fr; } }
+</style>

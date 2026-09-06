@@ -1,0 +1,221 @@
+---
+import Mesh from './Mesh.astro'
+
+interface Props {
+  lang: 'zh' | 'en'
+  docsHref: string
+  ico: (name: string, size?: number) => string
+}
+const { lang, ico } = Astro.props
+const isEn = lang === 'en'
+
+const perfCells = [
+  {
+    i: 'rocket',
+    t: isEn ? 'Create Perf Task' : '创建性能任务',
+    d: isEn ? 'Guided form with token-budget warnings before you run.' : '引导式表单，运行前提供 Token 词元预警。',
+    tags: isEn ? ['Token Budget', 'Case Select'] : ['Token 预算', '用例选择'],
+    preview: 'form' as const,
+  },
+  {
+    i: 'beaker',
+    t: 'Cases',
+    d: isEn ? 'Reusable request-case presets for fast iteration.' : '可复用的请求用例预设，快速迭代。',
+    tags: isEn ? ['Random Gen', 'Length Pair'] : ['随机生成', '长度配对'],
+    preview: 'cases' as const,
+  },
+  {
+    i: 'lineChart',
+    t: 'Real-Time Metrics',
+    d: isEn ? 'Output / TTFT / TPOT / ITL stream live during benchmark.' : '压测期间 Output / TTFT / TPOT / ITL 实时流式刷新。',
+    tags: ['TTFT', 'TPOT'],
+    preview: 'rt' as const,
+  },
+  {
+    i: 'barChart',
+    t: 'Statistics',
+    d: isEn ? 'Request-level compare, log viewer and record export.' : '请求级对比、日志查看与记录导出。',
+    tags: isEn ? ['Compare Runs', 'Export'] : ['运行对比', '导出'],
+    preview: 'stat' as const,
+  },
+]
+---
+
+<section id="perf" class="screen sec">
+  <Mesh density={16} className="screen-mesh" />
+  <div class="sec-in">
+    <div class="sec-panel">
+      <div class="sec-panel-head">
+        <p class="eyebrow">{isEn ? 'Performance' : '性能'}</p>
+        <h2 class="sec-title">{isEn ? 'Performance Testing' : '性能测试'}</h2>
+        <p class="sec-lead">{isEn ? 'Load-test any OpenAI-compatible service with concurrency and threshold modes, streaming every metric live.' : '以并发与阈值双模式对任意 OpenAI 兼容服务施压，实时流式输出所有指标。'}</p>
+      </div>
+      <div class="perf-grid">
+        {perfCells.map((c) => (
+          <div class="pcard flowcell">
+            <div class="virt pv" aria-hidden="true"></div>
+            <div class="pcard-head">
+              <div class="ficon"><Fragment set:html={ico(c.i, 22)} /></div>
+              <h3 class="fct">{c.t}</h3>
+            </div>
+            <p class="fcd">{c.d}</p>
+            {/* 面板预览区域 */}
+            <div class="pcard-preview">
+              {c.preview === 'form' && (
+                <div class="ppv-form">
+                  <div class="ppv-row"><span class="ppv-label">Model</span><span class="ppv-dot"></span><span class="ppv-val">DeepSeek-V4-Flash-0731</span></div>
+                  <div class="ppv-row"><span class="ppv-label">Framework</span><span class="ppv-dot"></span><span class="ppv-val">builtin</span></div>
+                  <div class="ppv-row"><span class="ppv-label">Mode</span><span class="ppv-dot"></span><span class="ppv-val">Concurrency Mode</span></div>
+                  <div class="ppv-row"><span class="ppv-label">Dataset</span><span class="ppv-dot"></span><span class="ppv-val">Random(1024/1024)</span></div>
+                  <div class="ppv-row"><span class="ppv-label">Concurrency</span><span class="ppv-dot"></span><span class="ppv-val">Inf</span></div>
+                  <div class="ppv-row"><span class="ppv-label">Service Status</span><span class="ppv-dot"></span><span class="ppv-val ppv-online">Online</span></div>
+                  <div class="ppv-row"><span class="ppv-label">Service URL</span><span class="ppv-dot"></span><span class="ppv-val">http://127.0.0.1:8001</span></div>
+                </div>
+              )}
+              {c.preview === 'cases' && (
+                <div class="ppv-cases">
+                  {[
+                    { name: 'g1#1024/1024', label: '1024×1024', reqs: '1, 2, 4, 8, 16, 32, 64, 128' },
+                    { name: 'g2#3072/1024', label: '3072×1024', reqs: '1, 2, 4, 8, 16, 32, 64, 128' },
+                    { name: 'g3#256/256', label: '256×256', reqs: '1, 2, 4, 8, 16, 32, 64, 128' },
+                  ].map((cs) => (
+                    <div class="ppv-case">
+                      <div class="ppv-case-head"><span class="ppv-case-label">{cs.label}</span></div>
+                      <div class="ppv-row"><span class="ppv-label">Group</span><span class="ppv-dot"></span><span class="ppv-val">{cs.name}</span></div>
+                      <div class="ppv-row"><span class="ppv-label">Requests</span><span class="ppv-dot"></span><span class="ppv-val">{cs.reqs}</span></div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {c.preview === 'rt' && (
+                <table class="ppv-table ppv-rt">
+                  <thead><tr><th>Metric</th><th class="r">avg</th><th class="r">p99</th></tr></thead>
+                  <tbody>
+                    <tr><td>TTFT (ms)</td><td class="r">413.82</td><td class="r">219.94</td></tr>
+                    <tr><td>TTST (ms)</td><td class="r">413.82</td><td class="r">219.94</td></tr>
+                    <tr><td>TPOT (ms)</td><td class="r">10.84</td><td class="r">10.80</td></tr>
+                    <tr><td>ITL (ms)</td><td class="r">15.86</td><td class="r">0.01</td></tr>
+                    <tr><td>Output TPS/User</td><td class="r">89.02</td><td class="r">87.97</td></tr>
+                    <tr><td>Output TPS</td><td class="r" colspan="2">2857.57</td></tr>
+                    <tr><td>Total TPS</td><td class="r" colspan="2">5714.79</td></tr>
+                  </tbody>
+                </table>
+              )}
+              {c.preview === 'stat' && (
+                <table class="ppv-table ppv-stat">
+                  <thead><tr><th>Req</th><th class="r">Output TPS</th><th class="r">TTFT Mean</th><th class="r">TPOT Mean</th></tr></thead>
+                  <tbody>
+                    <tr><td>1</td><td class="r">93.05</td><td class="r">9.74</td><td class="r">10.74</td></tr>
+                    <tr><td>2</td><td class="r">183.80</td><td class="r">6.09</td><td class="r">10.87</td></tr>
+                    <tr><td>4</td><td class="r">367.04</td><td class="r">21.47</td><td class="r">10.87</td></tr>
+                    <tr><td>8</td><td class="r">743.27</td><td class="r">22.51</td><td class="r">10.73</td></tr>
+                    <tr><td>16</td><td class="r">1466.02</td><td class="r">48.24</td><td class="r">10.82</td></tr>
+                    <tr><td>32</td><td class="r">2857.57</td><td class="r">114.55</td><td class="r">10.89</td></tr>
+                    <tr><td>64</td><td class="r">5707.73</td><td class="r">106.28</td><td class="r">10.85</td></tr>
+                    <tr><td>128</td><td class="r">10999.79</td><td class="r">413.82</td><td class="r">10.84</td></tr>
+                  </tbody>
+                </table>
+              )}
+            </div>
+            <div class="pcard-tags">
+              {c.tags.map((tag) => <span class="ptag">{tag}</span>)}
+              <span class="ptag ptag-more">···</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  /* ── 屏3 性能 ── */
+  .perf-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    flex: 1;
+    grid-auto-rows: 1fr;
+  }
+  .pcard {
+    display: flex; flex-direction: column;
+    padding: 20px;
+    background: transparent;
+    border: 1px solid var(--line);
+  }
+  .pcard::before { display: none; }
+  .pcard:hover { background: rgba(214,177,90,.04); }
+  .pcard-head {
+    display: flex; align-items: center; gap: 10px;
+    position: relative; z-index: 1;
+    flex-shrink: 0;
+    height: 28px; margin-bottom: 4px;
+  }
+  .pcard-head .ficon { margin-bottom: 0; }
+  .pcard-head .fct { margin-bottom: 0; font-size: 13px; }
+  .pcard .fcd {
+    position: relative; z-index: 1;
+    margin: 0; font-size: 11px; line-height: 1.5; color: var(--text-2);
+    flex-shrink: 0;
+    height: 32px; margin-bottom: 8px; overflow: hidden;
+  }
+
+  /* 面板预览区 */
+  .pcard-preview {
+    position: relative; z-index: 1;
+    background: var(--bg-inset); border: 1px solid var(--line);
+    padding: 8px 10px;
+    flex: 1;
+    overflow: hidden;
+  }
+  .pcard:hover .ppv-mv { color: var(--gold-text); }
+  .pcard:hover .ppv-val { color: var(--gold-text); }
+  .pcard:hover .ppv-online { color: #4ade80; }
+  .pcard:hover .ppv-table td.r { color: var(--gold-text); }
+  .pcard:hover .ppv-table td[colspan] { color: var(--gold-text); }
+  :root[data-theme='silver'] .pcard:hover .ppv-mv,
+  :root[data-theme='silver'] .pcard:hover .ppv-val,
+  :root[data-theme='silver'] .pcard:hover .ppv-table td.r,
+  :root[data-theme='silver'] .pcard:hover .ppv-table td[colspan] { color: var(--bs-gold-text); }
+
+  /* 表单预览 */
+  .ppv-form { display: flex; flex-direction: column; gap: 3px; }
+  .ppv-row { display: flex; align-items: baseline; gap: 3px; }
+  .ppv-label { font-size: 9px; color: var(--text-2); white-space: nowrap; flex-shrink: 0; }
+  .ppv-dot { flex: 1; border-bottom: 1px dotted var(--line); min-width: 6px; margin: 0 2px; position: relative; top: -2px; }
+  .ppv-val { font: 600 9px var(--font-mono); color: var(--text-2); white-space: nowrap; flex-shrink: 0; transition: color .16s; }
+  .ppv-online { color: #4ade80 !important; }
+
+  /* Cases 预览 */
+  .ppv-cases { display: flex; flex-direction: column; gap: 6px; }
+  .ppv-case { border-bottom: 1px solid var(--line); padding-bottom: 5px; }
+  .ppv-case:last-child { border-bottom: none; padding-bottom: 0; }
+  .ppv-case-head { margin-bottom: 2px; }
+  .ppv-case-label { font: 700 9px var(--font-mono); color: var(--text-1); letter-spacing: .02em; }
+
+  /* 通用表格预览 */
+  .ppv-table { width: 100%; border-collapse: collapse; font-size: 8.5px; }
+  .ppv-table th { text-align: left; color: var(--text-2); font-weight: 600; padding: 2px 0; border-bottom: 1px solid var(--line); font-size: 8px; letter-spacing: .02em; }
+  .ppv-table th.r, .ppv-table td.r { text-align: right; }
+  .ppv-table td { color: var(--text-2); padding: 2px 0; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: 8.5px; transition: color .16s; }
+  .ppv-table td.r { transition: color .16s; }
+  .ppv-table tr:last-child td { border-bottom: none; }
+  .ppv-rt td[colspan] { font-weight: 600; transition: color .16s; }
+
+  /* 标签 */
+  .pcard-tags {
+    display: flex; flex-wrap: wrap; gap: 4px;
+    position: relative; z-index: 1;
+    margin-top: 8px;
+    flex-shrink: 0;
+  }
+  .ptag {
+    font: 600 9.5px var(--font-mono); letter-spacing: .03em;
+    color: var(--text-2); background: var(--bg-float);
+    border: 1px solid var(--line); padding: 2px 6px;
+  }
+  .virt { position: absolute; inset: 0; z-index: 0; opacity: .35; transition: opacity .4s; }
+  .virt.pv { background: linear-gradient(135deg, rgba(214,177,90,.25), rgba(25,25,28,0) 55%); }
+  .flowcell:hover .virt { opacity: .7; }
+
+  @media (max-width: 1000px) { .perf-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 720px) { .perf-grid { grid-template-columns: 1fr; } }
+</style>

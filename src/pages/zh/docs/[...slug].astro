@@ -1,0 +1,27 @@
+---
+import { getCollection, render } from 'astro:content'
+import DocLayout from '../../../layouts/DocLayout.astro'
+import { buildSidebar } from '../../../lib/sidebar'
+
+export async function getStaticPaths() {
+  const all = await getCollection('docs', (e) => e.id.startsWith('zh/') && !e.id.toLowerCase().endsWith('/readme'))
+  return all.map((entry) => {
+    let rel = entry.id.slice('zh/'.length) // e.g. performance/threshold
+    // 目录 index.md 折叠到目录根路由（/zh/docs/performance/）
+    if (rel.endsWith('/index')) rel = rel.slice(0, -'/index'.length)
+    return { params: { slug: rel }, props: { entry } }
+  })
+}
+
+const { entry } = Astro.props
+const { Content } = await render(entry)
+const slug = (Astro.params.slug || '') as string
+const { groups, flat } = await buildSidebar('zh')
+const idx = flat.findIndex((x) => x.id === entry.id)
+const prev = idx > 0 ? flat[idx - 1] : null
+const next = idx >= 0 && idx < flat.length - 1 ? flat[idx + 1] : null
+---
+
+<DocLayout lang="zh" entry={entry} slug={slug.length ? slug.split('/') : []} groups={groups} prev={prev} next={next}>
+  <Content />
+</DocLayout>

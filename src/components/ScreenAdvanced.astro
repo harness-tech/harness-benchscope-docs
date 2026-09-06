@@ -1,0 +1,59 @@
+---
+import Mesh from './Mesh.astro'
+
+interface Props {
+  lang: 'zh' | 'en'
+  docsHref: string
+  ico: (name: string, size?: number) => string
+}
+const { lang, docsHref, ico } = Astro.props
+const isEn = lang === 'en'
+
+const adTitle = isEn ? 'Advanced' : '高级'
+const adv = [
+  { k: 'CLI', i: 'terminal', href: `${docsHref}cli/`, t: isEn ? 'CLI' : 'CLI', d: isEn ? 'Every web task mirrors a terminal command — script it, CI it.' : '每个 Web 任务都对应一条终端命令——可脚本化、可进 CI。' },
+  { k: 'SESSION', i: 'chat', href: `${docsHref}tools/`, t: isEn ? 'Sessions' : '会话', d: isEn ? 'Interactive streaming sessions with chat & sampling params.' : '交互式流式会话，支持对话与采样参数。' },
+  { k: 'ENGINE', i: 'cpu', href: `${docsHref}tools/`, t: isEn ? 'Engine' : '引擎', d: isEn ? 'Own bench engine + versioned vLLM / SGLang backends.' : '自研 bench 引擎 + 版本化 vLLM / SGLang 后端。' },
+  { k: 'SKILLS', i: 'brain', href: `${docsHref}tools/`, t: isEn ? 'Skills' : '技能', d: isEn ? 'Benchmark & scorer skills drive evaluation.' : '基准与判分技能驱动评测。' },
+  { k: 'MODELS', i: 'zap', href: `${docsHref}tools/`, t: isEn ? 'Models' : '模型', d: isEn ? 'A built-in catalog of tested model identifiers.' : '内置已测模型标识目录。' },
+  { k: 'DATASETS', i: 'database', href: `${docsHref}tools/`, t: isEn ? 'Datasets' : '数据集', d: isEn ? 'MMLU · GSM8K · C-Eval and more, ready to run.' : 'MMLU · GSM8K · C-Eval 等，开箱即用。' },
+]
+---
+
+<section id="advanced" class="screen sec">
+  <Mesh density={16} className="screen-mesh" />
+  <div class="sec-in">
+    <div class="sec-panel">
+      <div class="sec-panel-head">
+        <p class="eyebrow">{adTitle}</p>
+        <h2 class="sec-title">{adTitle}</h2>
+      </div>
+      <div class="agrid2">
+        {adv.map((a) => (
+          <a class="acell flowcell" href={a.href}>
+            <span class="jump" aria-hidden="true"><Fragment set:html={ico('arrowUpRight', 16)} /></span>
+            <div class="abig"><Fragment set:html={ico(a.i, 32)} /></div>
+            <h3 class="fct">{a.k}</h3>
+            <p class="fcd">{a.d}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  /* ── 屏6 高级 ── */
+  .agrid2 { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 12px; flex: 1; min-height: 0; }
+  .acell { display: block; text-decoration: none; }
+  .abig { margin-bottom: 12px; color: var(--text-2); transition: color .16s; }
+  .abig svg { display: block; }
+  .acell:hover .abig { color: var(--gold-text); }
+  .jump { position: absolute; top: 12px; right: 12px; color: var(--gold-light); opacity: 0; transition: opacity .2s; z-index: 2; }
+  .jump svg { display: block; }
+  .acell:hover .jump { opacity: 1; }
+  .acell .fct { letter-spacing: .02em; }
+
+  @media (max-width: 1000px) { .agrid2 { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 720px) { .agrid2 { grid-template-columns: 1fr; } }
+</style>

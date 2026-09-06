@@ -1,0 +1,11 @@
+---
+// 悄悄地在 <head> 注入主题初始化脚本（内联，避免闪烁）
+---
+<script is:inline>
+  ;(function () {
+    var root = document.documentElement
+    var saved = (function () { try { return localStorage.getItem('bs-theme') } catch (e) { return null } })()
+    var theme = saved === 'silver' ? 'silver' : 'black'
+    root.dataset.theme = theme
+  })()
+</script>

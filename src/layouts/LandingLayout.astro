@@ -1,0 +1,21 @@
+---
+import '../styles/global.css'
+import ThemeInit from '../components/ThemeInit.astro'
+
+interface Props { lang: 'zh' | 'en'; title?: string; description?: string }
+const { lang, title = 'BenchScope', description = 'BenchScope —— 大模型推理性能与精度可视化测试平台' } = Astro.props
+---
+<!doctype html>
+<html lang={lang === 'zh' ? 'zh-CN' : 'en-US'} data-theme="black">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/png" href="/images/logo-gold.png" />
+    <ThemeInit />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

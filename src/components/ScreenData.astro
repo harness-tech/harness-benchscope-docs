@@ -1,0 +1,300 @@
+---
+import Mesh from './Mesh.astro'
+
+interface Props {
+  lang: 'zh' | 'en'
+  docsHref: string
+  ico: (name: string, size?: number) => string
+}
+const { lang, ico } = Astro.props
+const isEn = lang === 'en'
+
+const dTitle = isEn ? 'Data & Statistics' : '数据'
+const datTabs = [
+  { k: 'rt', label: 'REALTIME METRICS' },
+  { k: 'stat', label: 'STATISTICS' },
+  { k: 'perf', label: 'PERF DATAS' },
+  { k: 'log', label: 'LOGS' },
+]
+const dFootnote = isEn ? '* Reference data, please take the test results as authoritative.' : '* 参考数据，请以测试数据为准'
+
+const logContent = `============ Serving Benchmark Result (benchscope builtin) ============
+Backend:                                 openai-chat
+Model:                                   /data/disk3/DeepSeek-V4-Flash-0731-W8A8
+Base URL:                                http://127.0.0.1:8001
+Successful requests:                     128
+Failed requests:                         0
+Maximum request concurrency:             128
+Benchmark duration (s):                  11.92
+Total input tokens:                      131058
+Total generated tokens:                  131072
+Request throughput (req/s):              10.74
+Output token throughput (tok/s):         10999.79
+Peak output token throughput (tok/s):    131072.00
+Total token throughput (tok/s):          21998.40
+-------------------- Time to First Token --------------------
+Mean TTFT (ms):                          413.82
+Median TTFT (ms):                        399.28
+P99 TTFT (ms):                           567.13
+-------------------- Time per Output Token --------------------
+Mean TPOT (ms):                          10.84
+Median TPOT (ms):                        10.84
+P99 TPOT (ms):                           10.98
+-------------------- Inter-token Latency --------------------
+Mean ITL (ms):                           15.86
+Median ITL (ms):                         15.60
+P99 ITL (ms):                            34.08
+==============================================================`
+---
+
+<section id="data" class="screen sec">
+  <Mesh density={16} className="screen-mesh" />
+  <div class="sec-in">
+    <div class="sec-panel">
+      <div class="sec-panel-head">
+        <p class="eyebrow">{dTitle}</p>
+        <h2 class="sec-title">{dTitle}</h2>
+      </div>
+      <div class="dpanel">
+        <div class="dtabs" role="tablist">
+          {datTabs.map((tab, i) => (
+            <button class={"dtab" + (i === 0 ? ' active' : '')} data-tab={tab.k} role="tab" type="button">{tab.label}</button>
+          ))}
+          <span class="dtab-foot">{dFootnote}</span>
+        </div>
+
+        <!-- Tab: REALTIME METRICS -->
+        <div class="dbody" data-pane="rt">
+          <table class="dtable rt-full">
+            <thead>
+              <tr><th>Metric</th><th class="r">avg</th><th class="r">min</th><th class="r">max</th><th class="r">p99</th><th class="r">p90</th><th class="r">p50</th><th class="r">std</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>TTFT (ms)</td><td class="r">413.82</td><td class="r">219.94</td><td class="r">577.23</td><td class="r">567.13</td><td class="r">543.36</td><td class="r">399.23</td><td class="r">121.02</td></tr>
+              <tr><td>TTST (ms)</td><td class="r">413.82</td><td class="r">219.94</td><td class="r">577.23</td><td class="r">567.13</td><td class="r">543.36</td><td class="r">399.23</td><td class="r">121.02</td></tr>
+              <tr><td>TPOT (ms)</td><td class="r">10.84</td><td class="r">10.80</td><td class="r">10.98</td><td class="r">10.98</td><td class="r">10.87</td><td class="r">10.84</td><td class="r">0.04</td></tr>
+              <tr><td>Req Latency (ms)</td><td class="r">11504.82</td><td class="r">11332.61</td><td class="r">11640.80</td><td class="r">11640.04</td><td class="r">11632.76</td><td class="r">11574.94</td><td class="r">121.14</td></tr>
+              <tr><td>ITL (ms)</td><td class="r">15.86</td><td class="r">0.01</td><td class="r">152.52</td><td class="r">34.08</td><td class="r">17.65</td><td class="r">15.60</td><td class="r">5.24</td></tr>
+              <tr><td>Output TPS/User</td><td class="r">89.02</td><td class="r">87.97</td><td class="r">90.36</td><td class="r">90.35</td><td class="r">90.29</td><td class="r">88.42</td><td class="r">0.94</td></tr>
+              <tr><td>OSL (tokens)</td><td class="r">1024</td><td class="r">1024</td><td class="r">1024</td><td class="r">1024</td><td class="r">1024</td><td class="r">1024</td><td class="r">0</td></tr>
+              <tr><td>ISL (tokens)</td><td class="r">1023.89</td><td class="r">1023</td><td class="r">1024</td><td class="r">1024</td><td class="r">1024</td><td class="r">1024</td><td class="r">0.31</td></tr>
+              <tr><td>Output TPS</td><td class="r">0</td><td class="r">0</td><td class="r">0</td><td class="r">0</td><td class="r">0</td><td class="r">0</td><td class="r">0</td></tr>
+              <tr><td>Req/sec</td><td class="r">0</td><td class="r">0</td><td class="r">0</td><td class="r">0</td><td class="r">0</td><td class="r">0</td><td class="r">0</td></tr>
+              <tr><td>Requests</td><td class="r">128</td><td class="r na" colspan="6">N/A</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tab: STATISTICS -->
+        <div class="dbody" data-pane="stat" hidden>
+          <div class="stat-grid">
+            {([
+              { title: 'Output token throughput (tok/s)', yMax: 12000, data: [120, 220, 450, 800, 1600, 2800, 3400, 5600, 11000] },
+              { title: 'Peak output token throughput (tok/s)', yMax: 150000, data: [800, 1200, 2100, 5000, 14000, 32000, 38000, 65000, 130000] },
+              { title: 'Total token throughput (tok/s)', yMax: 25000, data: [200, 400, 750, 1600, 3200, 5400, 6800, 11500, 21500] },
+              { title: 'Mean TPOT (ms)', yMin: 10.7, yMax: 11.0, data: [10.74, 10.87, 10.86, 10.73, 10.83, 10.89, 10.98, 10.85, 10.84] },
+              { title: 'Median TPOT (ms)', yMin: 10.7, yMax: 11.0, data: [10.73, 10.87, 10.86, 10.72, 10.82, 10.88, 10.97, 10.84, 10.84] },
+              { title: 'P99 TPOT (ms)', yMin: 10.7, yMax: 11.1, data: [10.74, 10.88, 10.88, 10.73, 10.83, 10.92, 11.04, 10.87, 10.98] },
+            ]).map((chart) => {
+              const W = 300, H = 120, PX = 6, PY = 6, BW = 4, GH = H - PY * 2
+              const yMin = chart.yMin ?? 0
+              const range = chart.yMax - yMin
+              const x = (i: number) => PX + i * ((W - PX - BW) / 8)
+              const y = (v: number) => PY + GH - ((v - yMin) / range) * GH
+              const pts = chart.data.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ')
+              const area = `${x(0).toFixed(1)},${(PY + GH).toFixed(1)} ${pts} ${x(8).toFixed(1)},${(PY + GH).toFixed(1)}`
+              return <div class="stat-chart">
+                <b class="stat-chart-title">{chart.title}</b>
+                <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
+                  {[0, 0.25, 0.5, 0.75, 1].map((f) => {
+                    const yl = PY + GH - f * GH
+                    return <line x1={PX} y1={yl} x2={W - BW} y2={yl} stroke="var(--line)" stroke-width="0.5" stroke-dasharray="4,3" />
+                  })}
+                  <polygon points={area} fill="var(--text-3)" fill-opacity=".06" class="stat-area" />
+                  <polyline points={pts} fill="none" stroke="var(--text-3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="stat-line" />
+                  {chart.data.map((v, i) => <circle cx={x(i)} cy={y(v)} r="2.5" fill="var(--text-3)" class="stat-dot" />)}
+                </svg>
+              </div>
+            })}
+          </div>
+        </div>
+
+        <!-- Tab: PERF DATAS -->
+        <div class="dbody" data-pane="perf" hidden>
+          <table class="dtable perf-full">
+            <thead>
+              <tr>
+                <th class="r">Requests</th>
+                <th class="r">Output<br/>TPS</th>
+                <th class="r">Peak<br/>TPS</th>
+                <th class="r">Total<br/>TPS</th>
+                <th class="r">TTFT<br/>(ms)</th>
+                <th class="r">TPOT<br/>(ms)</th>
+                <th class="r">ITL<br/>(ms)</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                [1,93.05,1024,186.09,9.74,10.74,15.74],
+                [2,183.80,2048,367.61,6.09,10.87,15.94],
+                [4,367.04,4096,734.07,21.47,10.87,15.92],
+                [8,743.27,8192,1486.46,22.51,10.73,15.72],
+                [16,1466.02,16384,2931.85,48.24,10.82,15.86],
+                [32,2857.57,32768,5714.79,114.55,10.89,15.94],
+                [40,3566.68,40960,7132.91,139.39,10.98,16.08],
+                [64,5707.73,65536,11414.51,106.28,10.85,15.88],
+                [128,10999.79,131072,21998.40,413.82,10.84,15.86],
+              ].map((r) => (
+                <tr>
+                  <td class="r">{r[0]}</td>
+                  <td class="r val">{r[1]}</td>
+                  <td class="r">{r[2]}</td>
+                  <td class="r">{r[3]}</td>
+                  <td class="r">{r[4]}</td>
+                  <td class="r">{r[5]}</td>
+                  <td class="r">{r[6]}</td>
+                  <td class="perf-action">Detail</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tab: LOGS -->
+        <div class="dbody" data-pane="log" hidden>
+          <div class="dlogs-inner">
+            <div class="log-left">
+              <pre class="logview">{logContent}</pre>
+            </div>
+            <div class="log-right">
+              <table class="dtable log-files">
+                <thead><tr><th>{isEn ? 'File' : '文件'}</th><th class="r">{isEn ? 'Size' : '大小'}</th><th></th></tr></thead>
+                <tbody>
+                  {[
+                    { n: 'DeepSeek-V4-Flash-0731-W8A8_1024x1024...', s: '19.0 KB' },
+                    { n: 'DeepSeek-V4-Flash-0731-W8A8_X.log', s: '738 B' },
+                    { n: 'DeepSeek-V4-Flash-0731-W8A8_X_p99.log', s: '520 B' },
+                    { n: 'benchmark-050926.xlsx', s: '7.5 KB' },
+                    { n: 'perf_0905-191350_0905191350.log', s: '19.0 KB' },
+                    { n: 'run.json', s: '23.4 KB' },
+                  ].map((r) => (
+                    <tr>
+                      <td class="fname">{r.n}</td>
+                      <td class="val r">{r.s}</td>
+                      <td class="actions">
+                        <button class="iconbtn" title="View" type="button"><Fragment set:html={ico('eye', 14)} /></button>
+                        <button class="iconbtn" title="Download" type="button"><Fragment set:html={ico('download', 14)} /></button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  /* ── 屏5 数据 ── */
+  .dpanel { background: var(--bg-surface); border: 1px solid var(--line); flex: 1; display: flex; flex-direction: column; min-height: 0; }
+  .dtabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); padding: 0; flex-shrink: 0; }
+  .dtab {
+    background: none; border: 0; color: var(--text-3); font-size: 11.5px; font-weight: 700;
+    padding: 12px 18px; cursor: pointer; border-bottom: 2px solid transparent;
+    letter-spacing: .08em; text-transform: uppercase; font-family: var(--font-mono);
+    transition: color .16s, border-color .16s;
+  }
+  .dtab:hover { color: var(--gold-text); }
+  .dtab.active { color: var(--gold-text); border-bottom-color: var(--gold); }
+  .dtab-foot {
+    margin-left: auto; font-size: 9.5px; color: var(--text-3);
+    font-family: var(--font-mono); letter-spacing: .02em;
+    padding: 0 10px; align-self: center; white-space: nowrap; opacity: .7;
+  }
+  .dbody { padding: 16px; flex: 1; overflow: auto; min-height: 0; }
+  .dbody[data-pane="rt"] { overflow: visible; }
+
+  /* RT 表格 */
+  .rt-full { font-size: 11px; }
+  .rt-full th { padding: 3px 5px; font-size: 9px; font-weight: 600; letter-spacing: .03em; }
+  .rt-full td { padding: 2px 5px; font-size: 10.5px; font-family: var(--font-mono); }
+  .rt-full td:first-child { text-align: left; font-weight: 600; color: var(--text-1); font-family: var(--font-body); font-size: 11px; }
+  .rt-full td.r { color: var(--text-2); }
+  .rt-full .na { color: var(--text-3); text-align: right; font-style: italic; }
+  .rt-full td.r:hover { color: var(--gold-text); }
+  .rt-full th.r:hover { color: var(--gold-text); }
+  .rt-full tbody tr:hover td { background: rgba(214,177,90,.06); }
+  .rt-full tbody tr:hover td:first-child { background: transparent; }
+
+  /* 通用表格 */
+  .dtable { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .dtable th { text-align: left; color: var(--text-1); font-weight: 650; padding: 7px 10px; border-bottom: 1px solid var(--line-strong); font-size: 11.5px; }
+  .dtable td { color: var(--text-2); padding: 7px 10px; border-bottom: 1px solid var(--line); }
+  .dtable td.val { text-align: right; font: 600 12.5px var(--font-mono); color: var(--gold-text); }
+  .dtable .fname { font: 600 12px var(--font-mono); }
+
+  /* PERF DATAS 表格 */
+  .perf-full { font-size: 11px; table-layout: fixed; width: 100%; }
+  .perf-full th { padding: 4px 5px; font-size: 9px; font-weight: 600; line-height: 1.3; text-align: right; color: var(--text-2); border-bottom: 1px solid var(--line-strong); letter-spacing: .02em; }
+  .perf-full th:first-child { text-align: right; }
+  .perf-full td { padding: 3px 5px; font-size: 10.5px; font-family: var(--font-mono); color: var(--text-2); border-bottom: 1px solid var(--line); transition: color .15s; text-align: right; }
+  .perf-full td.val { color: var(--gold-text); font-weight: 600; }
+  .perf-full td.r { text-align: right; }
+  .perf-full td:hover { color: var(--gold-text); }
+  .perf-full tr:hover td { background: rgba(214,177,90,.04); }
+  .perf-full tr:hover td:first-child { background: transparent; }
+  .perf-action { font-size: 9px; color: var(--text-3); font-family: var(--font-body); text-align: center !important; cursor: pointer; transition: color .15s; }
+  .perf-action:hover { color: var(--gold-text); }
+
+  /* Statistics 折线图 */
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr 1fr;
+    gap: 6px; height: 100%;
+  }
+  .stat-chart {
+    background: var(--bg-inset); border: 1px solid var(--line);
+    padding: 6px 6px 4px;
+    display: flex; flex-direction: column;
+    cursor: crosshair;
+  }
+  .stat-chart svg { width: 100%; flex: 1; min-height: 0; display: block; }
+  .stat-chart-title { display: block; font-size: 8.5px; font-weight: 600; color: var(--text-3); margin-bottom: 3px; font-family: var(--font-mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stat-line { transition: stroke .2s; }
+  .stat-dot { transition: fill .2s; }
+  .stat-area { transition: fill .2s, fill-opacity .2s; }
+  .stat-chart:hover .stat-line { stroke: var(--gold); }
+  .stat-chart:hover .stat-dot { fill: var(--gold); }
+  .stat-chart:hover .stat-area { fill: var(--gold); fill-opacity: .1; }
+
+  /* Logs */
+  .dlogs-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; height: 100%; min-height: 0; }
+  .log-left { display: flex; flex-direction: column; min-height: 0; }
+  .logview {
+    background: var(--bg-inset); border: 1px solid var(--line);
+    padding: 10px; font: 10px/1.6 var(--font-mono); color: var(--text-2);
+    overflow-y: auto; overflow-x: hidden; margin: 0; white-space: pre-wrap; word-break: break-all;
+    flex: 1; min-height: 0;
+  }
+  .log-right { display: flex; flex-direction: column; min-height: 0; }
+  .log-right table { flex: 1; }
+  .log-files { font-size: 10px; }
+  .log-files th { padding: 2px 5px; font-size: 8.5px; font-weight: 600; color: var(--text-3); }
+  .log-files th.r { text-align: right; }
+  .log-files td { padding: 2px 5px; font-size: 9.5px; line-height: 1.4; color: var(--text-2); }
+  .log-files td.val { font: 600 9.5px var(--font-mono); color: var(--text-2); text-align: right; }
+  .log-files .fname { font-size: 9.5px; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .actions { text-align: right; white-space: nowrap; }
+  .iconbtn { background: none; border: 1px solid var(--line); color: var(--text-3); width: 26px; height: 26px; cursor: pointer; margin-left: 4px; display: inline-flex; align-items: center; justify-content: center; }
+  .iconbtn:hover { color: var(--gold-text); border-color: var(--gold-line); }
+  .iconbtn svg { display: block; }
+
+  @media (max-width: 1000px) {
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .dlogs-inner { grid-template-columns: 1fr; }
+  }
+</style>

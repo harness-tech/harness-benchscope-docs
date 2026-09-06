@@ -1,0 +1,175 @@
+---
+import Base from './Base.astro'
+import SiteFooter from '../components/SiteFooter.astro'
+import { LABELS } from '../lib/sidebar'
+
+interface LinkItem { href: string; title: string }
+interface Group { label: string; children: LinkItem[] }
+interface Props {
+  lang: 'zh' | 'en'
+  entry: { id: string; data: { title?: string; description?: string } }
+  slug: string[]
+  groups: Group[]
+  prev: LinkItem | null
+  next: LinkItem | null
+}
+
+const { lang, entry, slug, groups, prev, next } = Astro.props
+const title = entry.data.title || (slug.length ? slug[slug.length - 1].replace(/[-_]/g, ' ') : '文档')
+const description = entry.data.description
+const currentRel = entry.id.slice(`${lang}/`.length)
+// index 页（如 performance/index）折叠回目录根路由
+const currentRelNorm = currentRel.replace(/\/index$/, '')
+const currentRoutes = [
+  `/${lang}/docs/${currentRel}`,
+  `/${lang}/docs/${currentRel}/`,
+  `/${lang}/docs/${currentRelNorm}`,
+  `/${lang}/docs/${currentRelNorm}/`,
+]
+
+// 面包屑：含语言前缀的路径，取顶层 section
+const parts = entry.id.split('/') // [zh, <section>, ...]
+const sectionKey = parts.length > 1 ? parts[1] : ''
+const sectionLabel = sectionKey && LABELS[sectionKey] ? LABELS[sectionKey][lang] : ''
+const crumb = ['首页', '文档']
+const enCrumb = ['Home', 'Docs']
+const crumbArr = lang === 'zh' ? crumb : enCrumb
+---
+
+<Base lang={lang} path={`/${lang}/docs/`} title={`${title} | BenchScope Docs`} description={description} mode="docs">
+  <div class="doc-shell">
+    <aside class="sidebar">
+      <div class="sidebar-inner">
+        {groups.map((g) =>
+          g.children.length ? (
+            <div class="sgroup">
+              <p class="sgroup-label">{g.label}</p>
+              {g.children.map((c) => (
+                <a class:list={{ 's-link': true, active: currentRoutes.includes(c.href) }} href={c.href}>{c.title}</a>
+              ))}
+            </div>
+          ) : null
+        )}
+      </div>
+    </aside>
+
+    <main class="article">
+      <div class="crumbbar">
+        <a class="crumb crumb-link" href={`/${lang}/`}>{crumbArr[0]}</a>
+        <span class="crumb-sep">/</span>
+        <a class="crumb crumb-link" href={`/${lang}/docs/`}>{crumbArr[1]}</a>
+        {sectionLabel && (
+          <>
+            <span class="crumb-sep">/</span>
+            <a class="crumb crumb-link" href={`/${lang}/docs/${sectionKey}/`}>{sectionLabel}</a>
+          </>
+        )}
+        <span class="crumb-sep">/</span>
+        <span class="crumb crumb-current">{title}</span>
+      </div>
+
+      <article class="prose">
+        <slot />
+      </article>
+
+      <div class="doc-meta">
+        <span class="meta-item">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          <span>{lang === 'zh' ? '创建' : 'Created'}: 2026-09-05</span>
+        </span>
+        <span class="meta-dot">·</span>
+        <span class="meta-item">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4.5V9h4.5"/></svg>
+          <span>{lang === 'zh' ? '更新' : 'Updated'}: 2026-09-05</span>
+        </span>
+      </div>
+
+      <nav class="pagenav">
+        {prev && <a class="pn-prev" href={prev.href}>← {prev.title}</a>}
+        {next && <a class="pn-next" href={next.href}>{next.title} →</a>}
+      </nav>
+    </main>
+
+    <aside class="toc" id="tocCol"></aside>
+  </div>
+
+  <SiteFooter lang={lang} />
+</Base>
+
+<script>
+  const article = document.querySelector('.prose')
+  const toc = document.getElementById('tocCol')
+  if (article && toc) {
+    const heads = article.querySelectorAll('h2, h3')
+    if (heads.length) {
+      const nav = document.createElement('nav')
+      heads.forEach((h) => {
+        if (!h.id) h.id = h.textContent!.trim().toLowerCase().replace(/\s+/g, '-')
+        const a = document.createElement('a')
+        a.textContent = h.textContent || ''
+        a.href = '#' + h.id
+        a.className = h.tagName === 'H3' ? 'toc-link lv2' : 'toc-link lv1'
+        nav.appendChild(a)
+      })
+      toc.appendChild(nav)
+    }
+  }
+</script>
+
+<style>
+  .doc-shell {
+    display: grid;
+    grid-template-columns: minmax(180px, 240px) minmax(0, 1fr) minmax(160px, 200px);
+    gap: 28px;
+    max-width: 76rem;
+    margin: 0 auto;
+    padding: 30px 24px 80px;
+    width: 100%;
+  }
+  .sidebar { position: sticky; top: 118px; align-self: start; max-height: calc(100vh - 130px); overflow: auto; padding-right: 6px; }
+  .sgroup { margin-bottom: 22px; }
+  .sgroup-label { font: 750 12px / 1.2 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-3); margin: 0 0 10px; }
+  .s-link { display: block; padding: 5px 8px; border-radius: 6px; color: var(--text-2); font-size: 13.5px; text-decoration: none; }
+  .s-link:hover { color: var(--gold-text); }
+  .s-link.active { color: var(--gold-text); background: var(--bs-gold-soft); font-weight: 650; }
+  .article { min-width: 0; }
+
+  .crumbbar {
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .crumb { color: var(--text-3); text-decoration: none; }
+  .crumb-link:hover { color: var(--gold-text); }
+  .crumb-current { color: var(--text-1); font-weight: 600; }
+  .crumb-sep { color: var(--text-3); opacity: .7; }
+
+  .doc-meta {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--line);
+    color: var(--text-3); font-size: 13px; font: 500 12.5px var(--font-mono);
+  }
+  .meta-item { display: inline-flex; align-items: center; gap: 6px; color: var(--text-3); }
+  .meta-item svg { color: var(--gold); }
+  .meta-dot { color: var(--text-3); }
+
+  .toc { position: sticky; top: 118px; align-self: start; max-height: calc(100vh - 130px); overflow: auto; }
+  .toc nav { border-left: 1px solid var(--line); padding-left: 12px; }
+  .toc-link { display: block; color: var(--text-3); font-size: 12.5px; line-height: 1.6; padding: 2px 4px; text-decoration: none; }
+  .toc-link.lv1 { font-weight: 600; color: var(--text-2); }
+  .toc-link.lv2 { padding-left: 14px; }
+  .toc-link:hover { color: var(--gold-text); }
+
+  .pagenav { display: flex; justify-content: space-between; gap: 16px; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); }
+  .pn-prev, .pn-next { color: var(--text-2); font-size: 14px; text-decoration: none; }
+  .pn-prev:hover, .pn-next:hover { color: var(--gold-text); }
+
+  @media (max-width: 1000px) {
+    .toc { display: none; }
+    .doc-shell { grid-template-columns: minmax(180px, 220px) minmax(0, 1fr); }
+  }
+  @media (max-width: 760px) {
+    .sidebar { display: none; }
+    .doc-shell { grid-template-columns: 1fr; }
+  }
+</style>

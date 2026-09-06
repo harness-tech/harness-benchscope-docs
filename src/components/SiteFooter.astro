@@ -1,0 +1,202 @@
+---
+interface Props { lang: 'zh' | 'en'; version?: string }
+const { lang, version = '1.0.0.dev' } = Astro.props
+const other = lang === 'zh' ? 'en' : 'zh'
+
+let url = Astro.url.pathname
+const base = lang === 'zh' ? '/zh' : '/en'
+const rest = url.startsWith(base) ? url.slice(base.length) : url
+const otherHref = `/${other}${rest === '' ? '/' : rest}`
+
+const links = [
+  { name: 'HarnessTek', url: 'https://www.harness-tech.com' },
+  { name: 'BenchScope', url: 'https://github.com/LABELNET/benchscope' },
+  { name: 'BenchScope Docs', url: 'https://github.com/harness-tech/harness-benchscope-docs' },
+]
+const copyright = '© 2026 HarnessTek. All rights reserved.'
+---
+
+<footer class="site-footer">
+  <!-- Row 1: 4列 -->
+  <div class="footer-row1">
+    <!-- Col 1: Logo + 介绍 -->
+    <div class="fc fc-brand">
+      <a class="flogo" href={`/${lang}/`}>
+        <img class="flogo-img" src="/images/logo-gold.png" alt="BenchScope" />
+        <span class="flogo-name">BenchScope</span>
+      </a>
+      <p class="fintro">BenchScope is an open‑source LLM inference benchmarking platform built with Harness Coding.</p>
+    </div>
+
+    <!-- Col 2: 超链接（左对齐，图标=文字色，hover 金色） -->
+    <div class="fc fc-links">
+      {links.map((l, i) => (
+        <a class="flink" href={l.url} target="_blank" rel="noopener">
+          {i === 0 ? (
+            /* HarnessTek: 网站 Logo（预染色，13px，无 padding） */
+            <img class="flink-logo" src="/images/logo-ht-dark.png" alt="" />
+          ) : (
+            /* BenchScope / Docs: GitHub 图标 */
+            <svg class="flink-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+          )}
+          <span>{l.name}</span>
+        </a>
+      ))}
+    </div>
+
+    <!-- Col 3: 空白（弹性撑开中间空间） -->
+    <div class="fc fc-spacer"></div>
+
+    <!-- Col 4: 语言 + 版本（右对齐，自上而下） -->
+    <div class="fc fc-col4">
+      <select class="lang-select" onchange="window.location.href=this.value" aria-label="Language">
+        <option value={lang === 'zh' ? url : otherHref} selected={lang === 'zh'}>🇨🇳 简体中文</option>
+        <option value={lang === 'en' ? url : otherHref} selected={lang === 'en'}>🇬🇧 English</option>
+      </select>
+      <span class="fc-col4-gap"></span>
+      <p class="ver-line">BenchScope <span class="ver-num">v1.1.1</span></p>
+      <p class="ver-line">BenchScope Docs <span class="ver-num">v{version}</span></p>
+    </div>
+  </div>
+
+  <!-- Row 2: 版权靠右，上下居中 -->
+  <div class="footer-row2">
+    <p class="copyright">{copyright}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--line-strong);
+    background: var(--bg-surface);
+    height: 208px;             /* nav 52px × 4 */
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Row 1: 占 4/5 ── */
+  .footer-row1 {
+    flex: 4 1 0;
+    display: flex;
+    align-items: center;       /* 所有列上下居中 */
+    gap: 24px;
+    max-width: 76rem;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ── Row 2: 占 1/5 ── */
+  .footer-row2 {
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;       /* 上下居中 */
+    justify-content: flex-end; /* 靠右 */
+    max-width: 76rem;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 28px;
+    border-top: 1px solid var(--line);
+  }
+  .copyright {
+    color: var(--ft-text);
+    font-size: 11px;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  /* ── Col 1: Logo + 介绍 ── */
+  .fc-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .flogo { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--ft-text); }
+  .flogo-img { width: 32px; height: 32px; border-radius: 6px; }
+  .flogo-name { font-size: 15px; font-weight: 750; letter-spacing: -.01em; }
+  .fintro { color: var(--ft-text); font-size: 11.5px; line-height: 1.6; margin: 0; max-width: 32ch; }
+
+  /* ── Col 2: 超链接 ── */
+  .fc-links {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;   /* 左对齐 */
+    flex-shrink: 0;
+  }
+  .flink {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ft-text);     /* footer 专用暗色 */
+    font-size: 12.5px;
+    text-decoration: none;
+    transition: color .16s;
+  }
+  .flink-ico {
+    color: var(--ft-text);     /* 与文字一致 */
+    flex-shrink: 0;
+    transition: color .16s;
+  }
+  .flink-logo {
+    width: 13px; height: 12px; object-fit: contain;
+    flex-shrink: 0;
+    transition: none;
+  }
+  /* 黑色主题：灰色 logo（默认），hover 金色 */
+  :root[data-theme='black'] .flink-logo { content: url("/images/logo-ht-dark.png"); }
+  :root[data-theme='black'] .flink:hover .flink-logo { content: url("/images/logo-ht-gold.png"); }
+  /* 银色主题：深灰 logo（默认），hover 金色 */
+  :root[data-theme='silver'] .flink-logo { content: url("/images/logo-ht-light.png"); }
+  :root[data-theme='silver'] .flink:hover .flink-logo { content: url("/images/logo-ht-gold.png"); }
+  .flink:hover { color: var(--gold-text); }
+  .flink:hover .flink-ico { color: var(--gold-text); }
+
+  /* ── Col 3: 空白弹性撑开 ── */
+  .fc-spacer { flex: 1; }
+
+  /* ── Col 4: 语言 + 版本 ── */
+  .fc-col4 {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-end;     /* 右对齐 */
+    flex-shrink: 0;
+  }
+  .fc-col4-gap { height: 8px; }
+  .lang-select {
+    background: var(--bg-inset);
+    color: var(--ft-text);
+    border: 1px solid var(--line-strong);
+    padding: 5px 8px;
+    font-size: 12px;
+    font-family: var(--font-body);
+    cursor: pointer;
+    appearance: auto;
+  }
+  .lang-select:hover { border-color: var(--gold-line); }
+  .ver-line {
+    color: var(--ft-text);
+    font-size: 11px;
+    margin: 0;
+    font-family: var(--font-mono);
+  }
+  .ver-num {
+    color: var(--ft-text);
+    font-weight: 600;
+    font-size: 10.5px;         /* 更小 */
+  }
+
+  /* ── 响应式 ── */
+  @media (max-width: 880px) {
+    .site-footer { height: auto; min-height: 208px; }
+    .footer-row1 { flex-wrap: wrap; }
+    .fc-spacer { display: none; }
+    .fc-col4 { align-items: flex-start; }
+  }
+  @media (max-width: 560px) {
+    .footer-row1 { flex-direction: column; align-items: stretch; }
+    .fc-links, .fc-col4 { align-items: flex-start; }
+  }
+</style>

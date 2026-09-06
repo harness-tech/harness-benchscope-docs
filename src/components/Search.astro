@@ -1,0 +1,102 @@
+---
+import MiniSearch from 'minisearch'
+
+interface Props { lang: 'zh' | 'en' }
+const { lang } = Astro.props
+const placeholder = lang === 'zh' ? '搜索文档…' : 'Search docs…'
+---
+
+<button class="search-btn" id="searchBtn" type="button" aria-label="Search">
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line></svg>
+</button>
+
+<div class="search-modal" id="searchModal" hidden>
+  <div class="search-box">
+    <div class="search-input-row">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line></svg>
+      <input id="searchInput" type="text" placeholder={placeholder} autocomplete="off" />
+      <button id="searchClose" class="search-close" type="button">×</button>
+    </div>
+    <ul id="searchResults" class="search-results"></ul>
+  </div>
+</div>
+
+<script>
+  import MiniSearch from 'minisearch'
+
+  const lang = { ...Astro.props.lang }
+  const btn = document.getElementById('searchBtn')
+  const modal = document.getElementById('searchModal')
+  const input = document.getElementById('searchInput') as HTMLInputElement
+  const results = document.getElementById('searchResults')
+  const close = document.getElementById('searchClose')
+
+  if (btn && modal) {
+    const modalN = modal
+    const ms = new MiniSearch({
+      fields: ['title', 'body'],
+      storeFields: ['title', 'id'],
+      searchOptions: { prefix: true, fuzzy: 0.2 },
+    })
+    let ready = false
+
+    async function ensureIndex() {
+      if (ready) return
+      const res = await fetch('/search-index.json')
+      const data = await res.json()
+      ms.addAll(data.entries.filter((e: any) => e.lang === lang))
+      ready = true
+    }
+
+    function open() {
+      ensureIndex()
+      modalN.hidden = false
+      input?.focus()
+    }
+    function closeModal() {
+      modalN.hidden = true
+      input!.value = ''
+      results!.innerHTML = ''
+    }
+
+    btn.addEventListener('click', open)
+    close?.addEventListener('click', closeModal)
+    modalN.addEventListener('click', (e) => { if (e.target === modal) closeModal() })
+    input?.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal() })
+
+    input?.addEventListener('input', () => {
+      const q = input.value.trim()
+      if (!q) { results!.innerHTML = ''; return }
+      const hits = ms.search(q, { prefix: true, fuzzy: 0.2 })
+      results!.innerHTML = hits
+        .slice(0, 10)
+        .map((h: any) => `<li><a href="${h.id}">${h.title}</a></li>`)
+        .join('') || '<li class="empty">（无结果）</li>'
+    })
+  }
+</script>
+
+<style>
+  .search-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--bs-line);
+    background: transparent; color: var(--os-ink-300); cursor: pointer;
+    transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+  }
+  .search-btn:hover { color: var(--bs-gold-text); border-color: #c8a24a66; background: #c8a24a1a; }
+  .search-modal {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,.5); display: flex; align-items: flex-start; justify-content: center; padding-top: 80px;
+  }
+  .search-modal[hidden] { display: none; }
+  .search-box { width: min(520px, 90vw); background: var(--os-ink-900); border: 1px solid var(--bs-line); border-radius: 12px; box-shadow: var(--shadow-lg); overflow: hidden; }
+  .search-input-row { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--bs-line); color: var(--os-ink-500); }
+  .search-input-row input { flex: 1; background: transparent; border: 0; outline: 0; color: var(--os-ink-50); font: 15px/1.4 var(--font-body); }
+  .search-input-row input::placeholder { color: var(--os-ink-500); }
+  .search-close { border: 0; background: none; color: var(--os-ink-500); font-size: 20px; cursor: pointer; line-height: 1; }
+  .search-close:hover { color: var(--bs-gold-text); }
+  .search-results { max-height: 320px; overflow: auto; padding: 6px; list-style: none; }
+  .search-results li a { display: block; padding: 8px 10px; border-radius: 7px; color: var(--os-ink-300); font-size: 14px; text-decoration: none; }
+  .search-results li a:hover { background: #c8a24a1a; color: var(--bs-gold-text); }
+  .search-results li.empty { padding: 12px 10px; color: var(--os-ink-500); font-size: 13px; }
+</style>

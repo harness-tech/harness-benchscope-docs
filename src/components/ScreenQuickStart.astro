@@ -1,0 +1,269 @@
+---
+import Mesh from './Mesh.astro'
+
+interface Props {
+  lang: 'zh' | 'en'
+  docsHref: string
+  ico: (name: string, size?: number) => string
+}
+const { lang, ico } = Astro.props
+const isEn = lang === 'en'
+
+const qTitle = isEn ? 'Quick Start' : '快速开始'
+const qSub = isEn ? 'Up and running in 30 seconds' : '30 秒上手'
+const steps = [
+  { k: 'prompt', i: 'send', label: 'PROMPT', hint: isEn ? 'AI auto-install & use' : 'AI 自动安装和使用' },
+  { k: 'install', i: 'package', label: 'INSTALL', hint: 'pip install benchscope' },
+  { k: 'start', i: 'play', label: 'START', hint: 'benchscope --port 8080' },
+  { k: 'web', i: 'globe', label: 'WEB', hint: 'http://127.0.0.1:8080' },
+  { k: 'cli', i: 'terminal', label: 'CLI', hint: 'benchscope perf / eval' },
+]
+const qInstallTitle = isEn ? 'Step 1 · Install' : '第 1 步 · 安装'
+const qInstallText = isEn ? 'Install from PyPI with a single command, then verify your Python version.' : '一条命令从 PyPI 安装，并确认你的 Python 版本。'
+const qInstallCmd = 'pip install benchscope'
+const qPyPi = isEn ? 'pypi.org/project/benchscope' : 'pypi.org/project/benchscope'
+const qStartTitle = isEn ? 'Step 2 · Start' : '第 2 步 · 启动'
+const qStartText = isEn ? 'Launch the full web platform. Options let you pin the port and open the browser.' : '启动完整 Web 平台。可用参数固定端口与是否打开浏览器。'
+const qStartCmd = 'benchscope --port 8080 --no-browser'
+const startOpts = isEn
+  ? [{ f: '--port', d: 'Server port (default 8080)' }, { f: '--host', d: 'Bind host (default 0.0.0.0)' }, { f: '--no-browser', d: 'Do not auto-open the browser' }, { f: '--data-dir', d: 'Data root (~/.benchscope)' }, { f: '--log-level', d: 'Logging verbosity' }]
+  : [{ f: '--port', d: '服务端口（默认 8080）' }, { f: '--host', d: '绑定地址（默认 0.0.0.0）' }, { f: '--no-browser', d: '不自动打开浏览器' }, { f: '--data-dir', d: '数据根目录（~/.benchscope）' }, { f: '--log-level', d: '日志级别' }]
+const qTestText = isEn ? 'Open the web UI, or drive everything from the terminal with the same engine.' : '打开 Web 界面，或使用同一引擎在终端完成全部测试。'
+---
+
+<section id="quickstart" class="screen sec">
+  <Mesh density={16} className="screen-mesh" />
+  <div class="sec-in">
+    <div class="sec-panel">
+      <div class="sec-panel-head">
+        <p class="eyebrow">{qTitle}</p>
+        <h2 class="sec-title">{qSub}</h2>
+      </div>
+      <div class="qwrap">
+        <div class="qsteps">
+          {steps.map((s, i) => (
+            <button class={"qstep" + (i === 0 ? ' active' : '')} data-step={s.k} type="button">
+              <span class="q-ico"><Fragment set:html={ico(s.i, 16)} /></span>
+              <span class="q-label">{s.label}</span>
+              <code class="q-hint">{s.hint}</code>
+            </button>
+          ))}
+        </div>
+        <div class="qcontent">
+          <Mesh density={16} className="qcontent-mesh" />
+          <!-- Prompt -->
+          <div class="qpane qpane-prompt" data-step="prompt" hidden>
+            <div class="prompt-center">
+              <p class="prompt-text">{isEn
+                ? 'Install BenchScope — an open-source LLM inference benchmarking platform. Run pip install benchscope, start with benchscope --port 8080, then test your model with benchscope perf or benchscope eval. View results in the web UI or terminal.'
+                : '安装 BenchScope —— 开源大模型推理基准测试平台。运行 pip install benchscope，使用 benchscope --port 8080 启动，然后用 benchscope perf 或 benchscope eval 测试你的模型。在 Web 界面或终端查看结果。'
+              }</p>
+              <button class="prompt-copy" id="promptCopy" type="button">
+                <Fragment set:html={ico('checkCircle', 13)} />
+                <span>{isEn ? 'Copy Prompt' : '复制提示词'}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Install -->
+          <div class="qpane" data-step="install">
+            <h3 class="pan-title">{qInstallTitle}</h3>
+            <p class="pan-lead">{qInstallText}</p>
+            <pre class="cmd"><span class="cmdp">$</span> <span class="cmdc">{qInstallCmd}</span></pre>
+            <div class="install-meta">
+              <a class="pypi-link" href="https://pypi.org/project/benchscope/" target="_blank" rel="noopener"><Fragment set:html={ico('link', 13)} /><span>{qPyPi}</span></a>
+              <div class="py-ver-list">
+                {['Python 3.9', 'Python 3.10', 'Python 3.11'].map((v) => (
+                  <span class="py-ver-tag"><Fragment set:html={ico('checkCircle', 10)} />{v}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <!-- Start -->
+          <div class="qpane" data-step="start" hidden>
+            <h3 class="pan-title">{qStartTitle}</h3>
+            <p class="pan-lead">{qStartText}</p>
+            <pre class="cmd"><span class="cmdp">$</span> <span class="cmdc">{qStartCmd}</span></pre>
+            <table class="dtable opts"><thead><tr><th>{isEn ? 'Option' : '参数'}</th><th>{isEn ? 'Description' : '说明'}</th></tr></thead>
+              <tbody>{startOpts.map((o) => <tr><td class="fname mon">{o.f}</td><td>{o.d}</td></tr>)}</tbody>
+            </table>
+          </div>
+
+          <!-- Web -->
+          <div class="qpane" data-step="web" hidden>
+            <h3 class="pan-title">{isEn ? 'Step 3 · Web' : '第 3 步 · Web'}</h3>
+            <p class="pan-lead pan-lead-full">{qTestText}</p>
+            <div class="browser-mock">
+              <div class="browser-bar">
+                <span class="browser-dots"><i></i><i></i><i></i></span>
+                <span class="browser-url"><Fragment set:html={ico('link', 11)} /> http://127.0.0.1:8080</span>
+              </div>
+              <div class="browser-body">
+                <img src="/images/benchscope-dashboard.png" alt="BenchScope dashboard" loading="lazy" />
+              </div>
+            </div>
+          </div>
+
+          <!-- CLI -->
+          <div class="qpane" data-step="cli" hidden>
+            <h3 class="pan-title">{isEn ? 'Step 4 · CLI' : '第 4 步 · CLI'}</h3>
+            <p class="pan-lead">{isEn ? 'Run benchmarks directly from the terminal.' : '直接在终端运行基准测试。'}</p>
+            <div class="cli-tabs" role="tablist">
+              <button class="cli-tab active" data-clitab="perf" type="button">Perf</button>
+              <button class="cli-tab" data-clitab="eval" type="button">Eval</button>
+            </div>
+            <div class="cli-pane" data-clitab="perf">
+              <pre class="cmd"><span class="cmdp">$</span> <span class="cmdc">benchscope perf --base-url=http://127.0.0.1:8001 --concurrency=1,2,4,8,16,32 --input-len=1024 --output-len=1024 --num-prompts=100</span></pre>
+              <table class="dtable opts"><thead><tr><th>{isEn ? 'Option' : '参数'}</th><th>{isEn ? 'Description' : '说明'}</th></tr></thead>
+                <tbody>
+                  <tr><td class="fname mon">--base-url</td><td>{isEn ? 'OpenAI-compatible API endpoint' : 'OpenAI 兼容 API 地址'}</td></tr>
+                  <tr><td class="fname mon">--concurrency</td><td>{isEn ? 'Comma-separated concurrency levels' : '逗号分隔的并发数列表'}</td></tr>
+                  <tr><td class="fname mon">--input-len</td><td>{isEn ? 'Input token length per request' : '每请求输入 Token 长度'}</td></tr>
+                  <tr><td class="fname mon">--output-len</td><td>{isEn ? 'Max output token length' : '最大输出 Token 长度'}</td></tr>
+                  <tr><td class="fname mon">--num-prompts</td><td>{isEn ? 'Number of requests per concurrency level' : '每个并发级别的请求数'}</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="cli-pane" data-clitab="eval" hidden>
+              <pre class="cmd"><span class="cmdp">$</span> <span class="cmdc">benchscope eval --base-url=http://127.0.0.1:8001 --dataset=mmlu --num-samples=100</span></pre>
+              <table class="dtable opts"><thead><tr><th>{isEn ? 'Option' : '参数'}</th><th>{isEn ? 'Description' : '说明'}</th></tr></thead>
+                <tbody>
+                  <tr><td class="fname mon">--base-url</td><td>{isEn ? 'OpenAI-compatible API endpoint' : 'OpenAI 兼容 API 地址'}</td></tr>
+                  <tr><td class="fname mon">--dataset</td><td>{isEn ? 'Evaluation dataset (mmlu / gsm8k / c-eval ...)' : '评测数据集（mmlu / gsm8k / c-eval ...）'}</td></tr>
+                  <tr><td class="fname mon">--num-samples</td><td>{isEn ? 'Number of samples to evaluate' : '评测样本数量'}</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  /* ── 屏7 快速开始 ── */
+  .qwrap { display: grid; grid-template-columns: 1fr 3fr; gap: 14px; flex: 1; }
+  .qsteps { display: flex; flex-direction: column; gap: 8px; }
+  .qstep { display: grid; grid-template-columns: 20px 1fr; gap: 8px; align-items: center; text-align: left; background: var(--bg-surface); border: 1px solid var(--line); padding: 14px; color: var(--text-2); cursor: pointer; }
+  .qstep .qnum { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; background: var(--gold); color: #2b200a; font-size: 12px; font-weight: 700; }
+  .qstep .q-ico { color: var(--text-2); display: flex; align-items: center; transition: color .16s; }
+  .qstep .q-ico svg { display: block; }
+  .qstep:hover .q-ico, .qstep.active .q-ico { color: var(--gold-text); }
+  .qstep .q-label { font-weight: 700; color: var(--text-1); font-size: 13px; }
+  .qstep code.q-hint { grid-column: 1 / -1; font: 600 11px var(--font-mono); color: var(--text-3); }
+  .qstep:hover, .qstep.active { border-color: var(--gold); background: var(--bg-float); }
+  .qstep:hover .q-label, .qstep.active .q-label { color: var(--gold-text); }
+  .qcontent {
+    position: relative; background: var(--bg-surface); border: 1px solid var(--line);
+    padding: 24px 28px; overflow: auto;
+  }
+  .qcontent .mesh { z-index: 0; }
+  .qpane { position: relative; z-index: 1; animation: fadeIn .2s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .qpane .pan-title { font-size: 14px; margin-bottom: 6px; }
+  .qpane .pan-lead { font-size: 12.5px; margin-bottom: 14px; line-height: 1.55; }
+  .pan-title { font-size: 16px; font-weight: 700; color: var(--text-1); margin: 0 0 4px; position: relative; z-index: 1; }
+  .pan-lead { color: var(--text-2); font-size: 13px; line-height: 1.6; margin: 0; max-width: 56ch; position: relative; z-index: 1; }
+  .pan-lead-full { max-width: none; }
+  .cmd { background: var(--bg-inset); border: 1px solid var(--line); padding: 10px 14px; font: 500 12px/1.5 var(--font-mono); color: var(--text-2); margin: 0 0 12px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
+  .cmdp { color: var(--text-3); margin-right: 4px; }
+  .cmdc { color: var(--gold-text); }
+  .opts { margin-top: 6px; }
+  .opts th { font-size: 10px; padding: 4px 8px; color: var(--text-3); }
+  .opts td { font-size: 11px; padding: 4px 8px; color: var(--text-2); }
+  .opts .fname { font-size: 11px; }
+  .mon { font-family: var(--font-mono); color: var(--gold-text); }
+  .dtable { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .dtable th { text-align: left; color: var(--text-1); font-weight: 650; padding: 7px 10px; border-bottom: 1px solid var(--line-strong); font-size: 11.5px; }
+  .dtable td { color: var(--text-2); padding: 7px 10px; border-bottom: 1px solid var(--line); }
+  .dtable .fname { font: 600 12px var(--font-mono); }
+
+  /* Install */
+  .install-meta { display: flex; flex-direction: column; gap: 10px; }
+  .pypi-link {
+    display: inline-flex; align-items: center; gap: 5px;
+    color: var(--text-2); font-size: 12px; text-decoration: none;
+    border: 1px solid var(--line); padding: 6px 12px;
+    transition: color .16s, border-color .16s;
+    width: fit-content;
+  }
+  .pypi-link svg { color: var(--text-3); transition: color .16s; }
+  .pypi-link:hover { color: var(--gold-text); border-color: var(--gold-line); }
+  .pypi-link:hover svg { color: var(--gold-text); }
+  .py-ver-list { display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+  .py-ver-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; color: var(--text-2); }
+  .py-ver-tag svg { color: var(--gold); }
+
+  /* Web 浏览器外壳 */
+  .browser-mock { border: 1px solid var(--line); overflow: hidden; border-radius: 8px; margin: 10px 24px 20px; max-width: 90%; }
+  .browser-bar {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg-inset); border-bottom: 1px solid var(--line);
+    padding: 6px 10px;
+  }
+  .browser-dots { display: flex; gap: 5px; }
+  .browser-dots i { display: block; width: 8px; height: 8px; border-radius: 50%; background: var(--line-strong); }
+  .browser-url {
+    flex: 1; font: 500 10px var(--font-mono); color: var(--text-3);
+    background: var(--bg); border: 1px solid var(--line); padding: 3px 8px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .browser-url svg { color: var(--text-3); flex-shrink: 0; }
+  .browser-body { background: var(--bg-inset); }
+  .browser-body img { width: 100%; display: block; filter: grayscale(1) brightness(.75); transition: filter .35s ease; }
+  .browser-mock:hover .browser-body img { filter: grayscale(0) brightness(1); }
+
+  /* CLI tabs */
+  .cli-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); margin-bottom: 10px; }
+  .cli-tab {
+    background: none; border: 0; color: var(--text-3); font-size: 10.5px; font-weight: 700;
+    padding: 7px 14px; cursor: pointer; border-bottom: 2px solid transparent;
+    letter-spacing: .06em; font-family: var(--font-mono);
+    transition: color .16s, border-color .16s;
+  }
+  .cli-tab:hover { color: var(--gold-text); }
+  .cli-tab.active { color: var(--gold-text); border-bottom-color: var(--gold); }
+  .cli-pane .cmd { font-size: 11.5px; }
+
+  /* Prompt 面板 */
+  .qpane-prompt { display: flex; align-items: center; justify-content: center; min-height: 280px; }
+  .qpane-prompt[hidden] { display: none; }
+  .prompt-center {
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+    max-width: 520px; text-align: center;
+  }
+  .prompt-icon { color: var(--text-3); opacity: .6; }
+  .prompt-icon svg { display: block; }
+  .prompt-text {
+    font-size: 13px; line-height: 1.7; color: var(--text-2); margin: 0;
+    background: var(--bg-inset); border: 1px solid var(--line);
+    padding: 16px 20px; transition: background .2s, border-color .2s;
+    position: relative;
+  }
+  .prompt-text::before {
+    content: ''; position: absolute; inset: -1px; z-index: 0; pointer-events: none;
+    padding: 1px;
+    background: conic-gradient(from var(--pf, 0deg), transparent 0 60%, var(--gold) 92%, var(--gold-light) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    opacity: 0; transition: opacity .28s var(--ease-out);
+  }
+  @property --pf { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+  @keyframes promptFlow { to { --pf: 360deg; } }
+  .prompt-text:hover { background: rgba(214,177,90,.04); border-color: transparent; }
+  .prompt-text:hover::before { opacity: 1; animation: promptFlow .9s linear infinite; }
+  .prompt-copy {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--bg-inset); border: 1px solid var(--line);
+    color: var(--text-2); font: 600 12px var(--font-mono);
+    padding: 8px 18px; cursor: pointer;
+    transition: color .16s, border-color .16s, background .16s;
+  }
+  .prompt-copy svg { color: var(--text-2); transition: color .16s; }
+  .prompt-copy:hover { color: var(--gold-text); border-color: var(--gold-line); background: var(--bs-gold-soft); }
+  .prompt-copy:hover svg { color: var(--gold-text); }
+
+  @media (max-width: 720px) { .qwrap { grid-template-columns: 1fr; } }
+</style>

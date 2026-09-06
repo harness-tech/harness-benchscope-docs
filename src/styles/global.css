@@ -1,0 +1,156 @@
+/* ============================================================
+   BenchScope —— 双主题（银色 / 黑色）× 亮金 全局样式
+   唯一视觉口径：DESIGN.md / PROMPT.md
+   ============================================================ */
+
+/* ---------- 黑色主题（默认）—— 亮金色字体 ---------- */
+:root,
+:root[data-theme='black'] {
+  --bs-gold:        #d6b15a;  /* 主品牌亮金 */
+  --bs-gold-light:  #e8c876;  /* hover 高亮亮金 */
+  --bs-gold-dark:   #b8933f;  /* 激活 / 深金 */
+  --bs-gold-text:   #ecd07a;  /* 亮金文字（黑色主题用亮金） */
+  --bs-gold-soft:   #d6b15a24;/* 金色淡底 */
+  --bs-gold-line:   #d6b15a66;/* 金描边 */
+
+  --bg:            #0b0b0d;   /* 页面背景 */
+  --bg-surface:    #141417;   /* 表面 / 卡片 */
+  --bg-float:      #1b1b1f;   /* 浮层 / 强调 */
+  --bg-inset:      #101013;   /* 内嵌 / 表格 */
+  --text-1:        #ededed;   /* 主文字 */
+  --text-2:        #bcbcc4;   /* 正文次级 */
+  --text-3:        #9a9aa2;   /* 次要文字 */
+  --line:          #ededed1f; /* 边框 */
+  --line-strong:   #ededed33;
+  --nav-text:      #c7c7cf;   /* 导航文字（银色） */
+  --ft-text:       #8c8c96;   /* footer 文字（比 text-3 更暗） */
+}
+
+/* ---------- 银色主题 —— 黑金色字体 ---------- */
+:root[data-theme='silver'] {
+  --bs-gold:        #9a7b2e;  /* 主品牌暗金（适配浅底） */
+  --bs-gold-light:  #b08a34;  /* hover 亮 */
+  --bs-gold-dark:   #7a5e1a;  /* 激活深 */
+  --bs-gold-text:   #8b6914;  /* 黑金色文字（银色主题用暗金） */
+  --bs-gold-soft:   #9a7b2e1a;/* 金色淡底 */
+  --bs-gold-line:   #9a7b2e55;/* 金描边 */
+
+  --bg:            #ecebf0;   /* 页面背景 */
+  --bg-surface:    #f7f7fa;   /* 表面 / 卡片 */
+  --bg-float:      #ffffff;   /* 浮层 / 强调 */
+  --bg-inset:      #e4e4ea80;   /* 内嵌 / 表格（半透明） */
+  --text-1:        #2b2b32;   /* 主文字 */
+  --text-2:        #4c4c55;   /* 正文次级 */
+  --text-3:        #6d6d76;   /* 次要文字 */
+  --line:          #23232e26; /* 边框 */
+  --line-strong:   #23232e3d;
+  --nav-text:      #4c4c55;   /* 导航文字（深灰） */
+  --ft-text:       #6e6e76;   /* footer 文字（比 text-3 更暗） */
+}
+
+/* ---------- 语义映射 & 其它 ---------- */
+:root {
+  --gold: var(--bs-gold);
+  --gold-light: var(--bs-gold-light);
+  --gold-dark: var(--bs-gold-dark);
+  --gold-text: var(--bs-gold-text);
+
+  --font-body: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'PingFang SC',
+    'Microsoft YaHei', 'Noto Sans SC', 'Source Han Sans SC', sans-serif;
+  --font-serif: Georgia, 'Times New Roman', 'Songti SC', 'STSong', serif;
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / .12);
+  --shadow-md: 0 8px 24px -6px rgb(0 0 0 / .22);
+  --shadow-lg: 0 24px 48px -12px rgb(0 0 0 / .4);
+  --dur-fast: .16s;
+  --dur-ui: .22s;
+  --ease-out: cubic-bezier(.23, 1, .32, 1);
+
+  /* 黑金网格底色 */
+  --mesh: rgba(214, 177, 90, .06);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; scrollbar-color: var(--gold-dark) transparent; }
+html[data-theme='black'] { color-scheme: dark; }
+html[data-theme='silver'] { color-scheme: light; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text-1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+  line-height: 1.6;
+  transition: background .3s var(--ease-out), color .3s var(--ease-out);
+}
+::selection { background: var(--gold); color: var(--bg); }
+a { color: var(--text-1); text-decoration: none; transition: color var(--dur-fast) var(--ease-out); }
+a:hover { color: var(--gold-text); }
+h1,h2,h3,h4 { letter-spacing: -.01em; text-wrap: balance; line-height: 1.2; color: var(--text-1); }
+code, pre, kbd { font-family: var(--font-mono); }
+
+/* ---------- 容器 ---------- */
+.container { max-width: 76rem; margin: 0 auto; padding: 0 28px; width: 100%; }
+
+/* ---------- Eyebrow（mono 金） ---------- */
+.eyebrow {
+  font: 700 12px / 1.4 var(--font-mono);
+  letter-spacing: .09em; text-transform: uppercase; color: var(--gold);
+  margin: 0 0 16px;
+}
+
+/* ---------- 文档正文（prose） ---------- */
+.prose { max-width: 60rem; }
+.prose h1 { font-size: clamp(1.8rem, 1.2rem + 2.4vw, 2.4rem); font-weight: 800; margin: 0 0 8px; }
+.prose h2 { font-size: 1.5rem; font-weight: 750; margin: 2rem 0 .75rem; padding-bottom: .4rem; border-bottom: 1px solid var(--line); }
+.prose h3 { font-size: 1.2rem; font-weight: 700; margin: 1.6rem 0 .6rem; }
+.prose h4 { font-size: 1.05rem; font-weight: 650; margin: 1.3rem 0 .5rem; }
+.prose p { margin: 0 0 1rem; line-height: 1.75; color: var(--text-2); }
+.prose ul, .prose ol { margin: 0 0 1rem; padding-left: 1.4rem; color: var(--text-2); }
+.prose li { margin: .3rem 0; line-height: 1.7; }
+.prose li::marker { color: var(--gold); }
+.prose a { color: var(--gold-text); }
+.prose a:hover { color: var(--gold-light); text-decoration: underline; }
+.prose img { max-width: 100%; border-radius: 4px; border: 1px solid var(--line); margin: .5rem 0 1rem; }
+.prose hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
+.prose strong { color: var(--text-1); font-weight: 700; }
+
+.prose code:not(.astro-code code) {
+  background: var(--bg-float); color: var(--gold-text);
+  border-radius: 4px; padding: .15em .4em;
+  font-size: .88em; border: 1px solid var(--line);
+}
+.prose :not(pre) > code { font-family: var(--font-mono); }
+
+.astro-code { border-radius: 4px; border: 1px solid var(--line); margin: 0 0 1rem; overflow: auto; }
+.astro-code pre { padding: 1rem 1.15rem; font-size: 13px; line-height: 1.7; }
+
+.prose blockquote { margin: 0 0 1rem; padding: .5rem 1rem; border-left: 3px solid var(--gold); background: var(--bg-surface); border-radius: 0 8px 8px 0; color: var(--text-2); }
+.prose blockquote p { margin: 0; }
+
+.prose table { width: 100%; border-collapse: collapse; margin: 0 0 1.2rem; font-size: 14px; }
+.prose th { text-align: left; background: var(--bg-float); color: var(--text-1); padding: .6rem .8rem; border: 1px solid var(--line); font-weight: 650; }
+.prose td { padding: .55rem .8rem; border: 1px solid var(--line); color: var(--text-2); }
+.prose tr:nth-child(2n) td { background: var(--bg-surface); }
+
+/* tip / warning / info 容器 */
+.prose .note, .prose .tip, .prose .warning, .prose .danger, .prose .info {
+  margin: 0 0 1rem; padding: .8rem 1rem; border-radius: 6px; border: 1px solid;
+}
+.prose .tip, .prose .note, .prose .info { border-color: var(--gold-line); background: var(--bg-surface); }
+.prose .warning { border-color: var(--gold-text); background: var(--bs-gold-soft); }
+.prose .danger { border-color: #f5654a; background: #c2402818; }
+.prose .tip p, .prose .note p, .prose .info p, .prose .warning p, .prose .danger p { color: var(--text-2); margin: 0; }
+
+/* ---------- 主题切换按钮（月亮 / 太阳） ---------- */
+.theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 6px; border: none;
+  background: transparent; color: var(--nav-text); cursor: pointer;
+  transition: color var(--dur-fast), background var(--dur-fast);
+}
+.theme-toggle:hover { color: var(--gold-text); background: var(--bs-gold-soft); }

@@ -1,0 +1,23 @@
+---
+import { getCollection, render } from 'astro:content'
+import DocLayout from '../layouts/DocLayout.astro'
+import { buildSidebar } from '../lib/sidebar'
+
+interface Props { lang: 'zh' | 'en' }
+const { lang } = Astro.props
+
+const all = await getCollection('docs', (e) => e.id.startsWith(`${lang}/`))
+const readme = all.find((e) => e.id.toLowerCase().endsWith('/readme')) || all.find((e) => e.id.toLowerCase() === `${lang}/readme`)
+if (!readme) {
+  throw new Error(`README for lang=${lang} not found. ids: ${all.map((e) => e.id).join(', ')}`)
+}
+const { Content } = await render(readme)
+const { groups, flat } = await buildSidebar(lang)
+const idx = flat.findIndex((x) => x.id === readme.id)
+const prev = idx > 0 ? flat[idx - 1] : null
+const next = idx >= 0 && idx < flat.length - 1 ? flat[idx + 1] : null
+---
+
+<DocLayout lang={lang} entry={readme} slug={[]} groups={groups} prev={prev} next={next}>
+  <Content />
+</DocLayout>

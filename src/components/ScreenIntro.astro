@@ -1,0 +1,55 @@
+---
+import Mesh from './Mesh.astro'
+import Typewriter from './Typewriter.astro'
+
+interface Props {
+  lang: 'zh' | 'en'
+  docsHref: string
+  ico: (name: string, size?: number) => string
+}
+const { lang, docsHref } = Astro.props
+const isEn = lang === 'en'
+
+const typedWords = isEn
+  ? ['PERFORMANCE', 'ACCURACY', 'DATA ANALYSIS', 'SESSION', 'SKILLS', 'MODELS', 'DATASETS', 'PLUGINS']
+  : ['性能', '精度', '数据分析', 'SESSION', '技能', '模型', '数据集', '插件']
+
+const introEyebrow = isEn ? 'Open Source · Harness Coding' : '开源 · Harness Coding'
+const introDesc = isEn
+  ? 'A visualization testing platform for LLM model performance & accuracy, supporting inference with vLLM / SGLang and any OpenAI-compatible API.'
+  : '面向 LLM 模型性能与精度的可视化测试平台，支持基于 vLLM / SGLang 与任意 OpenAI 兼容接口的模型推理。'
+const ctaStart = isEn ? 'Get Started' : '快速开始'
+const ctaDocs = isEn ? 'Read the Docs' : '阅读文档'
+---
+
+<section id="home" class="screen intro">
+  <Mesh ripple streams density={16} className="screen-mesh" />
+  <div class="intro-in">
+    <div class="intro-logo"><img src="/images/logo-gold.png" alt="BenchScope" /></div>
+    <p class="eyebrow intro-eyebrow">{introEyebrow}</p>
+    <h1 class="intro-name"><Typewriter words={typedWords} /></h1>
+    <p class="intro-desc">{introDesc}</p>
+    <div class="intro-actions">
+      <a class="btn btn-gold" href="#quickstart">{ctaStart}</a>
+      <a class="btn btn-ghost" href={docsHref}>{ctaDocs}</a>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .intro-in { text-align: center; justify-content: center; }
+  .intro-logo img { width: 80px; height: 80px; margin-bottom: 16px; }
+  .intro-eyebrow { margin-bottom: 14px; }
+  .intro-name { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 850; color: var(--gold-text); letter-spacing: -.02em; line-height: 1.1; margin: 0 0 18px; }
+  .intro-desc { color: var(--text-2); font-size: clamp(13px, 1.3vw, 15px); line-height: 1.7; margin: 0 auto 28px; max-width: 52ch; }
+  .intro-actions { display: flex; gap: 16px; justify-content: center; }
+  .btn { display: inline-flex; align-items: center; padding: 10px 24px; font-size: 14px; font-weight: 650; text-decoration: none; border: 1px solid transparent; }
+  .btn-gold { background: var(--gold); color: #2b200a; }
+  .btn-gold:hover { background: var(--gold-light); color: #2b200a; }
+  .btn-ghost { border-color: var(--gold); color: var(--gold-text); }
+  .btn-ghost:hover { background: var(--bs-gold-soft); }
+  :root[data-theme='silver'] .btn-gold { background: #2b2b32; color: #f0e6c8; }
+  :root[data-theme='silver'] .btn-gold:hover { background: #3a3a42; color: #f0e6c8; }
+  :root[data-theme='silver'] .btn-ghost { border-color: #2b2b32; color: #2b2b32; }
+  :root[data-theme='silver'] .btn-ghost:hover { background: rgba(43,43,50,.08); }
+</style>

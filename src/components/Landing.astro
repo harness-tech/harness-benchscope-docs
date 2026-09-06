@@ -1,0 +1,296 @@
+---
+import ThemeToggle from './ThemeToggle.astro'
+import SiteFooter from './SiteFooter.astro'
+import ScreenIntro from './ScreenIntro.astro'
+import ScreenFeatures from './ScreenFeatures.astro'
+import ScreenPerf from './ScreenPerf.astro'
+import ScreenAccuracy from './ScreenAccuracy.astro'
+import ScreenData from './ScreenData.astro'
+import ScreenAdvanced from './ScreenAdvanced.astro'
+import ScreenQuickStart from './ScreenQuickStart.astro'
+import { ico } from '../lib/icons'
+
+interface Props { lang: 'zh' | 'en'; docsHref: string }
+const { lang, docsHref } = Astro.props
+const isEn = lang === 'en'
+const gh = 'https://github.com/LABELNET/benchscope'
+
+const nav = isEn
+  ? [['#home', 'Intro'], ['#features', 'Features'], ['#perf', 'Performance'], ['#accuracy', 'Accuracy'], ['#data', 'Data'], ['#advanced', 'Advanced']]
+  : [['#home', '介绍'], ['#features', '功能'], ['#perf', '性能'], ['#accuracy', '精度'], ['#data', '数据'], ['#advanced', '高级']]
+const navIconNames = ['home', 'sparkles', 'bolt', 'target', 'folder', 'terminal'] as const
+---
+
+<div class="landing">
+  <!-- 主导航 -->
+  <header class="land-nav">
+    <div class="nav-inner">
+      <a class="brand" href={`/${lang}/`}>
+        <img class="brand-logo" src="/images/logo-gold.png" alt="BenchScope" />
+        <span class="brand-name">BenchScope</span>
+      </a>
+      <nav class="mainnav">
+        {nav.map(([href, label], i) => (
+          <a class="navlink" href={href}>
+            <Fragment set:html={ico(navIconNames[i], 14)} />
+            <span>{label}</span>
+          </a>
+        ))}
+        <a class="navlink" href={docsHref}>
+          <Fragment set:html={ico('book', 14)} />
+          <span>{isEn ? 'Docs' : '文档'}</span>
+        </a>
+        <a class="navlink" href={gh} target="_blank" rel="noopener" title="GitHub" aria-label="GitHub">
+          <Fragment set:html={ico('github', 14)} />
+          <span>GitHub</span>
+        </a>
+      </nav>
+      <div class="nav-theme"><ThemeToggle /></div>
+    </div>
+  </header>
+
+  <!-- 屏1 · 介绍 -->
+  <ScreenIntro lang={lang} docsHref={docsHref} ico={ico} />
+
+  <!-- 屏2 · 功能 -->
+  <ScreenFeatures lang={lang} docsHref={docsHref} ico={ico} />
+
+  <!-- 屏3 · 性能 -->
+  <ScreenPerf lang={lang} docsHref={docsHref} ico={ico} />
+
+  <!-- 屏4 · 精度 -->
+  <ScreenAccuracy lang={lang} docsHref={docsHref} ico={ico} />
+
+  <!-- 屏5 · 数据 -->
+  <ScreenData lang={lang} docsHref={docsHref} ico={ico} />
+
+  <!-- 屏6 · 高级 -->
+  <ScreenAdvanced lang={lang} docsHref={docsHref} ico={ico} />
+
+  <!-- 屏7 · 快速开始 -->
+  <ScreenQuickStart lang={lang} docsHref={docsHref} ico={ico} />
+
+  <!-- 滚动提示器 + 回到顶部 -->
+  <div class="scroll-dots" id="scrollDots" aria-hidden="true"></div>
+
+  <!-- Footer：作为 snap 的一部分 -->
+  <section class="footer-screen" id="footerScreen">
+    <SiteFooter lang={lang} version="1.0.0.dev" />
+  </section>
+</div>
+
+<script>
+  // ── 屏幕引用 ──
+  const landing = document.querySelector('.landing') as HTMLElement
+  const screens = Array.from(document.querySelectorAll('.screen')) as HTMLElement[]
+  const dotsWrap = document.getElementById('scrollDots')
+
+  // ── 滚动提示器（椭圆条） + 回到顶部 ──
+  if (dotsWrap) {
+    screens.forEach((s, i) => {
+      const d = document.createElement('button')
+      d.type = 'button'; d.dataset.i = String(i)
+      d.setAttribute('aria-label', 'goto')
+      d.addEventListener('click', () => s.scrollIntoView({ behavior: 'smooth' }))
+      dotsWrap.appendChild(d)
+    })
+    // 末尾追加回到顶部金色圆点
+    const topBtn = document.createElement('button')
+    topBtn.type = 'button'
+    topBtn.className = 'dot-top'
+    topBtn.setAttribute('aria-label', 'Back to top')
+    topBtn.title = 'Back to top'
+    topBtn.addEventListener('click', () => screens[0]?.scrollIntoView({ behavior: 'smooth' }))
+    dotsWrap.appendChild(topBtn)
+  }
+
+  // ── 当前屏追踪 ──
+  let currentScreen = 0
+
+  function updateDots(idx: number) {
+    dotsWrap?.childNodes.forEach((n, i) => {
+      (n as HTMLElement).classList.toggle('on', i === idx)
+    })
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    let best = -1, bestRatio = 0
+    entries.forEach((e) => {
+      const r = e.intersectionRatio
+      if (r > bestRatio) { bestRatio = r; best = screens.indexOf(e.target as HTMLElement) }
+    })
+    if (best >= 0 && bestRatio > 0.5 && best !== currentScreen) {
+      currentScreen = best
+      updateDots(best)
+    }
+  }, { threshold: [0.5, 0.7, 0.9] })
+  screens.forEach((s) => io.observe(s))
+  updateDots(0)
+
+  // ── Tab 切换 ──
+  const tabs = Array.from(document.querySelectorAll('.dtab')) as HTMLElement[]
+  const panes = Array.from(document.querySelectorAll('.dbody')) as HTMLElement[]
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      tabs.forEach((x) => x.classList.toggle('active', x === tab))
+      panes.forEach((p) => { p.hidden = p.dataset.pane !== tab.dataset.tab })
+    })
+  })
+
+  // ── QuickStart 步进 ──
+  const qsteps = Array.from(document.querySelectorAll('.qstep')) as HTMLElement[]
+  const qpanes = Array.from(document.querySelectorAll('.qpane')) as HTMLElement[]
+  function activateQstep(st: HTMLElement) {
+    qsteps.forEach((x) => x.classList.toggle('active', x === st))
+    qpanes.forEach((p) => { p.hidden = p.dataset.step !== st.dataset.step })
+  }
+  qsteps.forEach((st) => {
+    st.addEventListener('click', () => activateQstep(st))
+    st.addEventListener('mouseenter', () => activateQstep(st))
+  })
+  // 初始化：显示 prompt pane
+  const initStep = qsteps.find(s => s.dataset.step === 'prompt') || qsteps[0]
+  if (initStep) activateQstep(initStep)
+
+  // ── CLI Perf / Eval Tab 切换 ──
+  const cliTabs = Array.from(document.querySelectorAll('.cli-tab')) as HTMLElement[]
+  const cliPanes = Array.from(document.querySelectorAll('.cli-pane')) as HTMLElement[]
+  cliTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      cliTabs.forEach((x) => x.classList.toggle('active', x === tab))
+      cliPanes.forEach((p) => { p.hidden = p.dataset.clitab !== tab.dataset.clitab })
+    })
+  })
+
+  // ── Prompt 复制 ──
+  const copyBtn = document.getElementById('promptCopy')
+  copyBtn?.addEventListener('click', () => {
+    const text = document.querySelector('.qpane-prompt .prompt-text')?.textContent || ''
+    navigator.clipboard.writeText(text.trim()).then(() => {
+      const span = copyBtn.querySelector('span')
+      if (span) span.textContent = '✓ Copied'
+      setTimeout(() => { if (span) span.textContent = 'Copy Prompt' }, 2000)
+    })
+  })
+
+</script>
+
+<style is:global>
+  /* ── 基础 ── */
+  .landing { background: var(--bg); scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh; }
+  .screen {
+    position: relative; height: 100vh; display: flex; align-items: center;
+    overflow: hidden; scroll-snap-align: start; scroll-snap-stop: always;
+  }
+  .screen + .screen { border-top: 1px solid var(--line-strong); }
+  .screen-mesh { z-index: 0; }
+  .sec-in, .intro-in {
+    position: relative; z-index: 1; max-width: 76rem; margin: 0 auto;
+    padding: 72px 28px 40px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;
+  }
+
+  /* 面板容器（min/max 高度宽度） */
+  .sec-panel {
+    background: var(--bg-surface); border: 1px solid var(--line);
+    padding: 28px 32px; position: relative;
+    display: flex; flex-direction: column; overflow: hidden;
+    min-height: 540px; max-height: 810px;
+    min-width: 900px; max-width: 1440px;
+    width: 100%; margin: 0 auto;
+  }
+  .sec-panel-head { margin-bottom: 20px; flex-shrink: 0; }
+
+  /* ── 导航 ── */
+  .land-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 120; height: 52px;
+    background: color-mix(in srgb, var(--bg-float) 82%, transparent);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 6px 22px -16px rgb(0 0 0 / .4);
+  }
+  .nav-inner { max-width: 76rem; margin: 0 auto; height: 52px; padding: 0 24px; display: flex; align-items: center; gap: 20px; }
+  .brand { display: flex; align-items: center; gap: 9px; color: var(--gold-text); }
+  .brand-logo { height: 34px; width: 34px; border-radius: 6px; }
+  .brand-name { font-size: 16px; font-weight: 750; letter-spacing: -.01em; }
+  .mainnav { display: flex; gap: 2px; margin-left: auto; align-items: center; }
+  .navlink { display: inline-flex; align-items: center; gap: 5px; color: var(--nav-text); font-size: 13.5px; padding: 8px 10px; text-decoration: none; transition: color .16s; }
+  .navlink svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--nav-text); transition: color .16s; }
+  .navlink:hover, .navlink:active { color: var(--gold-text); }
+  .navlink:hover svg, .navlink:active svg { color: var(--gold-text); }
+  .nav-theme { display: flex; align-items: center; }
+
+  /* ── 通用字体 ── */
+  .sec-title { font-size: clamp(1.5rem, 2.5vw, 2rem); font-weight: 800; margin: 0 0 6px; letter-spacing: -.01em; }
+  .sec-lead { color: var(--text-2); font-size: 14px; line-height: 1.5; margin: 0 0 20px; font-weight: 600; }
+  .pan-title { font-size: 16px; font-weight: 700; color: var(--text-1); margin: 0 0 4px; position: relative; z-index: 1; }
+  .pan-lead { color: var(--text-2); font-size: 13px; line-height: 1.6; margin: 0; max-width: 56ch; position: relative; z-index: 1; }
+  .pan-lead-full { max-width: none; }
+
+  /* ── 流光边框 ── */
+  .flowcell {
+    --flow: 0deg;
+    position: relative; border: 1px solid var(--line); background: var(--bg-surface); padding: 18px;
+  }
+  .flowcell::before {
+    content: ''; position: absolute; inset: -1px; z-index: 0; pointer-events: none;
+    padding: 1px; border-radius: 0;
+    background: conic-gradient(from var(--flow), transparent 0 60%, var(--gold) 92%, var(--gold-light) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    opacity: 0; transition: opacity .28s var(--ease-out);
+  }
+  .flowcell:hover { background: var(--bg-float); }
+  .flowcell:hover::before { opacity: 1; animation: flow .9s linear infinite; }
+  @property --flow { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+  @keyframes flow { to { --flow: 360deg; } }
+  .ficon { position: relative; z-index: 1; margin-bottom: 8px; color: var(--text-2); transition: color .16s; }
+  .ficon svg { display: block; }
+  .flowcell:hover .ficon { color: var(--gold-text); filter: drop-shadow(0 0 6px rgba(214,177,90,.35)); }
+
+  /* ── Footer screen ── */
+  .footer-screen {
+    scroll-snap-align: start;
+    background: var(--bg);
+    border-top: 1px solid var(--line-strong);
+  }
+
+  /* ── 滚动提示器 + 回到顶部 ── */
+  .scroll-dots {
+    position: fixed; right: 22px; top: 50%; transform: translateY(-50%); z-index: 110;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .scroll-dots button:not(.dot-top) {
+    width: 6px; height: 20px; border-radius: 3px;
+    border: none; background: var(--line); cursor: pointer; padding: 0;
+    transition: background .25s, height .25s;
+  }
+  .scroll-dots button:not(.dot-top).on { background: var(--gold); height: 32px; }
+  /* 回到顶部圆点 */
+  .dot-top {
+    width: 10px; height: 10px; border-radius: 50%;
+    border: none; background: var(--line); cursor: pointer; padding: 0;
+    margin-top: 6px;
+    transition: transform .3s var(--ease-out), background .2s, width .3s, height .3s;
+    position: relative; overflow: hidden;
+  }
+  .dot-top::after {
+    content: '↑'; position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: #2b200a;
+    opacity: 0; transition: opacity .2s;
+  }
+  .dot-top:hover {
+    width: 28px; height: 28px;
+    background: var(--gold);
+  }
+  .dot-top:hover::after { opacity: 1; }
+  :root[data-theme='silver'] .dot-top:hover { background: #b0b0b8; }
+  :root[data-theme='silver'] .dot-top:hover::after { color: #fff; }
+
+  /* ── 响应式 ── */
+  @media (max-width: 720px) {
+    .mainnav .navlink span:last-child { display: none; }
+    .mainnav .navlink { padding: 8px 6px; }
+    .sec-panel { min-width: auto; max-width: 100%; }
+  }
+</style>

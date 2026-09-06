@@ -1,0 +1,80 @@
+---
+interface Props {
+  words: string[]
+}
+const { words } = Astro.props
+const wordsJson = JSON.stringify(words)
+---
+
+<span class="tw">
+  <span class="tw-static">BenchScope</span><br />
+  <span class="tw-body">
+    <span class="tw-text"></span><span class="tw-caret"></span>
+  </span>
+</span>
+<span class="tw-data" data-words={wordsJson} aria-hidden="true"></span>
+
+<script>
+  {
+    const dataEl = document.querySelector('.tw-data') as HTMLElement | null
+    const textEl = document.querySelector('.tw-text') as HTMLElement | null
+    if (dataEl && textEl) {
+      const words: string[] = JSON.parse(dataEl.dataset.words || '[]')
+      if (words.length) {
+        // 直接用 innerText 替换，比 textContent 更轻量（无 HTML 解析）
+        // 但最高效的是直接操作 childText
+        const textNode = document.createTextNode('')
+        textEl.appendChild(textNode)
+
+        let wi = 0, ci = 0, del = false
+        let timer: ReturnType<typeof setTimeout>
+
+        function tick() {
+          const w = words[wi]
+          if (!del) {
+            ci++
+            textNode.data = w.slice(0, ci)
+            if (ci === w.length) {
+              del = true
+              timer = setTimeout(tick, 1500)
+              return
+            }
+            timer = setTimeout(tick, 65)
+          } else {
+            ci--
+            textNode.data = w.slice(0, ci)
+            if (ci === 0) {
+              del = false
+              wi = (wi + 1) % words.length
+            }
+            timer = setTimeout(tick, 35)
+          }
+        }
+        timer = setTimeout(tick, 400)
+      }
+    }
+  }
+</script>
+
+<style>
+  .tw { display: inline-block; text-align: center; }
+  .tw-static { color: var(--gold-text); font-weight: 850; }
+  .tw-body {
+    font: 600 0.55em/1.6 var(--font-body);
+    color: var(--gold-light);
+    letter-spacing: .06em;
+    white-space: nowrap;
+  }
+  .tw-text { /* 文字容器 */ }
+  .tw-caret {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: var(--gold-light);
+    vertical-align: text-bottom;
+    margin-left: 1px;
+    animation: tw-blink 1s steps(2, start) infinite;
+  }
+  .tw-data { position: absolute; width: 0; height: 0; overflow: hidden; pointer-events: none; }
+  @keyframes tw-blink { 50% { opacity: 0; } }
+</style>

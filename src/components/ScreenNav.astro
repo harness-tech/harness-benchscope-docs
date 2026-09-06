@@ -1,0 +1,58 @@
+---
+import ThemeToggle from './ThemeToggle.astro'
+import { icons } from '../lib/icons'
+
+interface Props { lang: 'zh' | 'en'; docsHref: string }
+const { lang, docsHref } = Astro.props
+const isEn = lang === 'en'
+const gh = 'https://github.com/LABELNET/benchscope'
+
+const nav = isEn
+  ? [['#home', 'Intro', 'home'], ['#features', 'Features', 'grid'], ['#perf', 'Performance', 'bolt'], ['#accuracy', 'Accuracy', 'target'], ['#data', 'Data', 'chart'], ['#advanced', 'Advanced', 'gear']]
+  : [['#home', '介绍', 'home'], ['#features', '功能', 'grid'], ['#perf', '性能', 'bolt'], ['#accuracy', '精度', 'target'], ['#data', '数据', 'chart'], ['#advanced', '高级', 'gear']]
+---
+
+<header class="land-nav">
+  <div class="nav-inner">
+    <a class="brand" href={`/${lang}/`}>
+      <img class="brand-logo" src="/images/logo-gold.png" alt="BenchScope" />
+      <span class="brand-name">BenchScope</span>
+    </a>
+    <nav class="mainnav">
+      {nav.map(([href, label, icon]) => (
+        <a class="navlink" href={href}>
+          <svg class="nav-ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={icons[icon]} />
+          <span>{label}</span>
+        </a>
+      ))}
+      <a class="navlink" href={docsHref}>
+        <svg class="nav-ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={icons.book} />
+        <span>{isEn ? 'Docs' : '文档'}</span>
+      </a>
+      <a class="navlink" href={gh} target="_blank" rel="noopener" title="GitHub" aria-label="GitHub">
+        <svg class="nav-ico" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" set:html={icons.github} />
+        <span>GitHub</span>
+      </a>
+    </nav>
+    <div class="nav-theme"><ThemeToggle /></div>
+  </div>
+</header>
+
+<style is:global>
+  .land-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 120; height: 52px;
+    background: color-mix(in srgb, var(--bg-float) 82%, transparent);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 6px 22px -16px rgb(0 0 0 / .4);
+  }
+  .nav-inner { max-width: 80rem; margin: 0 auto; height: 52px; padding: 0 28px; display: flex; align-items: center; gap: 20px; }
+  .brand { display: flex; align-items: center; gap: 9px; color: var(--text-1); }
+  .brand-logo { height: 34px; width: 34px; border-radius: 6px; }
+  .brand-name { font-size: 16px; font-weight: 750; letter-spacing: -.01em; }
+  .mainnav { display: flex; gap: 2px; margin-left: auto; align-items: center; }
+  .navlink { display: inline-flex; align-items: center; gap: 5px; color: var(--nav-text); font-size: 13.5px; padding: 8px 10px; text-decoration: none; transition: color .16s; }
+  .nav-ico { flex-shrink: 0; }
+  .navlink:hover, .navlink:active { color: var(--gold-text); }
+  .nav-theme { display: flex; align-items: center; }
+</style>

@@ -1,8 +1,8 @@
-# Node / VuePress
+# Node / Astro
 node_modules/
-docs/.vuepress/dist/
-docs/.vuepress/.temp/
-docs/.vuepress/.cache/
+dist/
+.astro/
+public/search-index.json
 
 # OS
 .DS_Store
@@ -11,3 +11,6 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+pnpm-debug.log*
+node_modules
+dist
