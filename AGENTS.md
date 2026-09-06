@@ -133,15 +133,15 @@ pnpm convert:docs       # 将旧式 ::: 提示容器与相对 .md 链接转为 A
 
 ## 8. 版本与发布（Version & Release）规约
 
-> **版本定位**：当前版本 **`1.0.0.dev`**。版本号约定 **`x.y.z`**（见 `package.json`）。
+> **版本定位**：当前版本 **`1.0.0`**。版本号约定 **`x.y.z`**（见 `package.json`）。
 
 ### 8.1 变动类型 → 发布动作
 
 | 变动类型 | 版本变化 | 动作 |
 | --- | --- | --- |
-| **patch（z）** | `1.0.0 -> 1.0.1` | **只打 tag + 推送代码**（不发布 release） |
-| **minor（x.y）** | `1.0 -> 1.1` | **打 tag + 推送 release + 总结 release notes + 发布**（发布流程**暂未定义**） |
-| **major（x.y）** | `1.0 -> 2.0` | 同 minor：tag + release notes + 发布（待定义） |
+| **patch（z）** | `1.0.0 -> 1.0.1` | **只打 tag + 推送代码**（不发布 release / 不部署） |
+| **minor（x.y）** | `1.0 -> 1.1` | **打 tag + 推送 release + 总结 release notes + 部署上线** |
+| **major（x.y）** | `1.0 -> 2.0` | 同 minor：tag + release notes + 部署上线 |
 
 ### 8.2 发布命令
 
@@ -149,7 +149,7 @@ pnpm convert:docs       # 将旧式 ::: 提示容器与相对 .md 链接转为 A
 
 ```bash
 pnpm release patch     # z 变动：算出 v1.0.1，打印 patch 流程（打 tag + 推代码）
-pnpm release minor     # x.y 变动：算出 v1.1.0，打印 release notes 草稿 + 发布(待定义) 提示
+pnpm release minor     # x.y 变动：算出 v1.1.0，打印 release notes 草稿 + 发布提示
 pnpm release major
 ```
 
@@ -158,11 +158,42 @@ pnpm release major
 
 ### 8.3 约定补充
 
-- **patch（z）**：只打 tag 并推送代码，不生成 release、不总结 notes。
-- **minor / major（x.y）**：tag + 推送 release + 总结 release notes；其中「发布（publish）」动作**暂未定义**，留待后续确定渠道后补全。
+- **patch（z）**：只打 tag 并推送代码，不生成 release、不总结 notes、不部署。
+- **minor / major（x.y）**：tag + 推送 release + 总结 release notes + **部署上线**。
 - tag 命名：`v<x.y.z>`（如 `v1.1.0`）。
 - release notes 草稿由脚本输出，维护者补充「变更要点」后发布。
 - 版本号唯一来源 `package.json`；发布时同步更新。
+
+### 8.4 完整发布与部署流程（minor / major）
+
+1. **更新版本号**：改 `package.json` 的 `version` 为 `x.y.z`；同步更新官网/文档站底部版本（`src/components/Landing.astro` 的 `SiteFooter version` 与 `SiteFooter.astro` 默认值）、`DESIGN.md` Footer 版本、`CHANGELOG.md` 顶部（改版本定位 + 新增 `[x.y.z]` 条目）。
+2. **构建与校验**：`pnpm build`（自动生成搜索索引 + 链接校验）必须通过。
+3. **提交**：`feat(site): release vX.Y.Z with ...`（英文规范，见 §7）。
+4. **打 tag 并推送**：
+   ```bash
+   git tag -a vX.Y.Z -m "BenchScope Docs vX.Y.Z"
+   git push origin main
+   git push origin vX.Y.Z
+   ```
+5. **创建 GitHub Release（先英文后中文）**：无 `gh` CLI 时用 GitHub API（需 token）：
+   ```bash
+   # POST https://api.github.com/repos/<owner>/<repo>/releases
+   # body: {"tag_name":"vX.Y.Z","name":"...","body":"<英文→中文 notes>"}
+   ```
+   Release Notes 结构：英文在前，中文在后（与 README 一致）。
+6. **部署到 Netlify**：用 `scripts/deploy-netlify.py`（无需本地 CLI，直接走 Netlify API）：
+   ```bash
+   export NETLIFY_AUTH_TOKEN=$(cut -d= -f2 .env.netlify)   # token 存于本地 .env.netlify（已 gitignore）
+   pnpm build        # 产物在 dist/
+   python3 scripts/deploy-netlify.py --site-id <SITE_ID> --prod
+   ```
+   - 正式站点：`https://benchscope-docs.netlify.app`（site id `2fb005db-4cd4-4dd4-b2e3-f21de81b6f00`）。
+   - 脚本流程：哈希 `dist/` → `POST /sites/<id>/deploys` → `PUT /deploys/<id>/files/<sha>` 逐个上传 → `POST /deploys/<id>/restore` 提升为生产。
+
+### 8.5 凭据存储约定
+
+- **Netlify token**：存于根目录 `.env.netlify`（`chmod 600`，已 gitignore，不入库）。
+- **GitHub PAT / 任何 token**：仅在本地使用，用完即撤销 / 轮换，**绝不写入仓库**。
 
 ---
 

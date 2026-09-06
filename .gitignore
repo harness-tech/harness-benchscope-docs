@@ -16,3 +16,7 @@ node_modules
 dist
 # pnpm store cache
 .pnpm-store/
+
+# Netlify / env secrets
+.env.netlify
+.netlify/

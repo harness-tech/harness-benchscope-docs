@@ -23,6 +23,14 @@
 
 ---
 
+## [Unreleased] — 发布流程文档化 + Netlify 部署
+
+- **发布流程记录到 AGENTS.md**：§8.4 新增「完整发布与部署流程」（更新版本号 → 构建校验 → 提交 → 打 tag → GitHub Release（先英文后中文）→ Netlify 部署）；§8.5 新增「凭据存储约定」（token 存本地 gitignore，不入库）。
+- **Netlify 部署脚本**：新增 `scripts/deploy-netlify.py`（无 CLI，直接走 Netlify API：哈希 dist/ → 创建 deploy → 上传文件 → 提升生产）；正式站点 `https://benchscope-docs.netlify.app`。
+- **.gitignore**：新增忽略 `.env.netlify` / `.netlify/`（凭据与部署缓存不入库）。
+
+---
+
 ## [Unreleased] — 导航 / 图片 / README 整理
 
 ### 主导航布局
