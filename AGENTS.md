@@ -72,6 +72,8 @@ src/
 ├── pages/{zh,en}/             # 官网 + 文档路由
 └── styles/global.css          # OpenClaw 风格全局样式（金主题，唯一视觉口径）
 scripts/                       # check-links / build-search-index / convert-docs / make_gold_logo
+skills/                        # 内置维护技能
+└── harness-bs-docs-updater/   # 官网 + 文档站自动更新技能（SKILL.md + references + scripts）
 AGENTS.md · CHANGELOG.md · DESIGN.md · README.md · package.json
 ```
 

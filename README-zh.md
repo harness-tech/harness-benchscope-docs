@@ -50,6 +50,23 @@ pip install benchscope
 - **CLI 与 API** —— 命令行与 HTTP 接口
 - **发布与帮助** —— 版本说明与支持
 
+## 维护技能
+
+本项目内置维护技能，用于自动化官网与文档站更新：
+
+### harness-bs-docs-updater
+
+从 BenchScope 源码分析版本变更，自动维护官网（落地页）与文档站。
+
+**使用方式**：在 AI Agent 交互中说：
+- "BenchScope 发布了 vX.Y.Z，帮我更新文档站"
+- "根据源码路径 /path/to/benchscope 更新官网"
+- "同步 benchscope 最新版本到 docs"
+
+**功能**：源码功能分析 → 旧文档归档 → 官网更新 → 文档更新 → 截图 → 构建验证 → 发布
+
+详细说明见 [`skills/harness-bs-docs-updater/README.md`](skills/harness-bs-docs-updater/README.md)
+
 ## 项目信息
 
 - **源码仓库**：[LABELNET/benchscope](https://github.com/LABELNET/benchscope)
