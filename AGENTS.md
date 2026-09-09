@@ -73,7 +73,11 @@ src/
 └── styles/global.css          # OpenClaw 风格全局样式（金主题，唯一视觉口径）
 scripts/                       # check-links / build-search-index / convert-docs / make_gold_logo
 skills/                        # 内置维护技能
-└── harness-bs-docs-updater/   # 官网 + 文档站自动更新技能（SKILL.md + references + scripts）
+└── harness-bs-docs-updater/   # 官网 + 文档站自动更新技能
+    ├── SKILL.md               # 技能核心指令
+    ├── source-snapshot.json   # BenchScope 源码快照（模块/文件指纹/文档映射）
+    ├── scripts/snapshot.py    # 快照工具（生成/对比/更新）
+    └── archives/              # 旧版本文档归档
 AGENTS.md · CHANGELOG.md · DESIGN.md · README.md · package.json
 ```
 

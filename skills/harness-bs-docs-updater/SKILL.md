@@ -52,30 +52,57 @@ tags:
 
 ## 工作流
 
-### Phase 1 — 源码分析
+### Phase 1 — 源码分析（快照对比模式）
 
-1. **获取源码**：
-   - 本地路径：直接读取
-   - GitHub URL：`git clone --depth 1 --branch <tag> <url>` 到临时目录
-   - 若版本无变化（对比 `CHANGELOG.md` 最新版本），跳过源码分析，仅做文档维护
+> **核心优化**：不全量读取源码，而是通过 `source-snapshot.json` 快照对比差异，只读取变更文件。
 
-2. **变更提取**：
-   - 读取 `CHANGELOG.md` / `HISTORY.md` / Release Notes
-   - 对比 `git diff --stat <last-tag>..<new-tag>`
-   - 分析 `src/` 目录结构变更（新增模块、API 变更、配置变更）
-   - 提取关键变更点，按类别分组：新增功能、Bug 修复、行为变更、配置变更
+1. **加载快照**：读取 `skills/harness-bs-docs-updater/source-snapshot.json`
+   - 快照记录了 benchscope 源码的模块结构、文件指纹（SHA256）、功能映射和文档路径
 
-3. **输出变更摘要**：
+2. **对比差异**（运行快照工具）：
+   ```bash
+   # 本地源码对比
+   python skills/harness-bs-docs-updater/scripts/snapshot.py diff \
+     --source /path/to/benchscope --json
+
+   # 或 GitHub 对比
+   python skills/harness-bs-docs-updater/scripts/snapshot.py diff \
+     --github https://github.com/LABELNET/benchscope --tag v1.2.0 --json
+   ```
+
+3. **解读差异报告**：
+   - `modules_changed`：变更的模块列表，每个变更包含 module、file、old_hash、new_hash
+   - `docs_to_update`：需要更新的文档路径（zh/en）
+   - `changelog_changed`：CHANGELOG 是否有变化
+   - `configs_changed`：配置文件是否有变化
+   - 若 `needs_update = false`，说明无变更，跳过更新
+
+4. **只读取变更文件**：
+   - 根据 `modules_changed` 中的文件列表，只读取这些文件的 diff 或内容
+   - 读取 `CHANGELOG.md` 的新增条目（只读最新版本部分）
+   - **不读取**未变更的模块代码
+
+5. **输出变更摘要**：
    ```
    ## 变更摘要 (vX.Y.Z)
-   ### 新增功能
-   - ...
-   ### Bug 修复
-   - ...
-   ### 行为变更
-   - ...
+   ### 变更模块
+   - performance: perf/runner.py, perf/metrics.py 变更
+   - accuracy: accuracy/scorer.py 变更
+   ### 需要更新的文档
+   - zh: performance/index.md, accuracy/scoring.md
+   - en: performance/index.md, accuracy/scoring.md
    ### 配置变更
-   - ...
+   - 是/否
+   ```
+
+6. **更新快照**：变更处理完成后，更新快照文件：
+   ```bash
+   python skills/harness-bs-docs-updater/scripts/snapshot.py bump --version 1.2.0
+   ```
+   或重新生成（首次 / 结构大改时）：
+   ```bash
+   python skills/harness-bs-docs-updater/scripts/snapshot.py generate \
+     --source /path/to/benchscope --tag v1.2.0
    ```
 
 ### Phase 2 — 归档旧文档
@@ -110,12 +137,10 @@ tags:
 
 > 参考 `references/docs-update-guide.md` 和 `DESIGN.md §4.6`
 
-1. **确定文档影响面**：
-   - 新功能 → 新增文档页
-   - 功能变更 → 更新现有文档
-   - 配置变更 → 更新 `install/configuration.md`
-   - CLI 变更 → 更新 `cli/*.md`
-   - API 变更 → 更新 `api/index.md`
+1. **确定文档影响面**（直接使用快照报告的 `docs_to_update`）：
+   - 快照 diff 已输出需要更新的文档路径列表
+   - 只读取和更新这些文档，不触碰未变更的文档
+   - 若有新模块（快照中不存在），需新增文档页并同步更新快照
 
 2. **文档撰写规范**：
    - **双语同步**：zh/en 必须同时更新，结构一致
@@ -217,7 +242,9 @@ tags:
 | 异常 | 处理方式 |
 |---|---|
 | 源码路径不存在 | 提示用户确认路径，或使用 GitHub URL 克隆 |
-| 版本无变化 | 跳过源码分析，询问是否做文档维护 |
+| 版本无变化（快照 diff 无变更） | 跳过源码分析，询问是否做文档维护 |
+| 快照文件不存在 | 运行 `snapshot.py generate` 生成初始快照 |
+| 快照中缺少新模块 | 手动补充模块信息到快照，或重新 generate |
 | 截图获取失败 | 插入 TODO 占位，提示用户后续补充 |
 | 构建失败 | 读取错误输出，定位问题文件，修复后重试 |
 | 部署失败 | 检查 Netlify token，重试或提示手动部署 |
@@ -227,9 +254,12 @@ tags:
 
 | 何时读取 | 路径 |
 |---|---|
+| 源码快照（模块/文件/指纹） | `source-snapshot.json` |
+| 快照工具（生成/对比/更新） | `scripts/snapshot.py` |
 | 官网更新规范 | `references/landing-update-guide.md` |
 | 文档更新规范 | `references/docs-update-guide.md` |
 | 截图自动化 | `scripts/screenshot.py` |
+| 归档工具 | `scripts/archive.py` |
 | 归档模板 | `templates/archive-meta.md` |
 | Release Notes 模板 | `templates/release-notes.md` |
 | 项目设计规范 | `DESIGN.md`（项目根目录） |

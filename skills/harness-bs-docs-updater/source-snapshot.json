@@ -1,0 +1,157 @@
+{
+  "snapshot_version": "1.0",
+  "project": "benchscope",
+  "last_synced": "2026-09-09",
+  "version": "1.1.0",
+  "source_repo": "https://github.com/LABELNET/benchscope",
+  "local_path": null,
+  "modules": {
+    "core": {
+      "description": "核心引擎与调度",
+      "files": [
+        "benchscope/core/engine.py",
+        "benchscope/core/scheduler.py",
+        "benchscope/core/config.py"
+      ],
+      "features": ["自研 bench 引擎", "并发调度", "配置管理"],
+      "doc_paths": {
+        "zh": ["tools/bench-engine.md", "install/configuration.md"],
+        "en": ["tools/bench-engine.md", "install/configuration.md"]
+      }
+    },
+    "performance": {
+      "description": "性能压测模块",
+      "files": [
+        "benchscope/perf/runner.py",
+        "benchscope/perf/metrics.py",
+        "benchscope/perf/threshold.py",
+        "benchscope/perf/concurrency.py"
+      ],
+      "features": ["并发压测", "阈值探测", "实时指标", "TTFT/TPOT/ITL"],
+      "doc_paths": {
+        "zh": ["performance/index.md", "performance/concurrency.md", "performance/threshold.md", "cli/perf.md"],
+        "en": ["performance/index.md", "performance/concurrency.md", "performance/threshold.md", "cli/perf.md"]
+      }
+    },
+    "accuracy": {
+      "description": "精度评测模块",
+      "files": [
+        "benchscope/accuracy/evaluator.py",
+        "benchscope/accuracy/scorer.py",
+        "benchscope/accuracy/datasets.py",
+        "benchscope/accuracy/baseline.py"
+      ],
+      "features": ["Native 模式", "Serving 模式", "Mock 模式", "基线对标", "Token 预估"],
+      "doc_paths": {
+        "zh": ["accuracy/index.md", "accuracy/modes.md", "accuracy/datasets.md", "accuracy/scoring.md", "accuracy/guide.md", "cli/eval.md"],
+        "en": ["accuracy/index.md", "accuracy/modes.md", "accuracy/datasets.md", "accuracy/scoring.md", "accuracy/guide.md", "cli/eval.md"]
+      }
+    },
+    "sessions": {
+      "description": "交互式会话模块",
+      "files": [
+        "benchscope/sessions/chat.py",
+        "benchscope/sessions/sse.py",
+        "benchscope/sessions/storage.py"
+      ],
+      "features": ["SSE 流式对话", "采样参数控制", "Markdown 渲染", "会话持久化"],
+      "doc_paths": {
+        "zh": ["tools/sessions.md"],
+        "en": ["tools/sessions.md"]
+      }
+    },
+    "data": {
+      "description": "数据管理模块",
+      "files": [
+        "benchscope/data/storage.py",
+        "benchscope/data/importer.py",
+        "benchscope/data/exporter.py",
+        "benchscope/data/statistics.py"
+      ],
+      "features": ["历史记录归档", "导入/导出", "统计分析"],
+      "doc_paths": {
+        "zh": ["data/index.md"],
+        "en": ["data/index.md"]
+      }
+    },
+    "settings": {
+      "description": "全局设置模块",
+      "files": [
+        "benchscope/settings/manager.py",
+        "benchscope/settings/providers.py",
+        "benchscope/settings/models.py"
+      ],
+      "features": ["Provider 管理", "模型清单", "数据集配置", "引擎注册"],
+      "doc_paths": {
+        "zh": ["tools/settings.md", "install/configuration.md"],
+        "en": ["tools/settings.md", "install/configuration.md"]
+      }
+    },
+    "api": {
+      "description": "HTTP API 模块",
+      "files": [
+        "benchscope/api/routes.py",
+        "benchscope/api/schemas.py",
+        "benchscope/api/websocket.py"
+      ],
+      "features": ["OpenAI 兼容接口", "REST API", "WebSocket 实时推送"],
+      "doc_paths": {
+        "zh": ["api/index.md"],
+        "en": ["api/index.md"]
+      }
+    },
+    "cli": {
+      "description": "命令行工具",
+      "files": [
+        "benchscope/cli/main.py",
+        "benchscope/cli/serve.py",
+        "benchscope/cli/perf.py",
+        "benchscope/cli/eval.py"
+      ],
+      "features": ["serve 子命令", "perf 子命令", "eval 子命令"],
+      "doc_paths": {
+        "zh": ["cli/index.md", "cli/serve.md", "cli/perf.md", "cli/eval.md"],
+        "en": ["cli/index.md", "cli/serve.md", "cli/perf.md", "cli/eval.md"]
+      }
+    },
+    "ui_web": {
+      "description": "Web 前端（Vue）",
+      "files": [
+        "benchscope/web/src/views/Dashboard.vue",
+        "benchscope/web/src/views/Performance.vue",
+        "benchscope/web/src/views/Accuracy.vue",
+        "benchscope/web/src/views/Sessions.vue",
+        "benchscope/web/src/views/Datas.vue",
+        "benchscope/web/src/views/Settings.vue"
+      ],
+      "features": ["Dashboard 概览", "性能测试页", "精度评测页", "会话页", "数据页", "设置页"],
+      "doc_paths": {
+        "zh": ["quickstart/platform.md"],
+        "en": ["quickstart/platform.md"]
+      }
+    }
+  },
+  "configs": {
+    "description": "内置 YAML 配置文件",
+    "files": [
+      "benchscope/configs/benchscope-default.yaml",
+      "benchscope/configs/bench-params.yaml",
+      "benchscope/configs/benchs.yaml",
+      "benchscope/configs/datasets.yaml",
+      "benchscope/configs/models.yaml",
+      "benchscope/configs/baselines.yaml",
+      "benchscope/configs/token_estimates.yaml"
+    ],
+    "doc_paths": {
+      "zh": ["install/configuration.md"],
+      "en": ["install/configuration.md"]
+    }
+  },
+  "changelog": {
+    "description": "版本变更日志",
+    "files": [
+      "CHANGELOG.md",
+      "HISTORY.md"
+    ]
+  }
+}
