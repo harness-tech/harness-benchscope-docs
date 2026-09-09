@@ -19,4 +19,5 @@ dist
 
 # Netlify / env secrets
 .env.netlify
+.env.github
 .netlify/
