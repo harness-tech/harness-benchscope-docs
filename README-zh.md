@@ -38,7 +38,7 @@ pip install benchscope
 
 阅读文档：
 
-- [📖 阅读文档](https://benchscope.example.com/zh/)
+- [📖 阅读文档](https://benchscope.harness-tech.com/zh/docs/)
 
 ## 文档主题
 

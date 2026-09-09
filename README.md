@@ -38,7 +38,7 @@ pip install benchscope
 
 Explore the docs:
 
-- [📖 Read the documentation](https://benchscope.example.com/en/)
+- [📖 Read the documentation](https://benchscope.harness-tech.com/en/docs/)
 
 ## Documentation Topics
 
