@@ -125,9 +125,16 @@ pnpm convert:docs       # 将旧式 ::: 提示容器与相对 .md 链接转为 A
 
 - 完成某项工作后：**只保留工作区改动（不提交、不推送）**，向维护者反馈，等待明确指示。
 - 只有在维护者明确要求时，才执行 `git add` + `git commit`（以及仅在明确要求时 `git push`）。
-- 提交信息遵循 `<type>(<scope>): <subject>`，如 `docs(core): add performance tutorial`、`feat(theme): gold navbar`。
-- type 常用：`feat` / `fix` / `docs` / `style` / `refactor` / `chore`。
-- 提交前确认 `.gitignore` 生效、无构建产物入仓。
+- **提交信息语言**：commit 信息必须使用**英文**，且保持**简短**（一行，不超过 72 字符）。
+- **提交信息格式**：遵循 `<type>(<scope>): <subject>`，如 `docs(core): add performance tutorial`、`feat(theme): gold navbar`。
+- **type 常用**：`feat` / `fix` / `docs` / `style` / `refactor` / `chore`。
+- **提交前确认**：`.gitignore` 生效、无构建产物入仓。
+- **示例**：
+  - ✅ `feat(ui): add hover animation to feature cards`
+  - ✅ `fix(config): correct typo in analysis directory`
+  - ✅ `docs(api): update FAQ format`
+  - ❌ `feat(ui): 为功能卡片添加hover动画`（中文，不符合规范）
+  - ❌ `feat(ui): add hover animation to feature cards and fix some other issues`（过长）
 
 ---
 
