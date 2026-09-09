@@ -83,8 +83,9 @@ def main():
     print("deploy state:", state)
 
     # publish to production
-    if args.prod and state == "ready":
-        p = req("POST", f"{API}/sites/{site_id}/deploys/{deploy_id}/restore", b"",
+    if args.prod:
+        print("publishing to production ...")
+        p = req("POST", f"{API}/sites/{site_id}/publish/{deploy_id}", b"",
                 {"Content-Type": "application/json"})
         print("published:", p.get("state"))
         print("site URL:", p.get("url") or c.get("url") or d.get("url"))

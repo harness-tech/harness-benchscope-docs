@@ -2,13 +2,27 @@
 
 本站（BenchScope 官网 + 文档站）版本记录。**最新更新在文档最上面。**
 
-> **当前版本定位：`1.1.0`**（`package.json`）—— 版本号约定 **`x.y.z`**。
+> **当前版本定位：`1.1.1`**（`package.json`）—— 版本号约定 **`x.y.z`**。
 > - **z（patch）**：只打 tag + 推送代码。
 > - **x.y（minor / major）**：打 tag + 推送 release + 总结 release notes + 发布（发布流程**暂未定义**）。
 > - 发布命令：`pnpm release <patch|minor|major>`，详见 [AGENTS.md](./AGENTS.md) 第 8 节。
 >
 > 版本号说明：`Site x.y.z` 为文档站 / 仓库自身的版本；括号内为对应的 BenchScope 产品版本。
 > 文末附产品版本速查，完整产品更新说明见文档中心「更新说明」与 [/zh/docs/changelog/](/zh/docs/changelog/v1-1-0/)。
+
+---
+
+## [1.1.1] — 2026-09-09
+
+**品牌名称更新与链接修复（Site v1.1.1）。**
+
+### 品牌更新
+- **HarnessTek → HarnessAI / 模力有方**：英文站显示 `HarnessAI`，中文站显示 `模力有方`
+- **网站底部 Footer**：品牌名称与版权信息按语言动态切换
+- **README**：英文版权更新为 `© HarnessAI`，中文版权更新为 `© 模力有方`
+
+### 链接修复
+- **文档链接**：修正 README 中文档链接为正确的 base URL（`https://benchscope.harness-tech.com`）
 
 ---
 
