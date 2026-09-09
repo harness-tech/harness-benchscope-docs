@@ -79,20 +79,23 @@ python skills/harness-bs-docs-updater/scripts/archive.py --version 1.1.0 --skip-
 ## 目录结构
 
 ```
-skills/harness-bs-docs-updater/
-├── SKILL.md                    # 技能核心指令
-├── README.md                   # 本文件
-├── references/                 # 参考文档
-│   ├── landing-update-guide.md # 官网更新指南
-│   └── docs-update-guide.md    # 文档更新指南
-├── scripts/                    # 自动化脚本
-│   ├── screenshot.py           # 自动截图
-│   └── archive.py              # 文档归档
-├── templates/                  # 模板文件
-│   ├── release-notes.md        # Release Notes 模板
-│   └── archive-meta.md         # 归档元数据模板
-└── archives/                   # 版本归档目录
-    └── v1.1.0/                 # 示例归档
+skills/harness-bs-docs-updater/       # 技能目录
+├── SKILL.md                          # 技能核心指令
+├── README.md                         # 本文件
+├── source-snapshot.json              # 源码快照（模块/文件指纹/文档映射）
+├── references/                       # 参考文档
+│   ├── landing-update-guide.md       # 官网更新指南
+│   └── docs-update-guide.md          # 文档更新指南
+├── scripts/                          # 自动化脚本
+│   ├── snapshot.py                   # 快照工具（生成/对比/更新）
+│   ├── screenshot.py                 # 自动截图
+│   └── archive.py                    # 文档归档
+└── templates/                        # 模板文件
+    ├── release-notes.md              # Release Notes 模板
+    └── archive-meta.md               # 归档元数据模板
+
+archives/                             # 旧版本文档归档（项目根目录，由技能维护）
+└── v1.1.0/                           # 示例归档
 ```
 
 ## 版本管理

@@ -13,7 +13,7 @@ from datetime import datetime
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
-ARCHIVES_DIR = PROJECT_ROOT / "skills" / "harness-bs-docs-updater" / "archives"
+ARCHIVES_DIR = PROJECT_ROOT / "archives"
 DOCS_ZH = PROJECT_ROOT / "src" / "content" / "docs" / "zh"
 DOCS_EN = PROJECT_ROOT / "src" / "content" / "docs" / "en"
 

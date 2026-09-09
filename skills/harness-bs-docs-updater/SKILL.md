@@ -107,7 +107,9 @@ tags:
 
 ### Phase 2 — 归档旧文档
 
-1. **创建归档目录**：`archives/v<当前版本>/`
+> 归档目录位于**项目根目录** `archives/`（非技能目录下），由技能负责维护。
+
+1. **创建归档目录**：`archives/v<当前版本>/`（项目根目录下）
 2. **归档内容**：
    - 当前 `src/content/docs/zh/` 全量快照
    - 当前 `src/content/docs/en/` 全量快照
@@ -217,8 +219,8 @@ tags:
 | 产出 | 路径 | 说明 |
 |---|---|---|
 | 变更分析报告 | `archives/vX.Y.Z/ANALYSIS.md` | 源码变更摘要 |
-| 归档文档 | `archives/vX.Y.Z/docs/{zh,en}/` | 旧版本文档快照 |
-| 归档元数据 | `archives/vX.Y.Z/META.md` | 归档时间、版本、变更摘要 |
+| 归档文档 | `archives/vX.Y.Z/docs/{zh,en}/`（项目根目录） | 旧版本文档快照 |
+| 归档元数据 | `archives/vX.Y.Z/META.md`（项目根目录） | 归档时间、版本、变更摘要 |
 | Release Notes | `releases/vX.Y.Z.md` | 中英双语发布说明 |
 | 更新后的官网组件 | `src/components/Screen*.astro` | 涉及变更的屏幕 |
 | 更新后的文档 | `src/content/docs/{zh,en}/` | 新增或修改的文档页 |
