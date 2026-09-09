@@ -4,7 +4,7 @@ title: "Overview"
 
 # Overview
 
-The accuracy testing module performs **quantitative evaluation of model outputs**, supporting both **Native** and **Serving** modes, and ships with multiple built-in evaluation datasets and scorers. It answers the question: *how correct is my model on a given task?*
+The accuracy testing module performs **quantitative evaluation of model outputs**, supporting both **Native** and **Serving** modes, and ships with **9 built-in evaluation datasets** (GSM8K / MMLU / CMMLU / C-Eval / MATH / HumanEval / MBPP / MT-Bench / GAOKAO-Bench) with dedicated scorers. It answers the question: *how correct is my model on a given task?*
 
 ![Accuracy testing main interface](/images/benchscope-accuracy_default.png)
 

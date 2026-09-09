@@ -4,15 +4,19 @@ title: "Evaluation Datasets"
 
 # Evaluation Datasets
 
-BenchScope ships with **9 built-in evaluation datasets** covering knowledge / math / code / chat / Chinese domains. To choose a dataset, pass a **built-in dataset id** (for example `mmlu` / `gsm8k`) or a **local JSONL path**.
+BenchScope ships with **9 built-in evaluation datasets** covering knowledge / math / code / chat / comprehensive domains. Each dataset is bound to a dedicated scorer (`choice` / `math` / `code` / `judge`) with declared sample counts. To choose a dataset, pass a **built-in dataset id** (for example `mmlu` / `gsm8k`) or a **local JSONL path**.
 
-| Domain | Examples |
-| --- | --- |
-| Knowledge | MMLU |
-| Math | GSM8K |
-| Code | HumanEval / MBPP (sandboxed `pass@1`) |
-| Chat / judge | MT-Bench (LLM-as-judge) |
-| Chinese | Various Chinese-language datasets included in the built-in set |
+| Dataset id | Name | Domain | Scorer | Metric | Samples |
+| --- | --- | --- | --- | --- | --- |
+| `gsm8k` | GSM8K | Math | `math` | exact_match | 7,473 |
+| `mmlu` | MMLU | Knowledge | `choice` | accuracy | 14,079 |
+| `cmmlu` | CMMLU | Knowledge | `choice` | accuracy | 11,960 |
+| `c-eval` | C-Eval | Knowledge | `choice` | accuracy | 13,480 |
+| `math` | MATH | Math | `math` | exact_match | 5,000 |
+| `humaneval` | HumanEval | Code | `code` | pass@1 | 164 |
+| `mbpp` | MBPP | Code | `code` | pass@1 | 974 |
+| `mt-bench` | MT-Bench | Chat | `judge` | mt_bench | 80 |
+| `gaokao-bench` | GAOKAO-Bench | Comprehensive | `choice` | accuracy | 2,000 |
 
 See **Settings → Datasets** for the full list — [Settings](/en/docs/tools/settings/).
 

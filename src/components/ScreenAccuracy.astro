@@ -10,12 +10,12 @@ const { lang, ico } = Astro.props
 const isEn = lang === 'en'
 
 const aTitle = isEn ? 'Accuracy' : '精度'
-const aLead = isEn ? 'Evaluate model output quality against baselines, online or offline, with per-sample traceability.' : '对标基线评估模型输出质量，在线或离线，每个样本可溯源。'
+const aLead = isEn ? 'Evaluate model output quality against baselines with 9 built-in datasets, online or offline, per-sample traceability.' : '9 个内置数据集对标基线评估模型输出质量，在线或离线，每个样本可溯源。'
 
 const accCells = [
-  { i: 'target', t: isEn ? 'Create Accuracy Task' : '创建精度任务', d: isEn ? 'Pick a dataset with token warnings.' : '选择数据集，附带 Token 词元预警。' },
+  { i: 'target', t: isEn ? 'Create Accuracy Task' : '创建精度任务', d: isEn ? 'Pick from 9 built-in datasets with token warnings.' : '从 9 个内置数据集中选择，附带 Token 词元预警。' },
   { i: 'globe', t: isEn ? 'Serving Mode' : '服务模式', d: isEn ? 'Online test of a deployed OpenAI-compatible service.' : '对已部署的 OpenAI 兼容服务在线测试。' },
-  { i: 'chart', t: isEn ? 'Accuracy Analysis' : '精度分析', d: isEn ? 'Official-model accuracy comparison.' : '官方模型精度对标分析。' },
+  { i: 'chart', t: isEn ? 'Accuracy Analysis' : '精度分析', d: isEn ? 'Baseline comparison with diff_pp / grade / conclusion.' : '基线对标分析，含 diff_pp / grade / conclusion。' },
   { i: 'database', t: isEn ? 'Offline Mode' : '离线模式', d: isEn ? 'Native accuracy test of local weights.' : '对本地权重进行原生精度测试。' },
 ]
 ---
@@ -35,7 +35,7 @@ const accCells = [
             <h3 class="pan-title">{isEn ? 'Accuracy Testing' : '精度测试'}</h3>
             <p class="pan-lead">{aLead}</p>
             <div class="acc-datasets">
-              {['MMLU', 'GSM8K', 'C-Eval', 'HumanEval', 'MATH', 'BBH', 'ARC', 'HellaSwag'].map((ds) => (
+              {['MMLU', 'GSM8K', 'C-Eval', 'HumanEval', 'MATH', 'CMMLU', 'MBPP', 'MT-Bench', 'GAOKAO-Bench'].map((ds) => (
                 <span class="acc-tag">{ds}</span>
               ))}
             </div>

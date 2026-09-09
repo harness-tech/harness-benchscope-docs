@@ -107,16 +107,21 @@ tags:
 
 ### Phase 2 — 归档旧文档
 
-> 归档目录位于**项目根目录** `archives/`（非技能目录下），由技能负责维护。
+> 归档目录位于**项目根目录** `archives/`（非技能目录下），由技能负责维护。归档后自动打包为 `tar.gz`。
 
-1. **创建归档目录**：`archives/v<当前版本>/`（项目根目录下）
+1. **运行归档脚本**：
+   ```bash
+   python skills/harness-bs-docs-updater/scripts/archive.py --version <当前版本>
+   ```
 2. **归档内容**：
    - 当前 `src/content/docs/zh/` 全量快照
    - 当前 `src/content/docs/en/` 全量快照
-   - 当前 `src/components/` 中涉及变更的组件快照
-3. **记录归档元数据**：`archives/v<当前版本>/META.md`（归档时间、版本、变更摘要）
+3. **自动生成**：
+   - `archives/vX.Y.Z/META.md` — 归档元数据
+   - `archives/vX.Y.Z.tar.gz` — 归档压缩包
 
 > **归档规则**：仅在版本号发生变化时归档；同一版本的多次修改不重复归档。
+> **压缩包用途**：tar.gz 可直接上传到代码仓库或用于跨环境迁移。
 
 ### Phase 3 — 官网更新（Landing Page）
 
@@ -220,6 +225,7 @@ tags:
 |---|---|---|
 | 变更分析报告 | `archives/vX.Y.Z/ANALYSIS.md` | 源码变更摘要 |
 | 归档文档 | `archives/vX.Y.Z/docs/{zh,en}/`（项目根目录） | 旧版本文档快照 |
+| 归档压缩包 | `archives/vX.Y.Z.tar.gz`（项目根目录） | 归档目录的 tar.gz 压缩包 |
 | 归档元数据 | `archives/vX.Y.Z/META.md`（项目根目录） | 归档时间、版本、变更摘要 |
 | Release Notes | `releases/vX.Y.Z.md` | 中英双语发布说明 |
 | 更新后的官网组件 | `src/components/Screen*.astro` | 涉及变更的屏幕 |

@@ -4,7 +4,7 @@ title: "概述"
 
 # 概述
 
-精度测试模块对模型的输出做**量化评估**，支持**原生（Native）**与**服务（Serving）**双模式，内置多种评测数据集与判分器，并提供 Token 预估与开源基线对标能力。它回答「模型在给定任务上答得多准」。
+精度测试模块对模型的输出做**量化评估**，支持**原生（Native）**与**服务（Serving）**双模式，内置 **9 个评测数据集**（GSM8K / MMLU / CMMLU / C-Eval / MATH / HumanEval / MBPP / MT-Bench / GAOKAO-Bench）与专用判分器，并提供 Token 预估与开源基线对标能力。它回答「模型在给定任务上答得多准」。
 
 ![BenchScope 精度测试默认界面](/images/benchscope-accuracy_default.png)
 

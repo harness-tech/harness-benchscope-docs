@@ -2,7 +2,7 @@
   "snapshot_version": "1.0",
   "project": "benchscope",
   "last_synced": "2026-09-09",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "source_repo": "https://github.com/LABELNET/benchscope",
   "local_path": null,
   "modules": {
@@ -13,10 +13,25 @@
         "benchscope/core/scheduler.py",
         "benchscope/core/config.py"
       ],
-      "features": ["自研 bench 引擎", "并发调度", "配置管理"],
+      "features": [
+        "自研 bench 引擎",
+        "并发调度",
+        "配置管理"
+      ],
       "doc_paths": {
-        "zh": ["tools/bench-engine.md", "install/configuration.md"],
-        "en": ["tools/bench-engine.md", "install/configuration.md"]
+        "zh": [
+          "tools/bench-engine.md",
+          "install/configuration.md"
+        ],
+        "en": [
+          "tools/bench-engine.md",
+          "install/configuration.md"
+        ]
+      },
+      "file_hashes": {
+        "benchscope/core/engine.py": "missing",
+        "benchscope/core/scheduler.py": "missing",
+        "benchscope/core/config.py": "missing"
       }
     },
     "performance": {
@@ -27,10 +42,31 @@
         "benchscope/perf/threshold.py",
         "benchscope/perf/concurrency.py"
       ],
-      "features": ["并发压测", "阈值探测", "实时指标", "TTFT/TPOT/ITL"],
+      "features": [
+        "并发压测",
+        "阈值探测",
+        "实时指标",
+        "TTFT/TPOT/ITL"
+      ],
       "doc_paths": {
-        "zh": ["performance/index.md", "performance/concurrency.md", "performance/threshold.md", "cli/perf.md"],
-        "en": ["performance/index.md", "performance/concurrency.md", "performance/threshold.md", "cli/perf.md"]
+        "zh": [
+          "performance/index.md",
+          "performance/concurrency.md",
+          "performance/threshold.md",
+          "cli/perf.md"
+        ],
+        "en": [
+          "performance/index.md",
+          "performance/concurrency.md",
+          "performance/threshold.md",
+          "cli/perf.md"
+        ]
+      },
+      "file_hashes": {
+        "benchscope/perf/runner.py": "missing",
+        "benchscope/perf/metrics.py": "missing",
+        "benchscope/perf/threshold.py": "missing",
+        "benchscope/perf/concurrency.py": "missing"
       }
     },
     "accuracy": {
@@ -41,10 +77,36 @@
         "benchscope/accuracy/datasets.py",
         "benchscope/accuracy/baseline.py"
       ],
-      "features": ["Native 模式", "Serving 模式", "Mock 模式", "基线对标", "Token 预估"],
+      "features": [
+        "Native 模式",
+        "Serving 模式",
+        "Mock 模式",
+        "基线对标",
+        "Token 预估"
+      ],
       "doc_paths": {
-        "zh": ["accuracy/index.md", "accuracy/modes.md", "accuracy/datasets.md", "accuracy/scoring.md", "accuracy/guide.md", "cli/eval.md"],
-        "en": ["accuracy/index.md", "accuracy/modes.md", "accuracy/datasets.md", "accuracy/scoring.md", "accuracy/guide.md", "cli/eval.md"]
+        "zh": [
+          "accuracy/index.md",
+          "accuracy/modes.md",
+          "accuracy/datasets.md",
+          "accuracy/scoring.md",
+          "accuracy/guide.md",
+          "cli/eval.md"
+        ],
+        "en": [
+          "accuracy/index.md",
+          "accuracy/modes.md",
+          "accuracy/datasets.md",
+          "accuracy/scoring.md",
+          "accuracy/guide.md",
+          "cli/eval.md"
+        ]
+      },
+      "file_hashes": {
+        "benchscope/accuracy/evaluator.py": "missing",
+        "benchscope/accuracy/scorer.py": "missing",
+        "benchscope/accuracy/datasets.py": "27a6195ec237f38f",
+        "benchscope/accuracy/baseline.py": "missing"
       }
     },
     "sessions": {
@@ -54,10 +116,24 @@
         "benchscope/sessions/sse.py",
         "benchscope/sessions/storage.py"
       ],
-      "features": ["SSE 流式对话", "采样参数控制", "Markdown 渲染", "会话持久化"],
+      "features": [
+        "SSE 流式对话",
+        "采样参数控制",
+        "Markdown 渲染",
+        "会话持久化"
+      ],
       "doc_paths": {
-        "zh": ["tools/sessions.md"],
-        "en": ["tools/sessions.md"]
+        "zh": [
+          "tools/sessions.md"
+        ],
+        "en": [
+          "tools/sessions.md"
+        ]
+      },
+      "file_hashes": {
+        "benchscope/sessions/chat.py": "missing",
+        "benchscope/sessions/sse.py": "missing",
+        "benchscope/sessions/storage.py": "missing"
       }
     },
     "data": {
@@ -68,10 +144,24 @@
         "benchscope/data/exporter.py",
         "benchscope/data/statistics.py"
       ],
-      "features": ["历史记录归档", "导入/导出", "统计分析"],
+      "features": [
+        "历史记录归档",
+        "导入/导出",
+        "统计分析"
+      ],
       "doc_paths": {
-        "zh": ["data/index.md"],
-        "en": ["data/index.md"]
+        "zh": [
+          "data/index.md"
+        ],
+        "en": [
+          "data/index.md"
+        ]
+      },
+      "file_hashes": {
+        "benchscope/data/storage.py": "missing",
+        "benchscope/data/importer.py": "missing",
+        "benchscope/data/exporter.py": "missing",
+        "benchscope/data/statistics.py": "missing"
       }
     },
     "settings": {
@@ -81,10 +171,26 @@
         "benchscope/settings/providers.py",
         "benchscope/settings/models.py"
       ],
-      "features": ["Provider 管理", "模型清单", "数据集配置", "引擎注册"],
+      "features": [
+        "Provider 管理",
+        "模型清单",
+        "数据集配置",
+        "引擎注册"
+      ],
       "doc_paths": {
-        "zh": ["tools/settings.md", "install/configuration.md"],
-        "en": ["tools/settings.md", "install/configuration.md"]
+        "zh": [
+          "tools/settings.md",
+          "install/configuration.md"
+        ],
+        "en": [
+          "tools/settings.md",
+          "install/configuration.md"
+        ]
+      },
+      "file_hashes": {
+        "benchscope/settings/manager.py": "missing",
+        "benchscope/settings/providers.py": "missing",
+        "benchscope/settings/models.py": "missing"
       }
     },
     "api": {
@@ -94,10 +200,23 @@
         "benchscope/api/schemas.py",
         "benchscope/api/websocket.py"
       ],
-      "features": ["OpenAI 兼容接口", "REST API", "WebSocket 实时推送"],
+      "features": [
+        "OpenAI 兼容接口",
+        "REST API",
+        "WebSocket 实时推送"
+      ],
       "doc_paths": {
-        "zh": ["api/index.md"],
-        "en": ["api/index.md"]
+        "zh": [
+          "api/index.md"
+        ],
+        "en": [
+          "api/index.md"
+        ]
+      },
+      "file_hashes": {
+        "benchscope/api/routes.py": "missing",
+        "benchscope/api/schemas.py": "missing",
+        "benchscope/api/websocket.py": "missing"
       }
     },
     "cli": {
@@ -108,10 +227,30 @@
         "benchscope/cli/perf.py",
         "benchscope/cli/eval.py"
       ],
-      "features": ["serve 子命令", "perf 子命令", "eval 子命令"],
+      "features": [
+        "serve 子命令",
+        "perf 子命令",
+        "eval 子命令"
+      ],
       "doc_paths": {
-        "zh": ["cli/index.md", "cli/serve.md", "cli/perf.md", "cli/eval.md"],
-        "en": ["cli/index.md", "cli/serve.md", "cli/perf.md", "cli/eval.md"]
+        "zh": [
+          "cli/index.md",
+          "cli/serve.md",
+          "cli/perf.md",
+          "cli/eval.md"
+        ],
+        "en": [
+          "cli/index.md",
+          "cli/serve.md",
+          "cli/perf.md",
+          "cli/eval.md"
+        ]
+      },
+      "file_hashes": {
+        "benchscope/cli/main.py": "missing",
+        "benchscope/cli/serve.py": "missing",
+        "benchscope/cli/perf.py": "missing",
+        "benchscope/cli/eval.py": "missing"
       }
     },
     "ui_web": {
@@ -124,10 +263,29 @@
         "benchscope/web/src/views/Datas.vue",
         "benchscope/web/src/views/Settings.vue"
       ],
-      "features": ["Dashboard 概览", "性能测试页", "精度评测页", "会话页", "数据页", "设置页"],
+      "features": [
+        "Dashboard 概览",
+        "性能测试页",
+        "精度评测页",
+        "会话页",
+        "数据页",
+        "设置页"
+      ],
       "doc_paths": {
-        "zh": ["quickstart/platform.md"],
-        "en": ["quickstart/platform.md"]
+        "zh": [
+          "quickstart/platform.md"
+        ],
+        "en": [
+          "quickstart/platform.md"
+        ]
+      },
+      "file_hashes": {
+        "benchscope/web/src/views/Dashboard.vue": "missing",
+        "benchscope/web/src/views/Performance.vue": "missing",
+        "benchscope/web/src/views/Accuracy.vue": "missing",
+        "benchscope/web/src/views/Sessions.vue": "missing",
+        "benchscope/web/src/views/Datas.vue": "missing",
+        "benchscope/web/src/views/Settings.vue": "missing"
       }
     }
   },
@@ -143,8 +301,21 @@
       "benchscope/configs/token_estimates.yaml"
     ],
     "doc_paths": {
-      "zh": ["install/configuration.md"],
-      "en": ["install/configuration.md"]
+      "zh": [
+        "install/configuration.md"
+      ],
+      "en": [
+        "install/configuration.md"
+      ]
+    },
+    "file_hashes": {
+      "benchscope/configs/benchscope-default.yaml": "c37258f06e1a9734",
+      "benchscope/configs/bench-params.yaml": "1d7589dca9eb43f2",
+      "benchscope/configs/benchs.yaml": "30f21641c0f0eb22",
+      "benchscope/configs/datasets.yaml": "ea06f8b6c0184fd2",
+      "benchscope/configs/models.yaml": "a3661169e53e62e1",
+      "benchscope/configs/baselines.yaml": "4d6c51f99f470c47",
+      "benchscope/configs/token_estimates.yaml": "50241fb14dc1ac88"
     }
   },
   "changelog": {
@@ -152,6 +323,7 @@
     "files": [
       "CHANGELOG.md",
       "HISTORY.md"
-    ]
+    ],
+    "file_hashes": {}
   }
 }

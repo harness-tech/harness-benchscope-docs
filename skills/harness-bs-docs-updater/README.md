@@ -69,11 +69,21 @@ python skills/harness-bs-docs-updater/scripts/screenshot.py \
 ### 手动归档
 
 ```bash
-# 归档当前版本文档
+# 归档当前版本文档（自动打包为 tar.gz）
 python skills/harness-bs-docs-updater/scripts/archive.py --version 1.1.0
 
 # 仅创建元数据（不复制文档）
 python skills/harness-bs-docs-updater/scripts/archive.py --version 1.1.0 --skip-docs
+
+# 仅打包已有归档目录为 tar.gz
+python skills/harness-bs-docs-updater/scripts/archive.py --version 1.1.0 --pack-only
+```
+
+归档产物：
+```
+archives/
+├── v1.1.0/           # 归档目录（docs 快照 + META.md）
+└── v1.1.0.tar.gz     # 归档压缩包（可上传仓库）
 ```
 
 ## 目录结构
@@ -95,7 +105,8 @@ skills/harness-bs-docs-updater/       # 技能目录
     └── archive-meta.md               # 归档元数据模板
 
 archives/                             # 旧版本文档归档（项目根目录，由技能维护）
-└── v1.1.0/                           # 示例归档
+├── v1.1.0/                           # 示例归档目录（docs 快照 + META.md）
+└── v1.1.0.tar.gz                     # 示例归档压缩包
 ```
 
 ## 版本管理
