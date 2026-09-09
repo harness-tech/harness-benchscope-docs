@@ -55,4 +55,4 @@ pip install benchscope
 - **源码仓库**：[LABELNET/benchscope](https://github.com/LABELNET/benchscope)
 - **PyPI**：[benchscope](https://pypi.org/project/benchscope)
 - **开源协议**：[Apache License 2.0](./LICENSE)
-- **版权**：© HarnessTek（https://www.harness-tech.com）
+- **版权**：© 模力有方（https://www.harness-tech.com）

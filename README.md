@@ -55,4 +55,4 @@ Explore the docs:
 - **Source code**: [LABELNET/benchscope](https://github.com/LABELNET/benchscope)
 - **PyPI**: [benchscope](https://pypi.org/project/benchscope)
 - **License**: [Apache License 2.0](./LICENSE)
-- **Copyright**: © HarnessTek (https://www.harness-tech.com)
+- **Copyright**: © HarnessAI (https://www.harness-tech.com)

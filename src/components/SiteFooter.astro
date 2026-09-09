@@ -8,12 +8,18 @@ const base = lang === 'zh' ? '/zh' : '/en'
 const rest = url.startsWith(base) ? url.slice(base.length) : url
 const otherHref = `/${other}${rest === '' ? '/' : rest}`
 
-const links = [
-  { name: 'HarnessTek', url: 'https://www.harness-tech.com' },
-  { name: 'BenchScope', url: 'https://github.com/LABELNET/benchscope' },
-  { name: 'BenchScope Docs', url: 'https://github.com/harness-tech/harness-benchscope-docs' },
-]
-const copyright = '© 2026 HarnessTek. All rights reserved.'
+const links = lang === 'zh'
+  ? [
+      { name: '模力有方', url: 'https://www.harness-tech.com' },
+      { name: 'BenchScope', url: 'https://github.com/LABELNET/benchscope' },
+      { name: 'BenchScope Docs', url: 'https://github.com/harness-tech/harness-benchscope-docs' },
+    ]
+  : [
+      { name: 'HarnessAI', url: 'https://www.harness-tech.com' },
+      { name: 'BenchScope', url: 'https://github.com/LABELNET/benchscope' },
+      { name: 'BenchScope Docs', url: 'https://github.com/harness-tech/harness-benchscope-docs' },
+    ]
+const copyright = lang === 'zh' ? '© 2026 模力有方. All rights reserved.' : '© 2026 HarnessAI. All rights reserved.'
 ---
 
 <footer class="site-footer">
