@@ -51,17 +51,14 @@ CLI 与 Web 任务产物完全兼容：所有 CLI 产物可打包后在网页 **
 
 ## 常见问题
 
-**Q：`benchscope` 不带参数执行会怎样？**
+**问题：`benchscope` 不带参数执行会怎样？**
+等价于 `benchscope serve`，直接启动 Web 平台。
 
-A：等价于 `benchscope serve`，直接启动 Web 平台。
+**问题：产出的任务能在网页里管理吗？**
+可以。CLI 产物与网页任务完全兼容，可在 **Datas → Perfs / Evals** 查看、打包导入。
 
-**Q：产出的任务能在网页里管理吗？**
-
-A：可以。CLI 产物与网页任务完全兼容，可在 **Datas → Perfs / Evals** 查看、打包导入。
-
-**Q：如何按需选择命令？**
-
-A：启动服务用 [`serve`](/zh/docs/cli/serve/)；压测吞吐 / 延迟（含阈值探测）用 [`perf`](/zh/docs/cli/perf/)；评测精度用 [`eval`](/zh/docs/cli/eval/)。
+**问题：如何按需选择命令？**
+启动服务用 [`serve`](/zh/docs/cli/serve/)；压测吞吐 / 延迟（含阈值探测）用 [`perf`](/zh/docs/cli/perf/)；评测精度用 [`eval`](/zh/docs/cli/eval/)。
 
 ## 相关文档
 

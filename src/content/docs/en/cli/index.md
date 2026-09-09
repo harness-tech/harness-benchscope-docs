@@ -52,16 +52,13 @@ CLI and Web task artifacts are fully compatible: you can package any CLI output 
 ## FAQ
 
 **Q: What happens when `benchscope` runs with no arguments?**
-
-A: It behaves like `benchscope serve`, launching the Web platform directly.
+It behaves like `benchscope serve`, launching the Web platform directly.
 
 **Q: Can CLI-created tasks be managed in the Web UI?**
-
-A: Yes. CLI artifacts are fully equivalent to Web tasks and can be viewed or packaged-imported under **Datas → Perfs / Evals**.
+Yes. CLI artifacts are fully equivalent to Web tasks and can be viewed or packaged-imported under **Datas → Perfs / Evals**.
 
 **Q: Which command should I pick?**
-
-A: Use [`serve`](/en/docs/cli/serve/) to start the service, [`perf`](/en/docs/cli/perf/) for throughput / latency stress testing (including threshold probing), and [`eval`](/en/docs/cli/eval/) for accuracy evaluation.
+Use [`serve`](/en/docs/cli/serve/) to start the service, [`perf`](/en/docs/cli/perf/) for throughput / latency stress testing (including threshold probing), and [`eval`](/en/docs/cli/eval/) for accuracy evaluation.
 
 ## Related
 

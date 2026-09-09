@@ -45,7 +45,8 @@ const adv = [
 <style is:global>
   /* ── 屏6 高级 ── */
   .agrid2 { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 12px; flex: 1; min-height: 0; }
-  .acell { display: block; text-decoration: none; }
+  .acell { display: block; text-decoration: none; transition: all 0.2s ease; }
+  .acell:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(214,177,90,0.15); }
   .abig { margin-bottom: 12px; color: var(--text-2); transition: color .16s; }
   .abig svg { display: block; }
   .acell:hover .abig { color: var(--gold-text); }

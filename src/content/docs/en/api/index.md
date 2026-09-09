@@ -97,20 +97,16 @@ There is **no authentication by default** locally. If the target service require
 ## FAQ
 
 **Q: How can I confirm the service is running?**
-
-A: Visit `http://127.0.0.1:8080/api/version` (or your reachable root address) — a returned version number means the service is ready.
+Visit `http://127.0.0.1:8080/api/version` (or your reachable root address) — a returned version number means the service is ready.
 
 **Q: Can I call the chat endpoint directly with curl?**
-
-A: Yes. The `/v1/chat/completions` example above is a runnable curl command with an OpenAI-compatible request body and SSE streaming.
+Yes. The `/v1/chat/completions` example above is a runnable curl command with an OpenAI-compatible request body and SSE streaming.
 
 **Q: How do I let third-party services use my API key?**
-
-A: Configure the Base URL and API Key for the relevant Provider in [Settings → Providers](/en/docs/tools/settings/). Authentication of the service under test is separate from BenchScope's own API authentication.
+Configure the Base URL and API Key for the relevant Provider in [Settings → Providers](/en/docs/tools/settings/). Authentication of the service under test is separate from BenchScope's own API authentication.
 
 **Q: How do I create and preview a performance task over HTTP?**
-
-A: Post task conditions to `POST /api/tasks/preview` to preview the command that will run; then create the task with `POST /api/tasks` and start it with `POST /api/tasks/{task_id}/start`.
+Post task conditions to `POST /api/tasks/preview` to preview the command that will run; then create the task with `POST /api/tasks` and start it with `POST /api/tasks/{task_id}/start`.
 
 <div class="info">
 

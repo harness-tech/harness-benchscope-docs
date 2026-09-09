@@ -43,13 +43,14 @@ const ctaDocs = isEn ? 'Read the Docs' : '阅读文档'
   .intro-name { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 850; color: var(--gold-text); letter-spacing: -.02em; line-height: 1.1; margin: 0 0 18px; }
   .intro-desc { color: var(--text-2); font-size: clamp(13px, 1.3vw, 15px); line-height: 1.7; margin: 0 auto 28px; max-width: 52ch; }
   .intro-actions { display: flex; gap: 16px; justify-content: center; }
-  .btn { display: inline-flex; align-items: center; padding: 10px 24px; font-size: 14px; font-weight: 650; text-decoration: none; border: 1px solid transparent; }
+  .btn { display: inline-flex; align-items: center; padding: 10px 24px; font-size: 14px; font-weight: 650; text-decoration: none; border: 1px solid transparent; border-radius: 6px; transition: all 0.2s ease; }
+  .btn:hover { transform: scale(1.02); }
   .btn-gold { background: var(--gold); color: #2b200a; }
   .btn-gold:hover { background: var(--gold-light); color: #2b200a; }
   .btn-ghost { border-color: var(--gold); color: var(--gold-text); }
   .btn-ghost:hover { background: var(--bs-gold-soft); }
-  :root[data-theme='silver'] .btn-gold { background: #2b2b32; color: #f0e6c8; }
-  :root[data-theme='silver'] .btn-gold:hover { background: #3a3a42; color: #f0e6c8; }
-  :root[data-theme='silver'] .btn-ghost { border-color: #2b2b32; color: #2b2b32; }
-  :root[data-theme='silver'] .btn-ghost:hover { background: rgba(43,43,50,.08); }
+  :root[data-theme='silver'] .btn-gold { background: var(--gold); color: #fff; }
+  :root[data-theme='silver'] .btn-gold:hover { background: var(--gold-light); color: #fff; }
+  :root[data-theme='silver'] .btn-ghost { border-color: var(--gold); color: var(--gold-text); }
+  :root[data-theme='silver'] .btn-ghost:hover { background: var(--bs-gold-soft); }
 </style>

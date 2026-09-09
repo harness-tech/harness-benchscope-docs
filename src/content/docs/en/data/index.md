@@ -95,7 +95,7 @@ All Datas records come from artifacts persisted under your local data root (see 
 | --- | --- |
 | Performance testing | `~/.benchscope/perfs/` (`run.json` + logs) |
 | Accuracy evaluation | `~/.benchscope/evals/eval-<timestamp>/` (task / result / samples) |
-| Data analysis | `~/.benchscope/analysys/` |
+| Data analysis | `~/.benchscope/analysis/` |
 
 ## FAQ
 

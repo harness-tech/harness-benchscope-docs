@@ -35,7 +35,7 @@ benchscope
 ├── settings.json       # 全局设置持久化文件
 ├── perfs/              # 性能测试任务产物
 ├── evals/              # 精度评测任务产物
-├── analysys/           # 数据分析（联动 Datas）
+├── analysis/           # 数据分析（联动 Datas）
 ├── logs/               # 运行日志 + 任务终端输出
 ├── sessions/           # 会话缓存
 ├── datasets/           # 数据集下载目录
@@ -51,7 +51,7 @@ benchscope
 | --- | --- | --- |
 | `perfs_dir` | `perfs` | 性能测试任务产物（`run.json`、日志等） |
 | `evals_dir` | `evals` | 精度评测任务产物（`eval-<时间>/` 目录） |
-| `analysis_dir` | `analysys` | 数据分析（联动 Datas 的 Analysis 面板） |
+| `analysis_dir` | `analysis` | 数据分析（联动 Datas 的 Analysis 面板） |
 | `logs_dir` | `logs` | 运行日志 + 任务终端输出 |
 | `sessions_dir` | `sessions` | 会话缓存 |
 | `datasets_dir` | `datasets` | 数据集下载目录 |
@@ -84,7 +84,7 @@ benchscope
 {
   "perfs_dir": "perfs",
   "evals_dir": "evals",
-  "analysis_dir": "analysys",
+  "analysis_dir": "analysis",
   "logs_dir": "logs",
   "sessions_dir": "sessions",
   "datasets_dir": "datasets",

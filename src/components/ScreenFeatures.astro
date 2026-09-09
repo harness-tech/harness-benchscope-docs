@@ -47,7 +47,8 @@ const features = [
 <style is:global>
   /* 屏2 功能网格 */
   .fgrid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 1fr; gap: 12px; flex: 1; min-height: 0; }
-  .fcell { display: flex; flex-direction: column; overflow: hidden; }
+  .fcell { display: flex; flex-direction: column; overflow: hidden; min-height: 140px; transition: all 0.2s ease; }
+  .fcell:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(214,177,90,0.15); }
   .fblock {
     position: absolute; inset: 0; opacity: .5; z-index: 0;
     background: linear-gradient(140deg, rgba(214,177,90,.15), rgba(214,177,90,0));

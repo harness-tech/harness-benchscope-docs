@@ -35,7 +35,7 @@ Settings are persisted to `~/.benchscope/settings.json`. If you upgrade from an 
 ├── settings.json       # global settings persistence file
 ├── perfs/              # performance testing task artifacts
 ├── evals/              # accuracy evaluation task artifacts
-├── analysys/           # data analysis (linked to Datas)
+├── analysis/           # data analysis (linked to Datas)
 ├── logs/               # runtime logs + task terminal output
 ├── sessions/           # session cache
 ├── datasets/           # dataset download directory
@@ -51,7 +51,7 @@ The following table maps each configuration key to the corresponding subdirector
 | --- | --- | --- |
 | `perfs_dir` | `perfs` | Performance testing task artifacts (`run.json`, logs, ...) |
 | `evals_dir` | `evals` | Accuracy evaluation task artifacts (`eval-<time>/` dirs) |
-| `analysis_dir` | `analysys` | Data analysis (linked to the Datas Analysis panel) |
+| `analysis_dir` | `analysis` | Data analysis (linked to the Datas Analysis panel) |
 | `logs_dir` | `logs` | Runtime logs + task terminal output |
 | `sessions_dir` | `sessions` | Session cache |
 | `datasets_dir` | `datasets` | Dataset download directory |
@@ -84,7 +84,7 @@ Any change you make in the UI is **persisted automatically to `settings.json`**:
 {
   "perfs_dir": "perfs",
   "evals_dir": "evals",
-  "analysis_dir": "analysys",
+  "analysis_dir": "analysis",
   "logs_dir": "logs",
   "sessions_dir": "sessions",
   "datasets_dir": "datasets",

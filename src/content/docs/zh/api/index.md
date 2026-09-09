@@ -96,21 +96,17 @@ curl http://127.0.0.1:8080/api/version
 
 ## 常见问题
 
-**Q：如何确认服务是否正常启动？**
+**问题：如何确认服务是否正常启动？**
+访问 `http://127.0.0.1:8080/api/version`（或刷新可用的根地址），返回版本号即表明服务已就绪。
 
-A：访问 `http://127.0.0.1:8080/api/version`（或刷新可用的根地址），返回版本号即表明服务已就绪。
+**问题：能否直接用 curl 调用会话接口？**
+可以。上面的 `/v1/chat/completions` 示例即为可直接运行的 curl 命令，支持 OpenAI 兼容的请求体与 SSE 流式输出。
 
-**Q：能否直接用 curl 调用会话接口？**
+**问题：如何让第三方服务使用我的 API Key？**
+在 [Settings → Providers](/zh/docs/tools/settings/) 中为对应 Provider 配置 Base URL 与 API Key。被测服务的鉴权与 BenchScope 自身的接口鉴权是分开的。
 
-A：可以。上面的 `/v1/chat/completions` 示例即为可直接运行的 curl 命令，支持 OpenAI 兼容的请求体与 SSE 流式输出。
-
-**Q：如何让第三方服务使用我的 API Key？**
-
-A：在 [Settings → Providers](/zh/docs/tools/settings/) 中为对应 Provider 配置 Base URL 与 API Key。被测服务的鉴权与 BenchScope 自身的接口鉴权是分开的。
-
-**Q：如何通过 HTTP 创建并预览一个性能任务？**
-
-A：向 `POST /api/tasks/preview` 提交任务条件即可预览将执行的命令；确认后通过 `POST /api/tasks` 创建任务，再用 `POST /api/tasks/{task_id}/start` 启动。
+**问题：如何通过 HTTP 创建并预览一个性能任务？**
+向 `POST /api/tasks/preview` 提交任务条件即可预览将执行的命令；确认后通过 `POST /api/tasks` 创建任务，再用 `POST /api/tasks/{task_id}/start` 启动。
 
 <div class="info">
 

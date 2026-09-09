@@ -95,7 +95,7 @@ CLI 命令 `benchscope perf` / `benchscope eval` 落盘的产物与 Web UI 完�
 | --- | --- |
 | 性能压测 | `~/.benchscope/perfs/`（`run.json` + 日志） |
 | 精度评测 | `~/.benchscope/evals/eval-<时间>/`（task / result / samples） |
-| 数据分析 | `~/.benchscope/analysys/` |
+| 数据分析 | `~/.benchscope/analysis/` |
 
 ## 常见问题
 

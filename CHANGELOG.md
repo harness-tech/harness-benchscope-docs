@@ -2,13 +2,43 @@
 
 本站（BenchScope 官网 + 文档站）版本记录。**最新更新在文档最上面。**
 
-> **当前版本定位：`1.0.0`**（`package.json`）—— 版本号约定 **`x.y.z`**。
+> **当前版本定位：`1.1.0`**（`package.json`）—— 版本号约定 **`x.y.z`**。
 > - **z（patch）**：只打 tag + 推送代码。
 > - **x.y（minor / major）**：打 tag + 推送 release + 总结 release notes + 发布（发布流程**暂未定义**）。
 > - 发布命令：`pnpm release <patch|minor|major>`，详见 [AGENTS.md](./AGENTS.md) 第 8 节。
 >
 > 版本号说明：`Site x.y.z` 为文档站 / 仓库自身的版本；括号内为对应的 BenchScope 产品版本。
 > 文末附产品版本速查，完整产品更新说明见文档中心「更新说明」与 [/zh/docs/changelog/](/zh/docs/changelog/v1-1-0/)。
+
+---
+
+## [1.1.0] — 2026-09-09
+
+**UI/UX 美化与文档规范化（Site v1.1.0）。** 全面优化落地页交互、配色对比度、文档排版与键盘导航：
+
+### 高优先级修复
+- **版本号同步**：SiteFooter 版本号与 package.json 一致（v1.0.0 → v1.1.0）
+- **链接修复**：CHANGELOG 产品版本速查链接从 `/changelog/` 修正为 `/releases/`
+- **拼写修复**：配置说明中 `analysys` 修正为 `analysis`（zh/en 同步）
+- **银色主题金色对比度**：`--bs-gold-text` 从 `#8b6914` 调整为 `#7a5e1a`（对比度≥4.5:1，符合 WCAG AA）
+
+### UI/UX 美化
+- **按钮样式统一**：落地页 + 文档主页按钮添加 `border-radius: 6px` + hover 微交互（`transform: scale(1.02)`）
+- **功能卡片交互增强**：功能 8 宫格 + 高级 6 宫格 hover 添加阴影 + 微位移
+- **代码块字号优化**：代码正文字号从 9px 提升至 10px，可读性增强
+- **搜索框键盘导航**：支持 ↑/↓ 键导航 + Enter 选中 + Esc 关闭
+
+### 文档规范化
+- **FAQ 格式统一**：所有文档 FAQ 从 `**Q：**\n\nA：` 统一为 `**问题：**\n回答` 格式
+- **双语同步验证**：zh/en 文档文件结构完全一致（34+34 文件）
+- **内链格式验证**：运行 `convert:docs` 确认无相对 `.md` 链接
+
+### 响应式优化
+- **移动端导航**：落地页导航链接添加 `title` 属性（tooltip）
+- **表格字号优化**：性能屏 + 数据屏表格字号从 8.5px 提升至 12px
+
+### 基础设施
+- **新增 favicon**：添加 `public/favicon.ico`（从 logo-gold.png 复制）
 
 ---
 
@@ -314,20 +344,20 @@
 
 ### [v1.1.0] — 2026-09-05（已发布）
 
-会话体验、性能实时面板、Dashboard 概览与环境信息增强；Sessions 采样参数 + Markdown 高亮 + 重命名落盘；Datas 导航收敛。详见 [/zh/docs/changelog/v1-1-0/](/zh/docs/changelog/v1-1-0/)。
+会话体验、性能实时面板、Dashboard 概览与环境信息增强；Sessions 采样参数 + Markdown 高亮 + 重命名落盘；Datas 导航收敛。详见 [/zh/docs/releases/v1-1-0/](/zh/docs/releases/v1-1-0/)。
 
 ### [v1.0.8] — 2026-09-01（未推 PyPI）
 
-独立精度测试模块（Accuracy）落地：Native 原生精度 + Serving 链路精度双模式评测闭环。详见 [/zh/docs/changelog/v1-0-8/](/zh/docs/changelog/v1-0-8/)。
+独立精度测试模块（Accuracy）落地：Native 原生精度 + Serving 链路精度双模式评测闭环。详见 [/zh/docs/releases/v1-0-8/](/zh/docs/releases/v1-0-8/)。
 
 ### [v1.0.7] — 2026-08-30（未推 PyPI）
 
-性能测试核心引擎改造：引擎抽象与自研 bench。详见 [/zh/docs/changelog/v1-0-7/](/zh/docs/changelog/v1-0-7/)。
+性能测试核心引擎改造：引擎抽象与自研 bench。详见 [/zh/docs/releases/v1-0-7/](/zh/docs/releases/v1-0-7/)。
 
 ### [v1.0.6] — 2026-08-28（PyPI `benchscope==1.0.6`）
 
-Datas 主导航、内置数据集模块、缓存路径扩充（统一到 `~/.benchscope`）。详见 [/zh/docs/changelog/v1-0-6/](/zh/docs/changelog/v1-0-6/)。
+Datas 主导航、内置数据集模块、缓存路径扩充（统一到 `~/.benchscope`）。详见 [/zh/docs/releases/v1-0-6/](/zh/docs/releases/v1-0-6/)。
 
 ### [v1.0.5] —（迭代开发）
 
-v2.0 UI 大改 + 性能页双模式增强，后续 UI 与交互基础。详见 [/zh/docs/changelog/v1-0-5/](/zh/docs/changelog/v1-0-5/)。
+v2.0 UI 大改 + 性能页双模式增强，后续 UI 与交互基础。详见 [/zh/docs/releases/v1-0-5/](/zh/docs/releases/v1-0-5/)。

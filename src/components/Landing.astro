@@ -31,7 +31,7 @@ const navIconNames = ['home', 'sparkles', 'bolt', 'target', 'folder', 'terminal'
       </a>
       <nav class="mainnav">
         {nav.map(([href, label], i) => (
-          <a class="navlink" href={href}>
+          <a class="navlink" href={href} title={label}>
             <Fragment set:html={ico(navIconNames[i], 14)} />
             <span>{label}</span>
           </a>
