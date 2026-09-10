@@ -1,5 +1,6 @@
 ---
 title: "概述"
+description: "Datas 数据面板概述：集中管理历史性能压测与精度评测产物，支持查看、对比分析、备份导入与恢复。"
 ---
 
 # 概述
@@ -24,37 +25,40 @@ Datas 按类型提供多个记录面板，每个面板对应一类测试产物�
 
 - 分页记录表 + **最佳测试记录高亮**（性能最佳，金色 **Best** 标记）；
 - **Perf Datas**：性能数据详情——Output / TTFT / TPOT / ITL 的 **mean / median / p99** 三元组；
-- **Perf-Cases-Logs 高视图**：按用例组织查看；
+- **Perf-Cases-Logs 等高分栏**：按用例组织查看；
 - **分析面板**：多选记录**对比分析**；
 - 操作：删除 / 备份 / 分享 / **导入恢复**。
 
 ### Evals（精度评测记录）
 
-- 查看精度评测产物与结果；
-- 支持打包导入。
+Evals 子 Tab 当前**隐藏**（路由 `/datas/evals` 重定向到 `/datas/perfs`）；精度评测产物与结果请在 **Accuracy 页面**管理（任务列表 + 详情 + 样本查看）。
 
 ### Analysis（数据分析）
 
-- 数据分析面板（部分版本为占位）。
+数据分析面板（按分析维度组织性能结果，数据目录为 `~/.benchscope/analysys/`）。
 
 ## 导入备份
 
 Datas 支持从打包备份中恢复历史记录：
 
-- **性能**：打包为**扁平 zip**（含 `run.json` + 日志 + 可选 `metrics.json`），在 **Datas → Perfs → 导入备份** 导入。
-- **精度**：导入 `evals` 产物目录打包文件。
+- **性能**：备份为**扁平 zip**（文件直接位于 zip 根目录：`run.json` + 终端日志），在 **Datas → Perfs → 导入备份** 导入；导入时校验任务 ID 一致性，已存在的记录不重复导入。
+- **精度**：产物在 `~/.benchscope/evals/eval-<时间>/`（`task.json` / `result.json` / `samples.jsonl`），随数据目录整体迁移。
 
 ```bash
-# 性能任务产物打包示例（手动打包后导入）
+# 性能任务产物打包示例（手动打包为扁平 zip 后导入）
 cd ~/.benchscope/perfs/<run_id>
-zip -r perf-backup.zip run.json perf_<run_id>_*.log metrics.json
+zip perf-backup.zip run.json
+# 终端日志（位于 logs 目录）一并打包：
+zip perf-backup.zip ../logs/perf_<run_id>_*.log
 ```
+
+> 在 Web 界面可直接使用 **备份** 按钮下载自动生成的扁平 zip（`{run_id}.zip`），无需手动打包。
 
 <div class="info">
 
 **info**：
 
-CLI 命令 `benchscope perf` / `benchscope eval` 落盘的产物与 Web UI 完全一致。因此你可以在无界面的机器上跑测试、打包 zip，再导入到本机 BenchScope 实例以图形方式查看。
+CLI 命令 `benchscope perf` / `benchscope eval` 落盘的产物与 Web UI 完全一致。你可以在无界面的机器上跑测试、打包 zip，再导入到本机 BenchScope 实例以图形方式查看。
 
 </div>
 
@@ -95,7 +99,7 @@ CLI 命令 `benchscope perf` / `benchscope eval` 落盘的产物与 Web UI 完�
 | --- | --- |
 | 性能压测 | `~/.benchscope/perfs/`（`run.json` + 日志） |
 | 精度评测 | `~/.benchscope/evals/eval-<时间>/`（task / result / samples） |
-| 数据分析 | `~/.benchscope/analysis/` |
+| 数据分析 | `~/.benchscope/analysys/`（内置默认目录名） |
 
 ## 常见问题
 
@@ -103,11 +107,12 @@ CLI 命令 `benchscope perf` / `benchscope eval` 落盘的产物与 Web UI 完�
 确认数据根目录未被清理 / 未切换 `BENCHSCOPE_DATA_DIR`；也可通过导入备份恢复。
 
 **问题：导入后结构异常？**
-确认 zip 为平坦结构（根目录直接含 `run.json` / 日志等），嵌套目录可能导致导入失败。
+确认 zip 为扁平结构（根目录直接含 `run.json` / 日志等），嵌套目录可能导致导入失败。
 
 ## 相关文档
 
 - [性能测试](/zh/docs/performance/) — 产生 Perfs 记录
-- [概述](/zh/docs/accuracy/) — 产生 Evals 记录
+- [性能核心指标](/zh/docs/performance/metrics/) — Perfs 指标与导出列口径
+- [概述](/zh/docs/accuracy/) — 产生精度评测产物
 - [配置说明](/zh/docs/install/configuration/) — 产物落盘目录
 - [设置（Settings）](/zh/docs/tools/settings/) — 数据目录与 Cache Paths

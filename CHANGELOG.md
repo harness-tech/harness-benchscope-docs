@@ -2,13 +2,46 @@
 
 本站（BenchScope 官网 + 文档站）版本记录。**最新更新在文档最上面。**
 
-> **当前版本定位：`1.1.1`**（`package.json`）—— 版本号约定 **`x.y.z`**。
+> **当前版本定位：`1.1.2`**（`package.json`）—— 版本号约定 **`x.y.z`**。
 > - **z（patch）**：只打 tag + 推送代码。
 > - **x.y（minor / major）**：打 tag + 推送 release + 总结 release notes + 发布（发布流程**暂未定义**）。
 > - 发布命令：`pnpm release <patch|minor|major>`，详见 [AGENTS.md](./AGENTS.md) 第 8 节。
 >
 > 版本号说明：`Site x.y.z` 为文档站 / 仓库自身的版本；括号内为对应的 BenchScope 产品版本。
-> 文末附产品版本速查，完整产品更新说明见文档中心「更新说明」与 [/zh/docs/changelog/](/zh/docs/changelog/v1-1-0/)。
+> 文末附产品版本速查，完整产品更新说明见文档中心「更新说明」与 [/zh/docs/releases/](/zh/docs/releases/)。
+
+---
+
+## [1.1.2] — 2026-09-09
+
+**文档全面重构：功能快照驱动 + 核心指标全覆盖（Site v1.1.2）。**
+
+### 文档重构（feature-first）
+- **功能快照**：新增 `feature-snapshot.json`（存放于 `skills/harness-bs-docs-updater/`，**不放入 `archives/` 归档目录**），覆盖版本 / CLI 参数 / 引擎 / 数据集 / 基线 / API 路由 / WebUI 页面 / 指标定义 / 环境 / 内置技能 / 功能开关 / mock 环境，作为文档的唯一事实来源。
+- **新增两个核心指标口径页**：
+  - [性能核心指标](/zh/docs/performance/metrics/) — TTFT / TPOT / ITL（mean / median / p99）、输出 / 峰值输出 / 总吞吐、请求吞吐、单用户吞吐、请求统计、阈值结果、11 指标快照契约、XLSX / CSV 导出列完整口径。
+  - [精度核心指标](/zh/docs/accuracy/metrics/) — 正确率 / 通过率、样本统计、分学科 / 错因分析、判分器专项指标、Token 消耗、基线对标（S/A/B/C）、最终结论（合格 / 精度下跌 / 异常）完整口径。
+- **新增 4 个平台页面**：[Dashboard 概览](/zh/docs/tools/dashboard/)、[模拟调试环境](/zh/docs/tools/mock/)、[内置技能](/zh/docs/tools/skills/)、[v1.1.1 发布说明](/zh/docs/releases/v1-1-1/)。
+- **修复全部文档与功能偏差**：
+  - 移除 `benchscope --version` 选项的错误描述（CLI 未提供，改为 `pip show benchscope` / `/api/version`）。
+  - 修正分析数据目录为 `analysys`（内置默认目录名）。
+  - 修正 Datas 子导航为 Perfs + Analysis（Evals Tab 隐藏、路由重定向到 Perfs，精度产物在 Accuracy 页管理）。
+  - 修正 API **不暴露** OpenAI 兼容 `/v1/*` 推理端点（会话请求代理到激活 Provider），补全 9 个路由组完整清单。
+  - 修正精度最终结论枚举为**合格 / 精度下跌 / 异常**（原「持平 / 优于基线等」有误）。
+  - 补全数据集清单为 12 个（9 精度 + 3 性能）、基线库（10 模型）、性能引擎（benchscope / vllm-0.23 / sglang-0.5.10）与精度引擎（benchscope / native-hf / mock）。
+  - 修正会话采样参数（补 `quality` / `top_k` / `enable_thinking` / `provider_id`，`max_tokens` 固定 4096）。
+- **覆盖校验**：44 个核心指标（14 性能 + 30 精度）在 zh / en 文档中全部出现；CLI 参数、引擎、数据集、API 分组、WebUI 页面全部覆盖。
+
+### 技能优化（harness-bs-docs-updater）
+- 新增 `feature_snapshot.py` 工具：`generate`（生成功能快照）/ `coverage`（文档覆盖度检查，有缺口时 exit 2）/ `validate`（拒绝存放于 `archives/`）。
+- SKILL.md 工作流改为**功能快照优先**：先跑全量用例（模拟）生成功能快照，再按快照更新文档并校验覆盖度。
+- 升级 `references/docs-update-guide.md` 为完整文档规范（话术 / 段落约定 + 指标表规范）。
+- 从真实源码树重新生成 `source-snapshot.json`（自动发现），修复 stale manifest 问题。
+
+### 文档润色与中英结构对齐
+- **全量 132 篇文档润色**（中英双语）：改进措辞、降低 AI 味（此外 / Furthermore / 值得注意的是 / In summary 等模式），为每篇补齐 frontmatter `description`（含 `: ` 的 YAML 条目统一加引号，避免解析错误）。
+- **中英结构不对称对齐**（12 个手册页）：以中文版为基准，将英文版 `## ` 主章节与 `### ` 子章节调整为与中文完全一致（删除与详情页重复的冗余章节、合并被拆分的章节、唯一内容不丢失）。
+- **准确性校验**：9 条准确性红线全部保全（结论枚举、输出阈值方向、`analysys` 目录名等）；`pnpm test:links` + `pnpm build` + 覆盖度检查全部通过（132 文档 / 135 页，覆盖率 1.0）。
 
 ---
 
@@ -355,6 +388,10 @@
 ## 产品版本速查（Application Changelog）
 
 以下为 BenchScope 产品（PyPI）版本更新速查，完整说明见文档中心「更新说明」。
+
+### [v1.1.1] — 2026-09-05（已发布）
+
+安装包完整性修复：configs/*.yaml 与内置技能随包分发（Settings 各栏有内容）、Provider 缺失 id 自动回填、PyPI 图片改为绝对 URL、技能迁入包内。详见 [/zh/docs/releases/v1-1-1/](/zh/docs/releases/v1-1-1/)。
 
 ### [v1.1.0] — 2026-09-05（已发布）
 

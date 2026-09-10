@@ -1,5 +1,6 @@
 ---
 title: "架构介绍"
+description: "BenchScope 单体 Web 平台的整体架构：核心模块、API 面、性能与精度模块解耦设计及数据流。"
 ---
 
 # 架构介绍
@@ -18,7 +19,7 @@ BenchScope 是一个「后端 Python（FastAPI）+ 前端 Vue」的**单体 Web 
 │               backend (FastAPI — benchscope/server)   │
 │   api_benchs · api_accuracy · api_dashboard ·         │
 │   api_config · api_logs · api_sessions · api_tasks ·  │
-│   api_skills · api_plugins                            │
+│   api_skills · api_test（legacy）· /api/version · /ws  │
 └───────┬──────────────────────┬───────────────────────┘
         │ 任务执行               │ 配置持久化
 ┌───────┴────────┐     ┌────────┴─────────┐
@@ -49,16 +50,18 @@ BenchScope 是一个「后端 Python（FastAPI）+ 前端 Vue」的**单体 Web 
 
 ### API 面
 
-后端对外暴露一组 API 分组，供前端消费：
+后端对外暴露一组 API 分组，供前端消费（完整清单见 [API 概述](/zh/docs/api/)）：
 
-- `api_benchs` — 性能测试任务管理
-- `api_accuracy` — 精度评测任务
-- `api_dashboard` — 概览 / 环境信息
-- `api_config` — 配置读写
-- `api_logs` — 日志流式与获取
-- `api_sessions` — 会话对话（SSE）
-- `api_tasks` — 任务调度
-- `api_skills` / `api_plugins` — 技能与插件管理
+- `api_config` — 配置读写（含 Providers / Models / Datasets / 目录 / 重启）
+- `api_tasks` — 性能测试任务管理（创建 / 启动 / 停止 / 日志 / 导出）
+- `api_logs` — 日志与历史运行（列表 / 详情 / 实时 / 备份 / 导入 / 汇总）
+- `api_dashboard` — 概览统计 / 环境信息
+- `api_sessions` — 会话对话（SSE 流式）
+- `api_accuracy` — 精度评测任务（任务 / 样本 / 对标 / 引擎 / 数据集 / 预估 / 基线）
+- `api_benchs` — 内置引擎（清单 / 详情 / 环境校验 / 上传 / 导入 / 参数）
+- `api_skills` — 内置技能（清单 / 下载）
+- `api_test` — 精度测试 legacy 接口（start / preview / stop / status）
+- `/api/version` · `/ws` — 版本查询与 WebSocket 实时推送
 
 ### 性能模块（benches）
 
@@ -78,7 +81,7 @@ BenchScope 是一个「后端 Python（FastAPI）+ 前端 Vue」的**单体 Web 
 ### 配置与调度
 
 - 配置统一持久化到数据根目录下的 `settings.json`（默认 `~/.benchscope/settings.json`），数据根目录可通过环境变量 `BENCHSCOPE_DATA_DIR` 覆盖，见 [配置说明](/zh/docs/install/configuration/)；
-- 任务调度由 `task_manager` 负责，会话管理由 `session_manager` 负责。
+- `task_manager` 负责任务调度，`session_manager` 负责会话管理。
 
 <div class="info">
 
@@ -90,7 +93,7 @@ BenchScope 是一个「后端 Python（FastAPI）+ 前端 Vue」的**单体 Web 
 
 ## Bench 引擎抽象
 
-引擎抽象支持自研 `benchscope` 引擎、vLLM / SGLang 上游引擎与自定义引擎，含**环境校验**与**参数描述**，第三方引擎的**指标可得性显式化**。详见 [Bench 引擎](/zh/docs/tools/bench-engine/)。
+引擎抽象支持自研 `benchscope` 引擎、vLLM / SGLang 上游引擎与自定义引擎，提供**环境校验**与**参数描述**，并将第三方引擎的**指标可得性显式化**。详见 [Bench 引擎](/zh/docs/tools/bench-engine/)。
 
 ## 技术栈总览
 

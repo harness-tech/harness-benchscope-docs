@@ -30,14 +30,32 @@ description: "安装 BenchScope、启动 Web 平台并完成基础配置。"
 pip install benchscope
 ```
 
-安装完成后验证版本与可用命令：
+安装完成后验证命令可用：
 
 ```console
-$ benchscope --version
-benchscope 1.1.0
 $ benchscope --help
-usage: benchscope [-h] [--version] {serve,perf,eval} ...
+usage: benchscope [-h] [--host HOST] [--port PORT] [--no-browser] [--debug]
+
+LLM inference performance testing tool. Supports vLLM, SGLang, and any
+OpenAI-compatible API.
+
+options:
+  -h, --help    show this help message and exit
+  --host HOST   监听地址（默认 0.0.0.0）
+  --port PORT   监听端口（默认 8080）
+  --no-browser  不自动打开浏览器
+  --debug       开启调试日志
 ```
+
+查看已安装版本：
+
+```console
+$ pip show benchscope
+Name: benchscope
+Version: 1.1.1
+```
+
+> CLI 未提供 `--version` 选项；版本也可经 `pip show benchscope`、Web 端 `/api/version` 或 Settings 页查看。无参数或首参为选项（如 `--port 8080`）时，CLI 进入 serve 兼容分支，等价于 `benchscope serve`。
 
 > 如需**原生精度评测（Native）**能力（本地加载 transformers 权重离线评测，无需外部推理服务），请安装额外可选依赖：`pip install benchscope[accuracy-native]`。若不确定是否需要，可先按基础安装，之后按需补充。
 
@@ -45,7 +63,7 @@ usage: benchscope [-h] [--version] {serve,perf,eval} ...
 
 **info**：
 
-BenchScope 的 Web 前端完全内嵌在 Python 包中，安装后**无需**额外安装 Node.js 或前端依赖，也无需单独启动前后端服务。
+BenchScope 的 Web 前端完全内嵌在 Python 包中，**无需**额外安装 Node.js 或前端依赖，也无需单独启动前后端服务。
 
 </div>
 
@@ -103,7 +121,7 @@ INFO  Web UI: http://127.0.0.1:8080
 加 `--host` / `--port` 等显式参数时不会自动打开浏览器；也可使用 `--no-browser` 关闭自动打开，再手动访问控制台打印的地址。
 
 **问题：安装后 `benchscope` 命令找不到？**
-多为虚拟环境未激活或未将 `Scripts` / `bin` 目录加入 PATH，请检查当前环境后重试。
+通常是虚拟环境未激活，或未将 `Scripts` / `bin` 目录加入 PATH。请检查当前环境后重试。
 
 ## 相关文档
 

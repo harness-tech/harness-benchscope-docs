@@ -1,5 +1,6 @@
 ---
 title: "Bench 引擎"
+description: "BenchScope 引擎抽象（Bench Engine）：自研、vLLM / SGLang 与自定义引擎的统一接入契约，涵盖环境校验、参数描述与指标可得性。"
 ---
 
 # Bench 引擎
@@ -8,14 +9,24 @@ title: "Bench 引擎"
 
 ## 引擎类型
 
+**性能引擎**（`benchscope perf` 可用）：
+
 | 引擎 | 说明 |
 | --- | --- |
 | `benchscope`（自研） | 内置自研引擎，流式时间线采集，指标口径对齐 vLLM |
-| `vllm-<ver>` | vLLM 官方 bench 引擎（如 `vllm-0.23`） |
-| `sglang-<ver>` | SGLang 官方 bench 引擎（如 `sglang-0.5.10`） |
-| 自定义引擎 | 通过技能 / 插件注册的自定义引擎（`bs-engine-create`） |
+| `vllm-0.23` | vLLM 官方 bench 引擎（需 torch >= 2.0 + vllm >= 0.23, < 0.24） |
+| `sglang-0.5.10` | SGLang 官方 bench 引擎（需 torch + sglang >= 0.5.10, < 0.6） |
+| 自定义引擎 | 通过 Upload Engine / 导入注册的自定义引擎（`bs-engine-create` 技能辅助创建） |
 
-自研的 `benchscope` 引擎是 `benchscope perf` 的默认引擎——**无需本地框架环境**，可直接压测**远程 OpenAI 兼容服务**。
+**精度引擎**（`benchscope eval` 可用）：
+
+| 引擎 | 说明 |
+| --- | --- |
+| `benchscope`（serving） | 经 OpenAI 兼容端点的 Serving 链路评测（默认） |
+| `native-hf` | 本地权重离线评测（需 torch + transformers，可选 LoRA 挂载） |
+| `mock` | Mock 评测引擎（可控正确率，联调 / 演示用） |
+
+自研的 `benchscope` 引擎是 `benchscope perf` 的默认引擎——**无需本地框架环境**，可直接压测**远程 OpenAI 兼容服务**；同时也是精度评测的默认 serving 链路。
 
 ## 组成
 
@@ -38,14 +49,16 @@ title: "Bench 引擎"
 
 ## 指标口径
 
-自研引擎的吞吐 / TTFT / TPOT / ITL 指标口径与 **vLLM 对齐**，保证跨引擎可比——用自研引擎测出的结果与 vLLM bench 测出的结果含义一致：
+自研引擎的吞吐 / TTFT / TPOT / ITL 指标口径与 **vLLM 对齐**，保证跨引擎可比——用自研引擎测出的结果与 vLLM bench 测出的结果含义一致。完整口径见[性能核心指标](/zh/docs/performance/metrics/)：
 
 | 指标 | 口径 |
 | --- | --- |
-| 吞吐（output_mean / total_mean） | 输出 / 总吞吐（tok/s） |
-| TTFT（ttft_mean） | 首 token 延迟（ms） |
-| TPOT（tpot_mean） | 每输出 token 延迟（ms） |
-| ITL（itl_mean） | 令牌间隔延迟（ms） |
+| 吞吐（output_mean / peakoutput_mean / total_mean） | 输出 / 峰值输出 / 总吞吐（tok/s） |
+| 请求吞吐（req_per_s） | 每秒完成请求数（req/s） |
+| 单用户吞吐（single_user） | 按 `1000 / TPOT(mean)` 推导（tok/s） |
+| TTFT（ttft_mean / ttft_median / ttft_p99） | 首 token 延迟（ms） |
+| TPOT（tpot_mean / tpot_median / tpot_p99） | 每输出 token 延迟（ms） |
+| ITL（itl_mean / itl_median / itl_p99） | 令牌间隔延迟（ms） |
 
 ## 自定义引擎（进阶）
 
@@ -79,5 +92,8 @@ title: "Bench 引擎"
 ## 相关文档
 
 - [设置（Settings）→ Bench Engines](/zh/docs/tools/settings/) — 在界面中配置引擎
+- [性能核心指标](/zh/docs/performance/metrics/) — 引擎指标完整口径
+- [精度核心指标](/zh/docs/accuracy/metrics/) — 精度引擎指标口径
+- [内置技能](/zh/docs/tools/skills/) — bs-engine-create 自定义引擎技能
 - [架构介绍](/zh/docs/tools/architecture/) — 模块划分
 - [v1.0.7 更新日志](/zh/docs/releases/v1-0-7/) — 引擎改造背景

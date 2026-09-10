@@ -1,15 +1,19 @@
 ---
 title: "概述"
+description: "BenchScope 工具区总览：会话式交互、全局设置、模拟调试环境，以及面向开发者的架构与引擎抽象。"
 ---
 
 # 概述
 
-工具区收录 BenchScope 的**进阶使用与平台级能力**：会话式交互、全局设置，以及面向开发者的架构与引擎抽象。它由四个子页组成，覆盖从「在浏览器里与模型对话」到「扩展平台本身」的完整链路。
+工具区收录 BenchScope 的**进阶使用与平台级能力**：会话式交互、全局设置，以及面向开发者的架构与引擎抽象。七个子页覆盖从「在浏览器里与模型对话」到「扩展平台本身」的完整链路。
 
 ## 子页面导览
 
+- **[Dashboard 概览](/zh/docs/tools/dashboard/)** — 平台首页：统计概览（性能 / 精度 / 会话 / 内置技能 / 模型 / 数据集 / Provider 计数）、环境信息（硬件 / 操作系统 / 网络 / 框架版本）与最新性能记录。
 - **[会话（Sessions）](/zh/docs/tools/sessions/)** — 基于 SSE 流式的交互式对话：配置 `temperature` / `top_p` 等采样参数、发送消息并实时查看流式输出，支持 Markdown 渲染 + 代码高亮、思考（reasoning）解析与性能栏。
 - **[设置（Settings）](/zh/docs/tools/settings/)** — 七个面板集中管理全局配置：General / Providers / Models / Datasets / Bench Engines / Skills / Plugins；所有修改自动持久化到 `settings.json`。
+- **[内置技能](/zh/docs/tools/skills/)** — 随包分发的 3 个 Agent 技能：`bs-perfs-concurrency` / `bs-perfs-threshold` / `bs-engine-create`，含查看与下载方式。
+- **[模拟调试环境（Mock）](/zh/docs/tools/mock/)** — 无真实 vLLM / SGLang / GPU 时的完整联调环境：mock OpenAI 服务、FAKE bench 后端与全量功能用例的模拟运行方法。
 - **[架构介绍](/zh/docs/tools/architecture/)** — 后端 Python（FastAPI）+ 前端 Vue 的单体架构：核心模块、API 面、性能与精度模块解耦设计及数据流。
 - **[Bench 引擎](/zh/docs/tools/bench-engine/)** — 引擎抽象与自定义：自研 `benchscope` / vLLM / SGLang / 自定义引擎的统一接入契约（环境校验 / 参数描述 / 指标可得性）。
 
@@ -17,8 +21,10 @@ title: "概述"
 
 | 你的目标 | 前往 |
 | --- | --- |
+| 查看平台运行状态与资源计数 | [Dashboard 概览](/zh/docs/tools/dashboard/) |
 | 在浏览器里与模型**交互式对话** | [会话（Sessions）](/zh/docs/tools/sessions/) |
 | 配置推理服务、模型清单、数据集与引擎 | [设置（Settings）](/zh/docs/tools/settings/) |
+| 无真实服务 / GPU 时联调全部功能 | [模拟调试环境（Mock）](/zh/docs/tools/mock/) |
 | 理解 BenchScope 内部如何运转 | [架构](/zh/docs/tools/architecture/) |
 | 接入新的压测后端 / 自研引擎 | [Bench 引擎](/zh/docs/tools/bench-engine/) |
 | 把模型跑起来做一次压测或评测 | [快速开始](/zh/docs/quickstart/) 与 [CLI](/zh/docs/cli/) |

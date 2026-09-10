@@ -1,0 +1,2349 @@
+{
+  "snapshot_version": "2.0",
+  "kind": "feature-snapshot",
+  "project": "benchscope",
+  "version": "1.1.1",
+  "source_path": "/home/yuanmingzhuo/benchscope",
+  "generated_at": "2026-09-09 19:42:27",
+  "placement_rule_zh": "功能快照存放于技能目录 skills/harness-bs-docs-updater/，禁止放入项目归档目录 archives/。",
+  "placement_rule_en": "Feature snapshots live under skills/harness-bs-docs-updater/; they must NOT be placed in the project archive directory archives/.",
+  "verified_cases": {
+    "method": "full-case simulation: ./tests/run_tests.sh (mock OpenAI :8011 + FAKE bench server :18091 + isolated BENCHSCOPE_DATA_DIR) + CLI mock runs against mocks.openai_server",
+    "finished_at": "2026-09-09 19:45",
+    "test_suite": {
+      "runner": "tests/run_tests.sh",
+      "environment": "mock OpenAI (mocks.openai_server) + BENCHSCOPE_FAKE_BENCH=1 + temp BENCHSCOPE_DATA_DIR; API 180 cases + WebUI 51 cases (Playwright)",
+      "total": 231,
+      "passed": 226,
+      "failed": 5,
+      "api": {
+        "total": 180,
+        "passed": 177,
+        "failed": 3
+      },
+      "webui": {
+        "total": 51,
+        "passed": 49,
+        "failed": 2
+      },
+      "failed_tests": [
+        {
+          "test": "tests/api/test_accuracy_estimate_baselines.py::test_task_benchmark_api",
+          "cause": "PUT /api/accuracy/baselines 500: PermissionError writing benchscope/configs/baselines.yaml（该文件在本 checkout 中为 root 属主）——环境问题（文件属主），非功能回归",
+          "category": "environment"
+        },
+        {
+          "test": "tests/api/test_skills.py::test_validate_script_checks_definition",
+          "cause": "validate.sh 路径假设过期：技能 1.1.1 迁入包内后 REPO_ROOT 解析为 benchscope/（包目录），configs 路径重复一层（benchscope/benchscope/configs/...）",
+          "category": "code-bug"
+        },
+        {
+          "test": "tests/api/test_skills.py::test_skill_download_endpoint",
+          "cause": "GET /api/skills/{id}/download 500: 打包产物 tarball 未生成（FileNotFoundError），技能打包/下载链路存在缺陷",
+          "category": "code-bug"
+        },
+        {
+          "test": "tests/webui/test_ui.py::test_perf_landing_intro_cards",
+          "cause": "状态污染：Performance 介绍页仅在无任务时展示，API 用例已在本会话创建任务，WebUI 用例共享同一数据目录",
+          "category": "test-state"
+        },
+        {
+          "test": "tests/webui/test_ui.py::test_datas_evals_records_page",
+          "cause": "过期用例：/datas/evals 自 1.1.0 起重定向到 /datas/perfs（Evals Tab 有意隐藏），用例仍断言旧 .evals-page 元素",
+          "category": "stale-test"
+        }
+      ]
+    },
+    "cli_runs": [
+      {
+        "name": "perf concurrency (real mock run)",
+        "command": "benchscope perf --model mock-model --base-url http://127.0.0.1:8011 --concurrency 4 --num-prompts 8 --input-len 64 --output-len 32",
+        "status": "ok",
+        "key_output": {
+          "successful_requests": 8,
+          "failed_requests": 0,
+          "benchmark_duration": 1.0139,
+          "output_mean": 252.4892,
+          "total_mean": 756.4815,
+          "ttft_mean": 3.9124,
+          "ttft_median": 3.32,
+          "ttft_p99": 11.82,
+          "tpot_mean": 16.0735,
+          "tpot_median": 16.09,
+          "tpot_p99": 16.4,
+          "itl_mean": 13.4023,
+          "itl_median": 14.85,
+          "itl_p99": 16.85
+        }
+      },
+      {
+        "name": "perf threshold (real mock run)",
+        "command": "benchscope perf --model mock-model --base-url http://127.0.0.1:8011 --mode threshold --ttft-threshold-ms 500 --tpot-threshold-ms 100 --max-concurrency-search 8 --max-requests 8 --num-prompts 4 --input-len 64 --output-len 32",
+        "status": "ok",
+        "key_output": {
+          "tested_concurrency": [
+            1,
+            2,
+            4,
+            6,
+            7,
+            8
+          ],
+          "best_concurrency": 7,
+          "note": "搜索上限 8 时 conc=8 亦满足阈值，但返回 7（上限恰为 2 的幂且已测且满足时的边界用例，疑似 off-by-one，待项目侧确认）"
+        }
+      },
+      {
+        "name": "eval mock (real run, local JSONL choice dataset)",
+        "command": "benchscope eval --engine mock --model mock-model --dataset /tmp/bs_snap_eval.jsonl --limit 20 --mock-correct-rate 0.7",
+        "status": "ok",
+        "key_output": {
+          "accuracy": 60.0,
+          "pass_rate": 100.0,
+          "total_samples": 20,
+          "correct_samples": 12,
+          "wrong_samples": 8,
+          "invalid_samples": 0,
+          "subjects": {
+            "biology": 60.0,
+            "chemistry": 40.0,
+            "economics": 100.0,
+            "physics": 40.0
+          },
+          "error_tag_summary": {
+            "知识错误": 8
+          },
+          "tokens": {
+            "prompt_tokens_total": 570,
+            "completion_tokens_total": 240,
+            "total_tokens": 810
+          },
+          "conclusion": "合格",
+          "estimate": {
+            "total_tokens": 5700,
+            "est_seconds": 426.7,
+            "source": "chars"
+          }
+        }
+      }
+    ]
+  },
+  "cli": {
+    "entry": "benchscope",
+    "compat_zh": "无参数或首参为选项（如 --port 8080）时等价于 benchscope serve。",
+    "compat_en": "No args, or first arg is an option (e.g. --port 8080), is equivalent to `benchscope serve`.",
+    "note_zh": "CLI 未提供 --version 选项；版本可经 Web 端 /api/version、Settings 页或 pip show benchscope 查看。",
+    "note_en": "The CLI has no --version option; check the version via /api/version, the Settings page, or `pip show benchscope`.",
+    "commands": {
+      "serve": {
+        "usage": "benchscope serve [--host HOST] [--port PORT] [--no-browser] [--debug]",
+        "args": [
+          {
+            "flags": [
+              "--host"
+            ],
+            "default": "0.0.0.0",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--port"
+            ],
+            "default": "8080",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "int"
+          },
+          {
+            "flags": [
+              "--no-browser"
+            ],
+            "default": null,
+            "choices": null,
+            "required": false,
+            "flag": true,
+            "type": null
+          },
+          {
+            "flags": [
+              "--debug"
+            ],
+            "default": null,
+            "choices": null,
+            "required": false,
+            "flag": true,
+            "type": null
+          }
+        ],
+        "behavior_zh": "启动 Web 服务（FastAPI + WebUI 统一入口）；无参数或首参为选项时同样进入 serve（向后兼容 benchscope --port 8080）。",
+        "behavior_en": "Starts the web service (FastAPI + WebUI unified entry); also entered when no args or the first arg is an option (backward-compatible `benchscope --port 8080`)."
+      },
+      "perf": {
+        "usage": "benchscope perf --model MODEL [options]",
+        "args": [
+          {
+            "flags": [
+              "--engine"
+            ],
+            "default": "benchscope",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--model"
+            ],
+            "default": null,
+            "choices": null,
+            "required": true,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--base-url"
+            ],
+            "default": "http://127.0.0.1:8000",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--api-key"
+            ],
+            "default": "",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--backend"
+            ],
+            "default": "openai-chat",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--endpoint"
+            ],
+            "default": "/v1/chat/completions",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--mode"
+            ],
+            "default": "concurrency",
+            "choices": [
+              "concurrency",
+              "threshold"
+            ],
+            "required": false,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--concurrency"
+            ],
+            "default": "1",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "int"
+          },
+          {
+            "flags": [
+              "--num-prompts"
+            ],
+            "default": "0",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "int"
+          },
+          {
+            "flags": [
+              "--input-len"
+            ],
+            "default": "1024",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "int"
+          },
+          {
+            "flags": [
+              "--output-len"
+            ],
+            "default": "1024",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "int"
+          },
+          {
+            "flags": [
+              "--request-rate"
+            ],
+            "default": "inf",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--num-warmups"
+            ],
+            "default": "0",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "int"
+          },
+          {
+            "flags": [
+              "--chars-per-token"
+            ],
+            "default": "4.0",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "float"
+          },
+          {
+            "flags": [
+              "--timeout"
+            ],
+            "default": "600.0",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "float"
+          },
+          {
+            "flags": [
+              "--temperature"
+            ],
+            "default": "0.0",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "float"
+          },
+          {
+            "flags": [
+              "--seed"
+            ],
+            "default": "0",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "int"
+          },
+          {
+            "flags": [
+              "--ttft-threshold-ms"
+            ],
+            "default": "0.0",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "float"
+          },
+          {
+            "flags": [
+              "--tpot-threshold-ms"
+            ],
+            "default": "100.0",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "float"
+          },
+          {
+            "flags": [
+              "--output-threshold"
+            ],
+            "default": "0.0",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "float"
+          },
+          {
+            "flags": [
+              "--ttft-statistic"
+            ],
+            "default": "mean",
+            "choices": [
+              "mean",
+              "median",
+              "p99"
+            ],
+            "required": false,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--tpot-statistic"
+            ],
+            "default": "mean",
+            "choices": [
+              "mean",
+              "median",
+              "p99"
+            ],
+            "required": false,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--max-concurrency-search"
+            ],
+            "default": "4096",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "int"
+          },
+          {
+            "flags": [
+              "--max-requests"
+            ],
+            "default": "4096",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "int"
+          }
+        ],
+        "behavior_zh": "执行一次自研引擎压测：concurrency（单并发）/ threshold（阈值搜索找最佳并发）；落盘 run.json + 终端日志。",
+        "behavior_en": "Runs one built-in-engine benchmark: concurrency (single level) / threshold (search best concurrency); writes run.json + terminal log."
+      },
+      "eval": {
+        "usage": "benchscope eval --model MODEL --dataset DATASET [options]",
+        "args": [
+          {
+            "flags": [
+              "--engine"
+            ],
+            "default": "benchscope",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--mode"
+            ],
+            "default": "serving",
+            "choices": [
+              "serving",
+              "native"
+            ],
+            "required": false,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--model"
+            ],
+            "default": null,
+            "choices": null,
+            "required": true,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--lora-path"
+            ],
+            "default": "",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--lora-name"
+            ],
+            "default": "",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--dataset"
+            ],
+            "default": null,
+            "choices": null,
+            "required": true,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--base-url"
+            ],
+            "default": "",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--api-key"
+            ],
+            "default": "",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--limit"
+            ],
+            "default": "0",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "int"
+          },
+          {
+            "flags": [
+              "--seed"
+            ],
+            "default": "1234",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "int"
+          },
+          {
+            "flags": [
+              "--temperature"
+            ],
+            "default": "0.0",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "float"
+          },
+          {
+            "flags": [
+              "--top-p"
+            ],
+            "default": "1.0",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "float"
+          },
+          {
+            "flags": [
+              "--max-tokens"
+            ],
+            "default": "512",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "int"
+          },
+          {
+            "flags": [
+              "--concurrency"
+            ],
+            "default": "4",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "int"
+          },
+          {
+            "flags": [
+              "--judge-model"
+            ],
+            "default": "",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--mock-correct-rate"
+            ],
+            "default": "0.7",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": "float"
+          },
+          {
+            "flags": [
+              "--name"
+            ],
+            "default": "",
+            "choices": null,
+            "required": false,
+            "flag": false,
+            "type": null
+          },
+          {
+            "flags": [
+              "--use-mock-env"
+            ],
+            "default": null,
+            "choices": null,
+            "required": false,
+            "flag": true,
+            "type": null
+          }
+        ],
+        "behavior_zh": "执行一次精度评测：serving / native 模式，引擎可选 benchscope / native-hf / mock；落盘 task.json / result.json / samples.jsonl。",
+        "behavior_en": "Runs one accuracy evaluation: serving / native mode with engines benchscope / native-hf / mock; writes task.json / result.json / samples.jsonl."
+      }
+    }
+  },
+  "engines": {
+    "performance": [
+      {
+        "id": "benchscope",
+        "kind": "builtin",
+        "framework": "builtin",
+        "version": "stable",
+        "name": "Bench CLI",
+        "description_zh": "BenchScope 自研测试引擎（Bench CLI），基于 OpenAI 兼容 API 的进程内异步流式负载生成器。 不依赖本地 vLLM / SGLang 环境，pip 安装后即可对本地或远程的任意 OpenAI 兼容推理服务进行性能测试。 指标口径严格对齐 vLLM bench（TTFT / TPOT / ITL / 吞吐量），结果可与原生引擎直接对比。 同时提供 Serving 链路精度评测能力（内置命令 `benchscope eval`）。",
+        "description_en": "BenchScope built-in engine (Bench CLI) — an in-process async load generator for OpenAI-compatible APIs. No local vLLM / SGLang installation is required, so any local or remote OpenAI-compatible service can be tested right after pip install. Metrics follow the vLLM bench definitions (TTFT / TPOT / ITL / throughput), so results are directly comparable with the native engines. Also provides serving-link accuracy evaluation via the built-in `benchscope eval` command.",
+        "eval": "serving",
+        "requires": []
+      },
+      {
+        "id": "vllm-0.23",
+        "kind": "vllm",
+        "framework": "vllm",
+        "version": "0.23",
+        "name": "vLLM 0.23",
+        "description_zh": "vLLM 原生引擎，调用本地安装的 vllm bench serve CLI 执行测试。 指标为 vLLM 官方口径，可作为校验 Bench CLI 结果的基线参考。",
+        "description_en": "vLLM native engine — invokes the locally installed vllm bench serve CLI. Metrics are the official vLLM baseline, serving as the reference for cross-checking Bench CLI results.",
+        "eval": null,
+        "requires": [
+          {
+            "name": "torch",
+            "spec": ">=2.0",
+            "hint": "pip install 'torch>=2.0'"
+          },
+          {
+            "name": "vllm",
+            "spec": ">=0.23,<0.24",
+            "hint": "pip install 'vllm>=0.23,<0.24'"
+          }
+        ]
+      },
+      {
+        "id": "sglang-0.5.10",
+        "kind": "sglang",
+        "framework": "sglang",
+        "version": "0.5.10",
+        "name": "SGLang 0.5.10",
+        "description_zh": "SGLang 原生引擎，调用本地 python -m sglang.bench_serving CLI 执行测试。 输出 SGLang 原生指标（TPOT / ITL），便于与 vLLM 及 Bench CLI 横向对比。",
+        "description_en": "SGLang native engine — invokes the local python -m sglang.bench_serving CLI. Reports SGLang-native metrics (TPOT / ITL) for comparison with vLLM and Bench CLI.",
+        "eval": null,
+        "requires": [
+          {
+            "name": "torch",
+            "spec": ">=2.0",
+            "hint": "pip install 'torch>=2.0'"
+          },
+          {
+            "name": "sglang",
+            "spec": ">=0.5.10,<0.6",
+            "hint": "pip install 'sglang>=0.5.10,<0.6'"
+          }
+        ]
+      }
+    ],
+    "accuracy": [
+      {
+        "id": "native-hf",
+        "kind": "native",
+        "framework": "transformers",
+        "version": "stable",
+        "name": "Native HF",
+        "description_zh": "Native 原生精度引擎，经 transformers 本地加载模型权重（路径或 HF id）离线推理。 固定种子 100% 可复现；支持 LoRA 微调训练的增量模型（peft adapter，lora_path 配置）。 需当前环境已安装 torch 与 transformers（选择前环境校验；可选依赖，不随 pip 必装）。",
+        "description_en": "Native accuracy engine — loads local model weights (path or HF id) with transformers and runs offline inference. 100% reproducible with a fixed seed; supports LoRA fine-tuned incremental models via peft adapters (lora_path). Requires torch and transformers in the current environment (validated before selection; optional extras, not bundled with pip install).",
+        "eval": "native",
+        "requires": [
+          {
+            "name": "torch",
+            "spec": ">=2.0",
+            "hint": "pip install 'torch>=2.0'"
+          },
+          {
+            "name": "transformers",
+            "spec": ">=4.40",
+            "hint": "pip install 'transformers>=4.40'"
+          }
+        ]
+      },
+      {
+        "id": "mock",
+        "kind": "mock",
+        "framework": "mock",
+        "version": "stable",
+        "name": "Mock",
+        "description_zh": "Mock 精度引擎，按样本返回确定性伪输出，正确率可控（mock_correct_rate，默认 0.7）。 用于无 GPU / 无真实推理服务场景的全链路联调、演示与测试（mock 环境定位）。",
+        "description_en": "Mock accuracy engine — returns deterministic pseudo answers with a controllable correctness rate (mock_correct_rate, default 0.7). For full-pipeline integration, demos and tests without GPU or a real inference service.",
+        "eval": "mock",
+        "requires": []
+      }
+    ],
+    "comparison_dimensions": [
+      {
+        "dimension": "Engine Type",
+        "dimension_zh": "引擎类型",
+        "values": {
+          "benchscope": "Bench CLI (built-in)",
+          "vllm-0.23": "vLLM native (vllm bench serve)",
+          "sglang-0.5.10": "SGLang native (sglang.bench_serving)"
+        }
+      },
+      {
+        "dimension": "Environment",
+        "dimension_zh": "环境依赖",
+        "values": {
+          "benchscope": "None (aiohttp only)",
+          "vllm-0.23": "torch >= 2.0 + vllm >= 0.23, < 0.24",
+          "sglang-0.5.10": "torch + sglang >= 0.5.10, < 0.6"
+        }
+      },
+      {
+        "dimension": "Test Target",
+        "dimension_zh": "测试对象",
+        "values": {
+          "benchscope": "Any OpenAI-compatible service",
+          "vllm-0.23": "vLLM OpenAI service",
+          "sglang-0.5.10": "SGLang OpenAI service"
+        }
+      },
+      {
+        "dimension": "Execution",
+        "dimension_zh": "执行方式",
+        "values": {
+          "benchscope": "In-process async (no subprocess)",
+          "vllm-0.23": "Subprocess CLI",
+          "sglang-0.5.10": "Subprocess CLI"
+        }
+      },
+      {
+        "dimension": "Metric Basis",
+        "dimension_zh": "指标口径",
+        "values": {
+          "benchscope": "Aligned with vLLM bench",
+          "vllm-0.23": "vLLM official",
+          "sglang-0.5.10": "SGLang official"
+        }
+      },
+      {
+        "dimension": "Install Size",
+        "dimension_zh": "安装体积",
+        "values": {
+          "benchscope": "~1 MB (pip extras)",
+          "vllm-0.23": "Large (full vLLM)",
+          "sglang-0.5.10": "Large (full SGLang)"
+        }
+      },
+      {
+        "dimension": "Eval Support",
+        "dimension_zh": "精度评测",
+        "values": {
+          "benchscope": "Yes (serving accuracy, benchscope eval)",
+          "vllm-0.23": "No (performance only)",
+          "sglang-0.5.10": "No (performance only)",
+          "native-hf": "Yes (local-weight accuracy, transformers)",
+          "mock": "Yes (mock, controllable accuracy)"
+        }
+      }
+    ]
+  },
+  "datasets": {
+    "categories": [
+      {
+        "key": "chat",
+        "name_zh": "对话",
+        "name_en": "Chat"
+      },
+      {
+        "key": "instruction",
+        "name_zh": "指令微调",
+        "name_en": "Instruction"
+      },
+      {
+        "key": "math",
+        "name_zh": "数学推理",
+        "name_en": "Math"
+      },
+      {
+        "key": "accuracy-knowledge",
+        "name_zh": "精度·知识",
+        "name_en": "Accuracy · Knowledge"
+      },
+      {
+        "key": "accuracy-math",
+        "name_zh": "精度·数学",
+        "name_en": "Accuracy · Math"
+      },
+      {
+        "key": "accuracy-code",
+        "name_zh": "精度·代码",
+        "name_en": "Accuracy · Code"
+      },
+      {
+        "key": "accuracy-chat",
+        "name_zh": "精度·对话",
+        "name_en": "Accuracy · Chat"
+      },
+      {
+        "key": "accuracy-mix",
+        "name_zh": "精度·综合",
+        "name_en": "Accuracy · Mix"
+      }
+    ],
+    "items": [
+      {
+        "id": "sharegpt",
+        "name": "ShareGPT",
+        "category": "chat",
+        "description": "ShareGPT 对话数据集（ModelScope 自动下载），用于 ShareGPT 模式基准测试",
+        "eval": null,
+        "source": "modelscope"
+      },
+      {
+        "id": "alpaca",
+        "name": "Alpaca",
+        "category": "instruction",
+        "description": "Stanford Alpaca 指令微调数据集（52K 对话样本），对话格式基准测试",
+        "eval": null,
+        "source": "url"
+      },
+      {
+        "id": "gsm8k",
+        "name": "GSM8K",
+        "category": "accuracy-math",
+        "description": "小学数学推理题数据集（7473 训练题），数学推理精度评测（exact_match）",
+        "eval": {
+          "scorer": "math",
+          "metrics": "exact_match",
+          "total_samples": 7473,
+          "answer_field": "answer（含",
+          "subject_field": ""
+        },
+        "source": "url"
+      },
+      {
+        "id": "dolly",
+        "name": "Dolly",
+        "category": "instruction",
+        "description": "Databricks Dolly-15k 指令微调数据集（15K 样本），对话格式基准测试",
+        "eval": null,
+        "source": "url"
+      },
+      {
+        "id": "mmlu",
+        "name": "MMLU",
+        "category": "accuracy-knowledge",
+        "description": "多任务语言理解基准（57 学科 14079 四选一客观题），知识类精度核心评测",
+        "eval": {
+          "scorer": "choice",
+          "metrics": "accuracy",
+          "total_samples": 14079,
+          "subject_field": "subject"
+        },
+        "source": "modelscope"
+      },
+      {
+        "id": "cmmlu",
+        "name": "CMMLU",
+        "category": "accuracy-knowledge",
+        "description": "中文多任务语言理解基准（67 学科 11960 四选一客观题），中文知识精度评测",
+        "eval": {
+          "scorer": "choice",
+          "metrics": "accuracy",
+          "total_samples": 11960,
+          "subject_field": "subject"
+        },
+        "source": "modelscope"
+      },
+      {
+        "id": "c-eval",
+        "name": "C-Eval",
+        "category": "accuracy-knowledge",
+        "description": "中文基础模型评估套件（52 学科 13480 四选一客观题），中文知识精度评测",
+        "eval": {
+          "scorer": "choice",
+          "metrics": "accuracy",
+          "total_samples": 13480,
+          "subject_field": "subject"
+        },
+        "source": "modelscope"
+      },
+      {
+        "id": "math",
+        "name": "MATH",
+        "category": "accuracy-math",
+        "description": "竞赛数学数据集（5000 题目），高难度数学推理精度评测（exact_match）",
+        "eval": {
+          "scorer": "math",
+          "metrics": "exact_match",
+          "total_samples": 5000
+        },
+        "source": "modelscope"
+      },
+      {
+        "id": "humaneval",
+        "name": "HumanEval",
+        "category": "accuracy-code",
+        "description": "OpenAI 代码生成基准（164 题函数补全），代码精度评测（pass@1）",
+        "eval": {
+          "scorer": "code",
+          "metrics": "pass@1",
+          "total_samples": 164
+        },
+        "source": "modelscope"
+      },
+      {
+        "id": "mbpp",
+        "name": "MBPP",
+        "category": "accuracy-code",
+        "description": "基础 Python 编程基准（974 题文本生成代码），代码精度评测（pass@1）",
+        "eval": {
+          "scorer": "code",
+          "metrics": "pass@1",
+          "total_samples": 974
+        },
+        "source": "modelscope"
+      },
+      {
+        "id": "mt-bench",
+        "name": "MT-Bench",
+        "category": "accuracy-chat",
+        "description": "多轮对话对齐基准（80 题 160 轮），LLM-as-judge 对话精度评测（0–10 分）",
+        "eval": {
+          "scorer": "judge",
+          "metrics": "mt_bench",
+          "total_samples": 80
+        },
+        "source": "modelscope"
+      },
+      {
+        "id": "gaokao-bench",
+        "name": "GAOKAO-Bench",
+        "category": "accuracy-mix",
+        "description": "中国高考题基准（2000 题，自动判分取客观题子集），综合知识精度评测",
+        "eval": {
+          "scorer": "choice",
+          "metrics": "accuracy",
+          "total_samples": 2000,
+          "subject_field": "subject"
+        },
+        "source": "modelscope"
+      }
+    ],
+    "perf_datasets": [
+      "sharegpt",
+      "alpaca",
+      "dolly"
+    ],
+    "eval_datasets": [
+      "gsm8k",
+      "mmlu",
+      "cmmlu",
+      "c-eval",
+      "math",
+      "humaneval",
+      "mbpp",
+      "mt-bench",
+      "gaokao-bench"
+    ]
+  },
+  "baselines": {
+    "version": "2026-08-30",
+    "models": [
+      {
+        "name": "Llama-3-8B",
+        "params_b": 8,
+        "group": "general",
+        "source": "Meta Llama3 技术报告 / 公开榜单近似值",
+        "scores": {
+          "mmlu": 68.4,
+          "gsm8k": 79.6,
+          "math": 30.0,
+          "humaneval": 62.2,
+          "mbpp": 66.0,
+          "cmmlu": 51.0,
+          "c-eval": 45.0,
+          "mt-bench": 8.0
+        }
+      },
+      {
+        "name": "Llama-3-70B",
+        "params_b": 70,
+        "group": "general",
+        "source": "Meta Llama3 技术报告 / 公开榜单近似值",
+        "scores": {
+          "mmlu": 82.0,
+          "gsm8k": 93.0,
+          "math": 41.4,
+          "humaneval": 81.7,
+          "mbpp": 74.0,
+          "cmmlu": 70.0,
+          "c-eval": 65.0,
+          "mt-bench": 8.6
+        }
+      },
+      {
+        "name": "Qwen2-7B",
+        "params_b": 7,
+        "group": "general",
+        "source": "Qwen2 技术报告 / 公开榜单近似值",
+        "scores": {
+          "mmlu": 70.5,
+          "gsm8k": 79.9,
+          "math": 51.3,
+          "humaneval": 54.9,
+          "mbpp": 60.0,
+          "cmmlu": 84.8,
+          "c-eval": 87.1,
+          "mt-bench": 8.0
+        }
+      },
+      {
+        "name": "Qwen2-14B",
+        "params_b": 14,
+        "group": "general",
+        "source": "Qwen2 技术报告 / 公开榜单近似值",
+        "scores": {
+          "mmlu": 74.5,
+          "gsm8k": 85.5,
+          "math": 55.9,
+          "humaneval": 66.5,
+          "mbpp": 66.0,
+          "cmmlu": 86.0,
+          "c-eval": 88.0,
+          "mt-bench": 8.3
+        }
+      },
+      {
+        "name": "Qwen2-72B",
+        "params_b": 72,
+        "group": "general",
+        "source": "Qwen2 技术报告 / 公开榜单近似值",
+        "scores": {
+          "mmlu": 84.2,
+          "gsm8k": 91.1,
+          "math": 68.1,
+          "humaneval": 73.2,
+          "mbpp": 74.0,
+          "cmmlu": 88.0,
+          "c-eval": 91.0,
+          "mt-bench": 9.0
+        }
+      },
+      {
+        "name": "InternLM2-7B",
+        "params_b": 7,
+        "group": "general",
+        "source": "InternLM2 技术报告 / 公开榜单近似值",
+        "scores": {
+          "mmlu": 65.8,
+          "gsm8k": 70.7,
+          "math": 33.4,
+          "humaneval": 43.9,
+          "mbpp": 52.0,
+          "cmmlu": 80.0,
+          "c-eval": 82.7,
+          "mt-bench": 7.8
+        }
+      },
+      {
+        "name": "Mistral-7B",
+        "params_b": 7,
+        "group": "general",
+        "source": "Mistral 技术报告 / 公开榜单近似值",
+        "scores": {
+          "mmlu": 62.5,
+          "gsm8k": 52.2,
+          "math": 20.0,
+          "humaneval": 30.5,
+          "mbpp": 47.5,
+          "cmmlu": 45.0,
+          "c-eval": 40.0,
+          "mt-bench": 7.6
+        }
+      },
+      {
+        "name": "Qwen2-Chinese",
+        "params_b": 7,
+        "group": "chinese",
+        "source": "Qwen2 中文口径（CMMLU/C-Eval）近似值",
+        "scores": {
+          "mmlu": 70.5,
+          "cmmlu": 84.8,
+          "c-eval": 87.1,
+          "gsm8k": 79.9,
+          "mt-bench": 8.0
+        }
+      },
+      {
+        "name": "Llama3-CN",
+        "params_b": 8,
+        "group": "chinese",
+        "source": "Llama3 中文社区评测（CMMLU/C-Eval）近似值",
+        "scores": {
+          "mmlu": 68.4,
+          "cmmlu": 52.0,
+          "c-eval": 46.0,
+          "gsm8k": 79.6,
+          "mt-bench": 8.0
+        }
+      },
+      {
+        "name": "Zephyr-7B",
+        "params_b": 7,
+        "group": "chinese",
+        "source": "Zephyr (HuggingFace) 技术报告近似值",
+        "scores": {
+          "mmlu": 61.4,
+          "gsm8k": 46.5,
+          "math": 15.0,
+          "humaneval": 27.4,
+          "mt-bench": 7.3
+        }
+      }
+    ]
+  },
+  "api": {
+    "api_config": [
+      {
+        "method": "GET",
+        "path": "/api/config"
+      },
+      {
+        "method": "POST",
+        "path": "/api/config"
+      },
+      {
+        "method": "GET",
+        "path": "/api/config/providers"
+      },
+      {
+        "method": "POST",
+        "path": "/api/config/providers"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/config/providers/{provider_id}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/config/providers/{provider_id}"
+      },
+      {
+        "method": "POST",
+        "path": "/api/config/providers/{provider_id}/activate"
+      },
+      {
+        "method": "GET",
+        "path": "/api/config/status"
+      },
+      {
+        "method": "GET",
+        "path": "/api/config/models"
+      },
+      {
+        "method": "POST",
+        "path": "/api/config/test-connection"
+      },
+      {
+        "method": "GET",
+        "path": "/api/config/gpu"
+      },
+      {
+        "method": "GET",
+        "path": "/api/config/params/{framework}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/config/params-yaml/{framework}"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/config/params-yaml/{framework}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/config/datasets"
+      },
+      {
+        "method": "GET",
+        "path": "/api/config/model-catalog"
+      },
+      {
+        "method": "POST",
+        "path": "/api/config/datasets/download"
+      },
+      {
+        "method": "GET",
+        "path": "/api/config/dirs"
+      },
+      {
+        "method": "POST",
+        "path": "/api/config/dirs"
+      },
+      {
+        "method": "POST",
+        "path": "/api/config/restart"
+      }
+    ],
+    "api_tasks": [
+      {
+        "method": "GET",
+        "path": "/api/tasks"
+      },
+      {
+        "method": "POST",
+        "path": "/api/tasks/preview"
+      },
+      {
+        "method": "GET",
+        "path": "/api/tasks/{task_id}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/tasks/{task_id}/logs"
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/tasks/{task_id}/threshold"
+      },
+      {
+        "method": "POST",
+        "path": "/api/tasks"
+      },
+      {
+        "method": "POST",
+        "path": "/api/tasks/{task_id}/start"
+      },
+      {
+        "method": "POST",
+        "path": "/api/tasks/{task_id}/stop"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/tasks/{task_id}"
+      },
+      {
+        "method": "POST",
+        "path": "/api/tasks/{task_id}/export"
+      },
+      {
+        "method": "POST",
+        "path": "/api/tasks/{task_id}/preview"
+      }
+    ],
+    "api_logs": [
+      {
+        "method": "GET",
+        "path": "/api/logs/runs"
+      },
+      {
+        "method": "GET",
+        "path": "/api/logs/runs/{run_id}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/logs/runs/{run_id}/live"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/logs/runs/{run_id}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/logs/runs/{run_id}/backup"
+      },
+      {
+        "method": "POST",
+        "path": "/api/logs/runs/import"
+      },
+      {
+        "method": "GET",
+        "path": "/api/logs/runs/{run_id}/preview"
+      },
+      {
+        "method": "GET",
+        "path": "/api/logs/runs/{run_id}/download"
+      },
+      {
+        "method": "GET",
+        "path": "/api/logs/datasets"
+      },
+      {
+        "method": "POST",
+        "path": "/api/logs/datasets/upload"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/logs/datasets/{name}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/logs/runs/{run_id}/summary"
+      },
+      {
+        "method": "GET",
+        "path": "/api/logs/datasets/sharegpt"
+      },
+      {
+        "method": "POST",
+        "path": "/api/logs/datasets/sharegpt/download"
+      }
+    ],
+    "api_dashboard": [
+      {
+        "method": "GET",
+        "path": "/api/dashboard/stats"
+      },
+      {
+        "method": "GET",
+        "path": "/api/dashboard/env"
+      }
+    ],
+    "api_sessions": [
+      {
+        "method": "GET",
+        "path": "/api/sessions"
+      },
+      {
+        "method": "POST",
+        "path": "/api/sessions"
+      },
+      {
+        "method": "GET",
+        "path": "/api/sessions/{session_id}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/sessions/{session_id}"
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/sessions/{session_id}/perf"
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/sessions/{session_id}/title"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/sessions"
+      },
+      {
+        "method": "POST",
+        "path": "/api/sessions/{session_id}/chat"
+      }
+    ],
+    "api_test": [
+      {
+        "method": "POST",
+        "path": "/api/test/start"
+      },
+      {
+        "method": "POST",
+        "path": "/api/test/preview"
+      },
+      {
+        "method": "POST",
+        "path": "/api/test/stop"
+      },
+      {
+        "method": "GET",
+        "path": "/api/test/status"
+      }
+    ],
+    "api_accuracy": [
+      {
+        "method": "GET",
+        "path": "/api/accuracy/tasks"
+      },
+      {
+        "method": "POST",
+        "path": "/api/accuracy/tasks"
+      },
+      {
+        "method": "GET",
+        "path": "/api/accuracy/tasks/{task_id}"
+      },
+      {
+        "method": "POST",
+        "path": "/api/accuracy/tasks/{task_id}/stop"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/accuracy/tasks/{task_id}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/accuracy/tasks/{task_id}/samples"
+      },
+      {
+        "method": "GET",
+        "path": "/api/accuracy/tasks/{task_id}/export-samples"
+      },
+      {
+        "method": "GET",
+        "path": "/api/accuracy/tasks/{task_id}/benchmark"
+      },
+      {
+        "method": "GET",
+        "path": "/api/accuracy/engines"
+      },
+      {
+        "method": "GET",
+        "path": "/api/accuracy/engines/{engine_id}/env-check"
+      },
+      {
+        "method": "GET",
+        "path": "/api/accuracy/datasets"
+      },
+      {
+        "method": "POST",
+        "path": "/api/accuracy/datasets/import"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/accuracy/datasets/{dataset_id}"
+      },
+      {
+        "method": "POST",
+        "path": "/api/accuracy/datasets/preview"
+      },
+      {
+        "method": "POST",
+        "path": "/api/accuracy/datasets/stats"
+      },
+      {
+        "method": "GET",
+        "path": "/api/accuracy/estimate"
+      },
+      {
+        "method": "GET",
+        "path": "/api/accuracy/baselines"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/accuracy/baselines"
+      },
+      {
+        "method": "POST",
+        "path": "/api/accuracy/compare"
+      }
+    ],
+    "api_benchs": [
+      {
+        "method": "GET",
+        "path": "/api/benchs"
+      },
+      {
+        "method": "POST",
+        "path": "/api/benchs/{engine_id}/mock"
+      },
+      {
+        "method": "GET",
+        "path": "/api/benchs/authoring"
+      },
+      {
+        "method": "POST",
+        "path": "/api/benchs/upload"
+      },
+      {
+        "method": "POST",
+        "path": "/api/benchs/import"
+      },
+      {
+        "method": "GET",
+        "path": "/api/benchs/{engine_id}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/benchs/config/yaml"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/benchs/config/yaml"
+      },
+      {
+        "method": "GET",
+        "path": "/api/benchs/{engine_id}/params"
+      },
+      {
+        "method": "GET",
+        "path": "/api/benchs/{engine_id}/params-yaml"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/benchs/{engine_id}/params-yaml"
+      },
+      {
+        "method": "GET",
+        "path": "/api/benchs/{engine_id}/params/{param_key}/option-desc"
+      },
+      {
+        "method": "GET",
+        "path": "/api/benchs/{engine_id}/env-check"
+      }
+    ],
+    "api_skills": [
+      {
+        "method": "GET",
+        "path": "/api/skills"
+      },
+      {
+        "method": "GET",
+        "path": "/api/skills/{skill_id}/download"
+      }
+    ],
+    "_app": [
+      {
+        "method": "GET",
+        "path": "/api/version"
+      },
+      {
+        "method": "WS",
+        "path": "/ws"
+      }
+    ],
+    "_note_zh": "BenchScope 本身不暴露 OpenAI 兼容的 /v1/* 端点；/v1/models 与 /v1/chat/completions 是被测服务（或 mocks/openai_server.py）的端点。会话 /api/sessions/{id}/chat 由服务端代理转发到激活的 Provider。",
+    "_note_en": "BenchScope itself does not expose OpenAI-compatible /v1/* endpoints; /v1/models and /v1/chat/completions belong to the target service (or mocks/openai_server.py). Session chat /api/sessions/{id}/chat is proxied server-side to the active provider."
+  },
+  "webui": {
+    "routes": [],
+    "pages": [
+      {
+        "route": "/dashboard",
+        "panels_zh": [
+          "统计概览（性能/精度/会话/内置技能/模型/数据集计数 + Provider 整行）",
+          "环境信息（硬件/操作系统/网络/框架版本）",
+          "性能测试记录（最新 8 条）"
+        ],
+        "notes_zh": "Eval Records（精度记录）面板当前隐藏（敬请期待）；Models/Datasets 下载计数暂未实现（默认 0）。"
+      },
+      {
+        "route": "/performance",
+        "panels_zh": [
+          "任务列表 + 任务详情（指标表 + 4 组 12 图曲线 + 实时面板）",
+          "创建任务三步表单（条件 / 参数 / 命令预览）"
+        ],
+        "notes_zh": "曲线 4 组：吞吐（Output/Peak Output/Total）、TTFT（mean/median/p99）、TPOT（mean/median/p99）、ITL（mean/median/p99）。"
+      },
+      {
+        "route": "/accuracy",
+        "panels_zh": [
+          "无任务时介绍页 + 创建入口",
+          "任务列表 + 详情（指标 / 分学科 / 基线对标 / 样本）"
+        ],
+        "notes_zh": "创建三步表单：数据集 / 模式与引擎 / 预览与 Token 强提醒确认。"
+      },
+      {
+        "route": "/sessions",
+        "panels_zh": [
+          "会话列表 + SSE 流式对话（Markdown 渲染 + 代码高亮 + 思考解析 + 性能栏）"
+        ],
+        "notes_zh": "会话请求由服务端代理到激活 Provider；支持 model / quality / enable_thinking / top_k / temperature / top_p。"
+      },
+      {
+        "route": "/datas",
+        "panels_zh": [
+          "Perfs（性能记录：列表 + 详情 + 导入/备份/导出）",
+          "Analysis（数据分析）"
+        ],
+        "notes_zh": "Evals 子 Tab 已隐藏（路由 /datas/evals 重定向到 /datas/perfs）；精度评测产物仍在 Accuracy 页管理。"
+      },
+      {
+        "route": "/settings",
+        "panels_zh": [
+          "General（Root Dir + Cache Paths）",
+          "Providers（Provider 管理 + GPU 信息）",
+          "Models",
+          "Datasets",
+          "Bench Engines（上传/导入/参数 YAML）",
+          "Skills",
+          "Plugins"
+        ],
+        "notes_zh": "全部修改自动持久化到 ~/.benchscope/settings.json；Root Dir 即时生效无需重启。"
+      }
+    ]
+  },
+  "metrics": {
+    "performance": {
+      "core_per_concurrency": [
+        "ttft",
+        "tpot",
+        "itl",
+        "output",
+        "peakoutput",
+        "total"
+      ],
+      "request_stats": [
+        "successful_requests",
+        "failed_requests",
+        "benchmark_duration",
+        "total_input_tokens",
+        "total_generated_tokens",
+        "peak_concurrent"
+      ],
+      "request_throughput": [
+        "req_per_s"
+      ],
+      "derived": [
+        "single_user"
+      ],
+      "threshold": [
+        "best_concurrency"
+      ],
+      "definitions": {
+        "ttft": {
+          "name_zh": "首 token 延迟 TTFT",
+          "name_en": "Time To First Token (TTFT)",
+          "unit": "ms",
+          "stats": [
+            "mean",
+            "median",
+            "p99"
+          ],
+          "def_zh": "从请求发出到收到第一个生成 token 的耗时，反映用户感知的首字响应速度，越低越好。",
+          "def_en": "Time from request send to the first generated token; reflects perceived first-token responsiveness, lower is better."
+        },
+        "tpot": {
+          "name_zh": "每输出 token 延迟 TPOT",
+          "name_en": "Time Per Output Token (TPOT)",
+          "unit": "ms",
+          "stats": [
+            "mean",
+            "median",
+            "p99"
+          ],
+          "def_zh": "生成每个输出 token 的平均耗时，决定流式输出的持续流畅度，越低越好。",
+          "def_en": "Average time to generate each output token; determines sustained streaming smoothness, lower is better."
+        },
+        "itl": {
+          "name_zh": "token 间隔延迟 ITL",
+          "name_en": "Inter-Token Latency (ITL)",
+          "unit": "ms",
+          "stats": [
+            "mean",
+            "median",
+            "p99"
+          ],
+          "def_zh": "相邻两个输出 token 之间的间隔耗时，刻画流式输出的抖动与卡顿，越低越好。",
+          "def_en": "Gap between consecutive output tokens; characterizes streaming jitter/stutter, lower is better."
+        },
+        "output": {
+          "name_zh": "输出吞吐",
+          "name_en": "Output Throughput",
+          "unit": "tok/s",
+          "stats": [
+            "mean"
+          ],
+          "def_zh": "服务端生成的输出 token 速率（总输出 token 数 / 压测时长），越高越好。",
+          "def_en": "Rate of generated output tokens (total output tokens / duration), higher is better."
+        },
+        "peakoutput": {
+          "name_zh": "峰值输出吞吐",
+          "name_en": "Peak Output Throughput",
+          "unit": "tok/s",
+          "stats": [
+            "mean"
+          ],
+          "def_zh": "压测窗口内观察到的输出 token 速率峰值（vLLM 口径提供；SGLang 原生输出无此项时记 N/A）。",
+          "def_en": "Peak output token rate observed in the window (vLLM provides it; recorded as N/A when the engine does not)."
+        },
+        "total": {
+          "name_zh": "总 token 吞吐",
+          "name_en": "Total Token Throughput",
+          "unit": "tok/s",
+          "stats": [
+            "mean"
+          ],
+          "def_zh": "输入 + 输出 token 的总处理速率（总 token 数 / 压测时长），衡量服务整体处理容量，越高越好。",
+          "def_en": "Combined input + output token processing rate (total tokens / duration), measures overall capacity, higher is better."
+        },
+        "req_per_s": {
+          "name_zh": "请求吞吐",
+          "name_en": "Request Throughput",
+          "unit": "req/s",
+          "stats": [
+            "mean"
+          ],
+          "def_zh": "每秒完成的请求数（成功请求数 / 压测时长），衡量服务承载的请求速率，越高越好。",
+          "def_en": "Completed requests per second (successful requests / duration), higher is better."
+        },
+        "single_user": {
+          "name_zh": "单用户吞吐",
+          "name_en": "Single-User Throughput",
+          "unit": "tok/s",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "单个用户可获得的生成速率，按 1000 / TPOT(mean) 推导，近似单人连续生成速度。",
+          "def_en": "Generation rate available to a single user, derived as 1000 / TPOT(mean), approximating single-user speed."
+        },
+        "successful_requests": {
+          "name_zh": "成功请求数",
+          "name_en": "Successful Requests",
+          "unit": "count",
+          "stats": [
+            "scalar"
+          ],
+          "def_zh": "压测中成功完成的请求数（收到完整响应）。",
+          "def_en": "Requests that completed successfully with a full response."
+        },
+        "failed_requests": {
+          "name_zh": "失败请求数",
+          "name_en": "Failed Requests",
+          "unit": "count",
+          "stats": [
+            "scalar"
+          ],
+          "def_zh": "压测中失败的请求数（超时 / 错误 / 未完成），健康压测中应为 0。",
+          "def_en": "Requests that failed (timeout / error / incomplete); should be 0 in a healthy run."
+        },
+        "benchmark_duration": {
+          "name_zh": "压测时长",
+          "name_en": "Benchmark Duration",
+          "unit": "s",
+          "stats": [
+            "scalar"
+          ],
+          "def_zh": "整轮压测的墙钟时长（从首个请求发出到全部请求结束）。",
+          "def_en": "Wall-clock duration of the whole run (first request sent to last request finished)."
+        },
+        "total_input_tokens": {
+          "name_zh": "总输入 token 数",
+          "name_en": "Total Input Tokens",
+          "unit": "tokens",
+          "stats": [
+            "scalar"
+          ],
+          "def_zh": "本轮压测发送的全部输入 token 总量。",
+          "def_en": "Total input tokens sent in this run."
+        },
+        "total_generated_tokens": {
+          "name_zh": "总输出 token 数",
+          "name_en": "Total Generated Tokens",
+          "unit": "tokens",
+          "stats": [
+            "scalar"
+          ],
+          "def_zh": "本轮压测服务端生成的全部输出 token 总量。",
+          "def_en": "Total output tokens generated by the service in this run."
+        },
+        "peak_concurrent": {
+          "name_zh": "峰值并发",
+          "name_en": "Peak Concurrent Requests",
+          "unit": "count",
+          "stats": [
+            "scalar"
+          ],
+          "def_zh": "压测过程中同时在途的请求数峰值。",
+          "def_en": "Peak number of in-flight requests during the run."
+        },
+        "best_concurrency": {
+          "name_zh": "最佳并发",
+          "name_en": "Best Concurrency",
+          "unit": "count",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "阈值模式下满足全部阈值条件（TTFT / TPOT / 输出吞吐）的最大并发；达到搜索上限仍满足时取上限。",
+          "def_en": "In threshold mode, the maximum concurrency satisfying all thresholds (TTFT / TPOT / output throughput); the search cap is used when it still satisfies."
+        }
+      },
+      "export": {
+        "xlsx_columns": [
+          "GPU",
+          "模型",
+          "精度",
+          "推理框架",
+          "输入长度",
+          "输出长度",
+          "并发数",
+          "Output",
+          "Peak Output",
+          "Total",
+          "TTFT",
+          "ITL",
+          "TPOT",
+          "单用户"
+        ],
+        "xlsx_sheets": [
+          "均值 Mean",
+          "P99"
+        ],
+        "csv_note_zh": "汇总 CSV 按用例分组，含「测试条件」标题行与 并发数/Output/Peak Output/Total/TTFT/TPOT/ITL 列（mean 或 P99 两套）。",
+        "csv_note_en": "Summary CSV is grouped by case with a condition header row and columns concurrency/Output/Peak Output/Total/TTFT/TPOT/ITL (mean or P99 sets)."
+      },
+      "charts_layout": {
+        "groups": [
+          {
+            "group_zh": "吞吐 Throughput",
+            "unit": "tok/s",
+            "cells": [
+              "output_mean",
+              "peakoutput_mean",
+              "total_mean"
+            ]
+          },
+          {
+            "group_zh": "TTFT",
+            "unit": "ms",
+            "cells": [
+              "ttft_mean",
+              "ttft_median",
+              "ttft_p99"
+            ]
+          },
+          {
+            "group_zh": "TPOT",
+            "unit": "ms",
+            "cells": [
+              "tpot_mean",
+              "tpot_median",
+              "tpot_p99"
+            ]
+          },
+          {
+            "group_zh": "ITL",
+            "unit": "ms",
+            "cells": [
+              "itl_mean",
+              "itl_median",
+              "itl_p99"
+            ]
+          }
+        ]
+      }
+    },
+    "accuracy": {
+      "core": [
+        "accuracy",
+        "pass_rate",
+        "total_samples",
+        "correct_samples",
+        "wrong_samples",
+        "invalid_samples"
+      ],
+      "per_subject": [
+        "subjects"
+      ],
+      "attribution": [
+        "error_tag_summary"
+      ],
+      "per_scorer": {
+        "choice": [],
+        "math": [
+          "exact_match",
+          "math_accuracy",
+          "answer_parse_rate"
+        ],
+        "code": [
+          "pass_at_1",
+          "compile_rate",
+          "case_pass_rate"
+        ],
+        "judge": [
+          "mt_bench_score",
+          "first_turn_score",
+          "second_turn_score",
+          "dim_helpfulness",
+          "dim_truthfulness",
+          "dim_harmlessness"
+        ]
+      },
+      "tokens_serving": [
+        "prompt_tokens_total",
+        "completion_tokens_total",
+        "total_tokens",
+        "avg_prompt_tokens_per_sample",
+        "avg_completion_tokens_per_sample"
+      ],
+      "baseline": [
+        "baseline_used",
+        "diff_pp",
+        "grade",
+        "conclusion"
+      ],
+      "grade_rules": [
+        {
+          "grade": "S",
+          "diff_pp": ">= 0"
+        },
+        {
+          "grade": "A",
+          "diff_pp": ">= -5"
+        },
+        {
+          "grade": "B",
+          "diff_pp": ">= -15"
+        },
+        {
+          "grade": "C",
+          "diff_pp": "< -15"
+        }
+      ],
+      "conclusion_rules": [
+        {
+          "value_zh": "异常",
+          "value_en": "abnormal",
+          "rule_zh": "总样本 = 0 或无效样本占比 > 20%",
+          "rule_en": "total = 0 or invalid ratio > 20%"
+        },
+        {
+          "value_zh": "精度下跌",
+          "value_en": "accuracy drop",
+          "rule_zh": "主指标较基线下降 > 5pp",
+          "rule_en": "primary metric drops > 5pp vs baseline"
+        },
+        {
+          "value_zh": "合格",
+          "value_en": "pass",
+          "rule_zh": "其余情况",
+          "rule_en": "otherwise"
+        }
+      ],
+      "radar_dimensions": [
+        "知识",
+        "数学",
+        "代码",
+        "对话",
+        "综合"
+      ],
+      "estimate": [
+        "estimate"
+      ],
+      "definitions": {
+        "accuracy": {
+          "name_zh": "正确率（核心主指标）",
+          "name_en": "Accuracy (core metric)",
+          "unit": "%",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "正确样本数 / 总样本数，精度评测的核心主指标。",
+          "def_en": "Correct samples / total samples; the core accuracy metric."
+        },
+        "pass_rate": {
+          "name_zh": "通过率",
+          "name_en": "Pass Rate",
+          "unit": "%",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "有效可解析样本占比 =（总样本 - 无效样本）/ 总样本，衡量回答可被判分的比例。",
+          "def_en": "Share of parseable samples = (total - invalid) / total; measures how many answers can be scored."
+        },
+        "total_samples": {
+          "name_zh": "总样本数",
+          "name_en": "Total Samples",
+          "unit": "count",
+          "stats": [
+            "scalar"
+          ],
+          "def_zh": "本轮评测实际执行的样本总数。",
+          "def_en": "Total samples actually evaluated."
+        },
+        "correct_samples": {
+          "name_zh": "正确样本数",
+          "name_en": "Correct Samples",
+          "unit": "count",
+          "stats": [
+            "scalar"
+          ],
+          "def_zh": "判分结果为正确的样本数。",
+          "def_en": "Samples judged correct."
+        },
+        "wrong_samples": {
+          "name_zh": "错误样本数",
+          "name_en": "Wrong Samples",
+          "unit": "count",
+          "stats": [
+            "scalar"
+          ],
+          "def_zh": "可判分但结果错误的样本数。",
+          "def_en": "Scorable samples judged wrong."
+        },
+        "invalid_samples": {
+          "name_zh": "无效样本数",
+          "name_en": "Invalid Samples",
+          "unit": "count",
+          "stats": [
+            "scalar"
+          ],
+          "def_zh": "无法解析 / 无法判分的样本数（格式错误、未作答等）。",
+          "def_en": "Samples that could not be parsed or scored."
+        },
+        "subjects": {
+          "name_zh": "分学科正确率",
+          "name_en": "Per-Subject Accuracy",
+          "unit": "%",
+          "stats": [
+            "per_subject"
+          ],
+          "def_zh": "按数据集 subject 字段分组的逐学科正确率（subject 为空的样本不参与）。",
+          "def_en": "Per-subject accuracy grouped by the dataset's subject field (samples without subject are excluded)."
+        },
+        "error_tag_summary": {
+          "name_zh": "错因标签分布",
+          "name_en": "Error-Tag Distribution",
+          "unit": "count",
+          "stats": [
+            "per_tag"
+          ],
+          "def_zh": "错误样本的归因标签计数（如「知识错误」），用于定位薄弱能力。",
+          "def_en": "Counts of error-attribution tags on wrong samples (e.g. \"knowledge error\"), used to locate weak abilities."
+        },
+        "exact_match": {
+          "name_zh": "精确匹配率",
+          "name_en": "Exact Match",
+          "unit": "%",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "数学题最终答案与标准答案精确匹配的样本占比（math 判分器）。",
+          "def_en": "Share of math samples whose final answer exactly matches the reference (math scorer)."
+        },
+        "math_accuracy": {
+          "name_zh": "数学正确率",
+          "name_en": "Math Accuracy",
+          "unit": "%",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "数学类数据集主指标，与 exact_match 同口径。",
+          "def_en": "Primary metric for math datasets; same basis as exact_match."
+        },
+        "answer_parse_rate": {
+          "name_zh": "答案解析率",
+          "name_en": "Answer Parse Rate",
+          "unit": "%",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "能从模型回答中提取出可判分答案的样本占比（math 判分器）。",
+          "def_en": "Share of samples whose answer could be extracted for scoring (math scorer)."
+        },
+        "pass_at_1": {
+          "name_zh": "pass@1",
+          "name_en": "pass@1",
+          "unit": "%",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "单次生成即通过全部测试用例的样本占比（code 判分器主指标）。",
+          "def_en": "Share of samples whose single generation passes all test cases (code scorer primary metric)."
+        },
+        "compile_rate": {
+          "name_zh": "编译通过率",
+          "name_en": "Compile Rate",
+          "unit": "%",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "生成代码可成功编译 / 执行的样本占比（code 判分器）。",
+          "def_en": "Share of generated code that compiles / executes (code scorer)."
+        },
+        "case_pass_rate": {
+          "name_zh": "用例通过率",
+          "name_en": "Case Pass Rate",
+          "unit": "%",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "全部样本的测试用例总体通过率（通过用例数 / 总用例数，code 判分器）。",
+          "def_en": "Overall test-case pass rate across samples (passed cases / total cases, code scorer)."
+        },
+        "mt_bench_score": {
+          "name_zh": "MT-Bench 总分",
+          "name_en": "MT-Bench Score",
+          "unit": "0-10",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "LLM 评审的两轮对话平均分（首轮均分 × 0.5 + 二轮均分 × 0.5，judge 判分器主指标）。",
+          "def_en": "Average LLM-judge score over two dialogue turns (first × 0.5 + second × 0.5, judge scorer primary metric)."
+        },
+        "first_turn_score": {
+          "name_zh": "首轮得分",
+          "name_en": "First-Turn Score",
+          "unit": "0-10",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "MT-Bench 第一轮对话的评审平均分。",
+          "def_en": "Average judge score for the first dialogue turn."
+        },
+        "second_turn_score": {
+          "name_zh": "二轮得分",
+          "name_en": "Second-Turn Score",
+          "unit": "0-10",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "MT-Bench 第二轮对话的评审平均分（考察对首轮上下文的继承）。",
+          "def_en": "Average judge score for the second turn (tests context inheritance from the first turn)."
+        },
+        "dim_helpfulness": {
+          "name_zh": "有用性维度分",
+          "name_en": "Helpfulness Dimension",
+          "unit": "0-10",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "评审的有用性（helpfulness）维度平均分。",
+          "def_en": "Average judge score on the helpfulness dimension."
+        },
+        "dim_truthfulness": {
+          "name_zh": "真实性维度分",
+          "name_en": "Truthfulness Dimension",
+          "unit": "0-10",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "评审的真实性（truthfulness）维度平均分。",
+          "def_en": "Average judge score on the truthfulness dimension."
+        },
+        "dim_harmlessness": {
+          "name_zh": "无害性维度分",
+          "name_en": "Harmlessness Dimension",
+          "unit": "0-10",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "评审的无害性（harmlessness）维度平均分。",
+          "def_en": "Average judge score on the harmlessness dimension."
+        },
+        "prompt_tokens_total": {
+          "name_zh": "输入 token 总量",
+          "name_en": "Prompt Tokens Total",
+          "unit": "tokens",
+          "stats": [
+            "scalar"
+          ],
+          "def_zh": "本轮评测全部请求的输入（prompt）token 总量（Serving 模式）。",
+          "def_en": "Total prompt tokens across all requests (serving mode)."
+        },
+        "completion_tokens_total": {
+          "name_zh": "输出 token 总量",
+          "name_en": "Completion Tokens Total",
+          "unit": "tokens",
+          "stats": [
+            "scalar"
+          ],
+          "def_zh": "本轮评测全部响应的输出（completion）token 总量（Serving 模式）。",
+          "def_en": "Total completion tokens across all responses (serving mode)."
+        },
+        "total_tokens": {
+          "name_zh": "token 总量",
+          "name_en": "Total Tokens",
+          "unit": "tokens",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "输入 + 输出 token 总量，用于成本核算。",
+          "def_en": "Prompt + completion tokens; used for cost accounting."
+        },
+        "avg_prompt_tokens_per_sample": {
+          "name_zh": "单样本平均输入 token",
+          "name_en": "Avg Prompt Tokens / Sample",
+          "unit": "tokens",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "输入 token 总量 / 总样本数。",
+          "def_en": "Prompt tokens total / total samples."
+        },
+        "avg_completion_tokens_per_sample": {
+          "name_zh": "单样本平均输出 token",
+          "name_en": "Avg Completion Tokens / Sample",
+          "unit": "tokens",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "输出 token 总量 / 总样本数。",
+          "def_en": "Completion tokens total / total samples."
+        },
+        "baseline_used": {
+          "name_zh": "对标基线",
+          "name_en": "Baseline Used",
+          "unit": "-",
+          "stats": [
+            "field"
+          ],
+          "def_zh": "参与对标的开源基线模型名（基线库中同尺寸段最优 / 指定模型）。",
+          "def_en": "Open-source baseline model name used for comparison (best in the same size segment, or specified)."
+        },
+        "diff_pp": {
+          "name_zh": "基线差值",
+          "name_en": "Baseline Diff (pp)",
+          "unit": "pp",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "本次主指标得分与基线得分的差值（百分点），正数表示优于基线。",
+          "def_en": "Difference between the primary score and the baseline (percentage points); positive means above baseline."
+        },
+        "grade": {
+          "name_zh": "档位评级",
+          "name_en": "Grade",
+          "unit": "S/A/B/C",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "按与同尺寸段最优基线的差值评级：S ≥ 0；A ≥ -5；B ≥ -15；其余为 C。",
+          "def_en": "Grade by diff vs the best same-size baseline: S ≥ 0; A ≥ -5; B ≥ -15; otherwise C."
+        },
+        "conclusion": {
+          "name_zh": "评测结论",
+          "name_en": "Conclusion",
+          "unit": "合格 / 精度下跌 / 异常",
+          "stats": [
+            "derived"
+          ],
+          "def_zh": "最终结论三选一：总样本为 0 或无效占比 > 20% → 异常；主指标较基线下降 > 5pp → 精度下跌；否则 → 合格。",
+          "def_en": "One of three: total = 0 or invalid ratio > 20% → abnormal; primary metric drops > 5pp vs baseline → accuracy drop; otherwise → pass."
+        },
+        "estimate": {
+          "name_zh": "Token 消耗预估",
+          "name_en": "Token Estimate",
+          "unit": "-",
+          "stats": [
+            "field"
+          ],
+          "def_zh": "评测前的消耗预估：prompt/completion/total tokens、预计耗时 est_seconds、估算来源 source（内置样本均值 / 字符估算）。Native 模式恒为 0（无线上链路消耗）。",
+          "def_en": "Pre-run cost estimate: prompt/completion/total tokens, est_seconds, source (builtin sample means / char heuristic). Native mode is always 0 (no serving link)."
+        }
+      },
+      "artifacts": [
+        "task.json",
+        "result.json",
+        "samples.jsonl"
+      ]
+    }
+  },
+  "environment": {
+    "env_vars": [
+      "BENCHSCOPE_DATA_DIR",
+      "BENCHSCOPE_FAKE_BENCH"
+    ],
+    "env_var_notes": {
+      "BENCHSCOPE_DATA_DIR": "数据根目录覆盖（默认 ~/.benchscope），用于测试隔离",
+      "BENCHSCOPE_FAKE_BENCH": "置 1 时性能引擎使用仿真输出（mocks/bench_outputs.py，缺失时回退内置简化仿真），无需真实 bench CLI"
+    },
+    "data_dirs": {
+      "data_dir": "~/.benchscope",
+      "perfs_dir": "~/.benchscope/perfs",
+      "evals_dir": "~/.benchscope/evals",
+      "analysis_dir": "~/.benchscope/analysys",
+      "logs_dir": "~/.benchscope/logs",
+      "sessions_dir": "~/.benchscope/sessions",
+      "models_dir": "~/.benchscope/models",
+      "datasets_dir": "~/.benchscope/datasets",
+      "plugins_dir": "~/.benchscope/plugins"
+    },
+    "data_root": "~/.benchscope",
+    "config_file": "~/.benchscope/settings.json"
+  },
+  "built_in_skills": [
+    {
+      "id": "bs-engine-create",
+      "name": "bs-engine-create",
+      "description": ">-"
+    },
+    {
+      "id": "bs-perfs-concurrency",
+      "name": "bs-perfs-concurrency",
+      "description": ">-"
+    },
+    {
+      "id": "bs-perfs-threshold",
+      "name": "bs-perfs-threshold",
+      "description": ">-"
+    }
+  ],
+  "feature_flags": [
+    {
+      "feature_zh": "Datas → Evals 子 Tab",
+      "feature_en": "Datas → Evals sub-tab",
+      "status": "hidden",
+      "note_zh": "路由 /datas/evals 重定向到 /datas/perfs；精度评测产物在 Accuracy 页管理。",
+      "note_en": "/datas/evals redirects to /datas/perfs; accuracy artifacts are managed on the Accuracy page."
+    },
+    {
+      "feature_zh": "Dashboard → Eval Records（精度记录）面板",
+      "feature_en": "Dashboard → Eval Records panel",
+      "status": "hidden",
+      "note_zh": "面板隐藏（敬请期待），前端保留数据接口。",
+      "note_en": "Panel hidden (coming soon); data endpoints retained."
+    },
+    {
+      "feature_zh": "Dashboard Models / Datasets 下载计数",
+      "feature_en": "Dashboard Models / Datasets download counts",
+      "status": "not_implemented",
+      "note_zh": "计数恒为 0（暂未实现下载统计）。",
+      "note_en": "Counts are always 0 (download stats not implemented yet)."
+    }
+  ],
+  "mock_environment": {
+    "components": {
+      "mocks/openai_server.py": "mock OpenAI 兼容推理服务（/v1/models + /v1/chat/completions，SSE 流式含 reasoning 增量）",
+      "mocks/cli.py": "独立 mock bench CLI（冒充 vllm bench serve / sglang.bench_serving，输出与 parser 正则对齐）",
+      "mocks/bench_outputs.py": "vLLM / SGLang 两种 bench 结果的仿真生成器",
+      "mocks/run_mock.sh": "一键启动 mock 调试环境（mock OpenAI :8001 + FAKE bench 后端 :8080）"
+    },
+    "models": [
+      "/data/disk3/DeepSeek-V4-Flash-0731-W8A8",
+      "Qwen2.5-72B-Instruct",
+      "mock-vllm-model",
+      "mock-sglang-model"
+    ],
+    "usage_zh": "无真实 vLLM/SGLang/GPU 时：./mocks/run_mock.sh 启动联调环境；或 BENCHSCOPE_FAKE_BENCH=1 benchscope serve；全量功能用例：./tests/run_tests.sh（mock OpenAI + 临时数据目录 + FAKE bench，API 212 项 + WebUI 用例）。",
+    "usage_en": "Without real vLLM/SGLang/GPU: run ./mocks/run_mock.sh for a debug env; or BENCHSCOPE_FAKE_BENCH=1 benchscope serve; full feature cases: ./tests/run_tests.sh (mock OpenAI + temp data dir + FAKE bench; 212 API + WebUI cases)."
+  }
+}

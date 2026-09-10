@@ -1,10 +1,11 @@
 ---
 title: "精度评测"
+description: "精度评测操作指南：Serving / Native / Mock 模式的运行命令与参数、结果指标解读、基线对标与样本级溯源，以及 Web 三步表单操作。"
 ---
 
 # 精度评测
 
-本节演示对模型输出做**精度评测**（服务模式与原生模式），并解读结果指标、对标基线与样本级溯源。
+本节演示如何对模型输出做**精度评测**（服务模式与原生模式），并解读结果指标、基线对标与样本级溯源。
 
 ## 前置条件
 
@@ -14,7 +15,7 @@ title: "精度评测"
 
 ## 服务模式（Serving）
 
-评测已部署服务链路——反映用户线上真实拿到行为，**含服务栈**：
+评测已部署服务链路——反映用户线上真实拿到的行为，**含服务栈**：
 
 ```bash
 benchscope eval --mode serving --model Qwen2.5-7B \
@@ -55,7 +56,7 @@ benchscope eval --mode native --model Qwen/Qwen2.5-7B \
 
 ## Mock 联调
 
-无真实服务验证链路：
+无需真实服务即可验证链路：
 
 ```bash
 benchscope eval --mode serving --engine mock --model mock-model --dataset gsm8k --use-mock-env
@@ -65,9 +66,14 @@ benchscope eval --mode serving --engine mock --model mock-model --dataset gsm8k 
 
 ## 解读结果
 
-- **`accuracy` / `pass_rate`**：整体正确率与通过率；
-- **`dataset_metrics`**：数据集专项指标（`math_accuracy` / `pass_at_1` 等）；
-- **`benchmark`**：与基线对标（`diff_pp` / `grade` / `conclusion`）；
+全部指标口径见[精度核心指标](/zh/docs/accuracy/metrics/)，常用指标如下：
+
+- **`accuracy` / `pass_rate`**：核心主指标——整体正确率与通过率；
+- **`subjects` / `error_tag_summary`**：分学科正确率（能力雷达）与错因标签分布；
+- **`dataset_metrics`**：判分器专项指标（`exact_match` / `math_accuracy` / `pass_at_1` / `compile_rate` / `mt_bench_score` 等）；
+- **`tokens`**（Serving 模式）：输入 / 输出 / 总 token 量与单样本均值；
+- **`benchmark`**：与基线对标（`baseline_used` / `diff_pp` / `grade`）；
+- **`conclusion`**：最终结论（合格 / 精度下跌 / 异常）；
 - **`samples.jsonl`**：样本级溯源，可定位个别错误样本。
 
 ```console
@@ -76,20 +82,19 @@ pass_rate:           92.0%
 total_samples:       200
 correct_samples:     175
 wrong_samples:       25
-dataset_metrics:     { "math_accuracy": 0.875 }
+dataset_metrics:     { "math_accuracy": 87.5 }
 tokens.total_tokens: 51200
-conclusion:          合格（优于基线）
+conclusion:          合格
 ```
 
 ## Web 操作
 
-在网页 **精度测试** 页创建评测任务:
+在网页 **精度测试** 页创建评测任务（三步表单）：
 
-1. 选择 **原生 / 服务** 模式；
-2. 选择**数据集**与**判分器**；
-3. （可选）**Token 预估**做成本控制；
-4. 启动评测；
-5. 在 **Datas → Evals** 查看结果。
+1. **Step1 数据集**：选择内置评测数据集（或本地 JSONL）与抽样上限（limit）；
+2. **Step2 模式与引擎**：选择 Native / Serving 模式与精度引擎（benchscope / native-hf / mock）；
+3. **Step3 预览与确认**：核对任务参数与 **Token 消耗预估**（超阈值强提醒），确认后启动；
+4. 在 **Accuracy 页面**查看任务进度、结果指标、分学科与基线对标。
 
 ![BenchScope 精度测试默认界面](/images/benchscope-accuracy_default.png)
 
@@ -99,13 +104,14 @@ conclusion:          合格（优于基线）
 先用 `--limit 100` 抽样验证链路与判分，正常后再跑全量；Serving 模式会做 Token 预估并强提醒。
 
 **问题：能否对比不同模型？**
-可以。分别评测后用 `conclusion` / `diff_pp` 与基线对标，或在 Datas 中对比查看。
+可以。分别评测后用 `diff_pp` / `grade` 与基线对标，或在 Accuracy 页面对多个任务的结果横向对比。
 
 **问题：评测中途被阻断？**
 Serving 检查服务可达性、Native 检查本地依赖；缺依赖时按提示安装 `benchscope[accuracy-native]` 后重试。
 
 ## 相关文档
 
-- [概述](/zh/docs/accuracy/) — 双模式与判分器详解
+- [概述](/zh/docs/accuracy/) — 三模式与判分器详解
+- [精度核心指标](/zh/docs/accuracy/metrics/) — 全部指标完整口径
 - [eval 命令](/zh/docs/cli/eval/) — `eval` 完整参数
-- [数据与统计（Datas）](/zh/docs/data/) — 结果查看与导入
+- [评测模式](/zh/docs/accuracy/modes/) — Native / Serving / Mock 与基线库

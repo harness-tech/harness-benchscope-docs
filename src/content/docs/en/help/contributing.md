@@ -1,10 +1,11 @@
 ---
 title: "Contributing"
+description: "Contributing to BenchScope: local development setup, how to run tests, the contribution workflow, and a pre-submit checklist."
 ---
 
 # Contributing
 
-You are welcome to contribute to BenchScope as **open source** through Issues / PRs — whether it is fixing bugs, adding features, improving documentation, or extending tests.
+You are welcome to contribute to the open-source BenchScope project via **Issues / PRs** — whether it is fixing bugs, adding features, improving documentation, or extending tests.
 
 ## Related Links
 
@@ -14,7 +15,7 @@ You are welcome to contribute to BenchScope as **open source** through Issues / 
 
 <div class="info">
 
-**info**：
+**Info:**
 
 Before you submit, read the root documentation — it explains how the project is structured and maintained.
 
@@ -33,7 +34,7 @@ While developing, please follow these conventions:
 
 - **Documentation sync** — developing or updating a feature must be accompanied by updating the corresponding documentation (`docs/prds/`, `docs/versions/`, `docs/rules/`, and so on).
 - **Testing** — run the `tests/` test suite before committing.
-- **Minimal changes** — keep changes focused, and follow the repository’s **naming** and **i18n** conventions.
+- **Minimal changes** — keep changes focused, and follow the repository’s naming and i18n conventions.
 
 ## Testing
 
@@ -45,7 +46,7 @@ pytest
 
 <div class="tip">
 
-**tip**：
+**Tip:**
 
 Make sure all related tests pass before submitting a PR, and add test cases when you introduce new functionality.
 
@@ -67,6 +68,6 @@ Make sure all related tests pass before submitting a PR, and add test cases when
 
 ## See Also
 
-- [Architecture](/en/docs/tools/architecture/) — understand the codebase before you start
-- [Bench Engine](/en/docs/tools/bench-engine/) — how engines are integrated (a common extension point)
+- [Architecture](/en/docs/tools/architecture/) — understand the code structure
+- [Bench Engine](/en/docs/tools/bench-engine/) — engine abstraction and customization
 - [Quick Start](/en/docs/quickstart/) — installation and usage

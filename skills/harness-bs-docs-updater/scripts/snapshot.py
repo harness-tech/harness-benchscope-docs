@@ -39,8 +39,128 @@ def file_hash(filepath: Path) -> str:
     return h.hexdigest()[:16]
 
 
+def read_version(source_dir: Path) -> str:
+    """从 pyproject.toml / setup.py / __init__.py 读取版本号。"""
+    # pyproject.toml: version = "1.1.1"
+    pyproject = source_dir / "pyproject.toml"
+    if pyproject.exists():
+        for line in pyproject.read_text().splitlines():
+            line = line.strip()
+            if line.startswith("version") and "=" in line:
+                val = line.split("=", 1)[1].strip().strip('"').strip("'")
+                if val:
+                    return val
+    # setup.py: version="1.1.1"
+    setup = source_dir / "setup.py"
+    if setup.exists():
+        for line in setup.read_text().splitlines():
+            if "version" in line and "=" in line:
+                val = line.split("=", 1)[1].strip().strip('"').strip("'").rstrip(",")
+                if val and val[0].isdigit():
+                    return val
+    # __init__.py: __version__ = "1.1.1"
+    init = source_dir / "benchscope" / "__init__.py"
+    if init.exists():
+        for line in init.read_text().splitlines():
+            if "__version__" in line and "=" in line:
+                val = line.split("=", 1)[1].strip().strip('"').strip("'")
+                if val:
+                    return val
+    return "unknown"
+
+
+def discover_source(source_dir: Path) -> dict:
+    """**自动发现**：从真实源码树构建 modules 结构（含文件指纹）。
+
+    不再依赖预定义的陈旧 manifest，而是实际扫描以下目录：
+      - benchscope/**/*.py   按顶级子包分组
+      - benchscope/configs/*.yaml
+      - benchscope/skills/**/*
+      - web/src/**/*.{vue,js}
+      - tests/**/*.py
+      - mocks/**/*.py
+      - 根文件：pyproject.toml / README.md / CHANGELOG.md（若存在）
+    返回全新的 modules 结构（file_hashes 已填充）。
+    """
+    modules: dict = {}
+
+    def add_group(group: str, rel_paths: list):
+        if not rel_paths:
+            return
+        entries = {}
+        for rel in rel_paths:
+            fpath = source_dir / rel
+            entries[rel] = file_hash(fpath) if fpath.exists() else "missing"
+        modules[group] = {
+            "files": sorted(entries.keys()),
+            "file_hashes": entries,
+        }
+
+    # benchscope 包：按顶级子包分组（core/perf/accuracy/... 或直接文件）
+    pkg = source_dir / "benchscope"
+    pkg_groups: dict = {}
+    if pkg.exists():
+        for py in sorted(pkg.rglob("*.py")):
+            rel = py.relative_to(source_dir).as_posix()
+            parts = py.relative_to(pkg).parts
+            group = parts[0] if len(parts) > 1 else "(root)"
+            pkg_groups.setdefault(group, []).append(rel)
+    for group, rels in sorted(pkg_groups.items()):
+        add_group(f"benchscope/{group}", rels)
+
+    # configs
+    add_group("configs", [
+        (source_dir / "benchscope" / "configs" / f).relative_to(source_dir).as_posix()
+        for f in sorted(os.listdir(source_dir / "benchscope" / "configs"))
+        if f.endswith(".yaml") and (source_dir / "benchscope" / "configs" / f).is_file()
+    ]) if (source_dir / "benchscope" / "configs").exists() else None
+
+    # skills
+    add_group("skills", [
+        p.relative_to(source_dir).as_posix()
+        for p in sorted((source_dir / "benchscope" / "skills").rglob("*"))
+        if p.is_file()
+    ]) if (source_dir / "benchscope" / "skills").exists() else None
+
+    # web
+    web_groups: dict = {}
+    web_src = source_dir / "web" / "src"
+    if web_src.exists():
+        for ext in ("*.vue", "*.js"):
+            for f in sorted(web_src.rglob(ext)):
+                rel = f.relative_to(source_dir).as_posix()
+                parts = f.relative_to(web_src).parts
+                group = parts[0] if len(parts) > 1 else "(root)"
+                web_groups.setdefault(group, []).append(rel)
+    for group, rels in sorted(web_groups.items()):
+        add_group(f"web/{group}", rels)
+
+    # tests
+    add_group("tests", [
+        p.relative_to(source_dir).as_posix()
+        for p in sorted((source_dir / "tests").rglob("*.py"))
+        if p.is_file()
+    ]) if (source_dir / "tests").exists() else None
+
+    # mocks
+    add_group("mocks", [
+        p.relative_to(source_dir).as_posix()
+        for p in sorted((source_dir / "mocks").rglob("*.py"))
+        if p.is_file()
+    ]) if (source_dir / "mocks").exists() else None
+
+    # 根文件
+    root_files = []
+    for name in ("pyproject.toml", "setup.py", "README.md", "CHANGELOG.md"):
+        if (source_dir / name).exists():
+            root_files.append(name)
+    add_group("root", root_files)
+
+    return {"modules": modules, "version": read_version(source_dir)}
+
+
 def scan_source(source_dir: Path, snapshot: dict) -> dict:
-    """扫描源码目录，更新快照中的文件指纹。"""
+    """扫描源码目录，更新快照中的文件指纹（基于快照已记录的 modules）。"""
     modules = snapshot.get("modules", {})
     changed = []
 
@@ -54,22 +174,6 @@ def scan_source(source_dir: Path, snapshot: dict) -> dict:
             else:
                 mod_info["file_hashes"][f] = "missing"
                 changed.append({"module": mod_name, "file": f, "status": "missing"})
-
-    # 扫描 changelog
-    changelog = snapshot.get("changelog", {})
-    changelog["file_hashes"] = {}
-    for f in changelog.get("files", []):
-        fpath = source_dir / f
-        if fpath.exists():
-            changelog["file_hashes"][f] = file_hash(fpath)
-
-    # 扫描 configs
-    configs = snapshot.get("configs", {})
-    configs["file_hashes"] = {}
-    for f in configs.get("files", []):
-        fpath = source_dir / f
-        if fpath.exists():
-            configs["file_hashes"][f] = file_hash(fpath)
 
     return snapshot, changed
 
@@ -188,6 +292,10 @@ def main():
     gen.add_argument("--github", help="GitHub repo URL")
     gen.add_argument("--tag", help="Git tag to checkout")
     gen.add_argument("--output", default=str(SNAPSHOT_PATH), help="Output snapshot path")
+    gen.add_argument("--auto-discover", action="store_true", default=True,
+                     help="从真实源码树自动发现 modules（默认开启，修复陈旧 manifest）")
+    gen.add_argument("--no-auto-discover", dest="auto_discover", action="store_false",
+                     help="使用快照中已记录的 modules（不重新发现）")
 
     # diff
     diff = sub.add_parser("diff", help="Diff snapshot against source")
@@ -210,7 +318,7 @@ def main():
             snapshot = json.loads(Path(args.output).read_text())
         else:
             snapshot = {
-                "snapshot_version": "1.0",
+                "snapshot_version": "2.0",
                 "project": "benchscope",
                 "modules": {},
             }
@@ -228,14 +336,26 @@ def main():
 
         # 扫描
         snapshot["last_synced"] = datetime.now().strftime("%Y-%m-%d")
-        if args.tag:
-            snapshot["version"] = args.tag.lstrip("v")
-        snapshot, changed = scan_source(source_dir, snapshot)
+        changed = []
+        if getattr(args, "auto_discover", True):
+            # **自动发现**：从真实源码树重建 modules（修复陈旧 manifest）
+            discovered = discover_source(source_dir)
+            snapshot["modules"] = discovered["modules"]
+            snapshot["version"] = discovered["version"]
+            if args.tag:
+                snapshot["version"] = args.tag.lstrip("v")
+        else:
+            if args.tag:
+                snapshot["version"] = args.tag.lstrip("v")
+            snapshot, changed = scan_source(source_dir, snapshot)
+
+        snapshot["snapshot_version"] = "2.0"
 
         # 保存
         Path(args.output).write_text(json.dumps(snapshot, indent=2, ensure_ascii=False))
         print(f"✅ Snapshot saved: {args.output}")
         print(f"   Modules: {len(snapshot.get('modules', {}))}")
+        print(f"   Version: {snapshot.get('version', 'unknown')}")
         if changed:
             print(f"   Missing files: {len(changed)}")
 

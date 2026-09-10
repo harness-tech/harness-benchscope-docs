@@ -1,5 +1,6 @@
 ---
 title: "serve 命令"
+description: "benchscope serve 命令：启动 Web 服务并打开完整平台，含监听地址、端口与调试参数说明。"
 ---
 
 # serve 命令
@@ -15,13 +16,13 @@ benchscope serve [--host HOST] [--port PORT] [--no-browser] [--debug]
 | `--host` | `0.0.0.0` | 监听地址 |
 | `--port` | `8080` | 监听端口 |
 | `--no-browser` | 关闭 | 启动时不自动打开浏览器 |
-| `--debug` | 关闭 | 开启调试日志（输出更详细的运行日志便于排障） |
+| `--debug` | 关闭 | 开启调试日志（输出更详细的运行日志，便于排障） |
 
 <div class="tip">
 
 **tip**：
 
-`--debug` 在排查任务启动、接口调用等问题时非常有用，会输出详细的 debug 级别日志。
+`--debug` 会输出详细的 debug 级别日志，便于排查任务启动、接口调用等问题。
 
 </div>
 
@@ -29,7 +30,7 @@ benchscope serve [--host HOST] [--port PORT] [--no-browser] [--debug]
 
 **info**：
 
-**向后兼容行为**：当 `benchscope` 无参数、或首个参数是选项（如 `--port 8080`）时，会走向兼容的「启动服务」行为，等价于 `benchscope serve`。
+**向后兼容行为**：当 `benchscope` 无参数、或首个参数是选项（如 `--port 8080`）时，会按「启动服务」的兼容行为执行，等价于 `benchscope serve`。
 
 </div>
 

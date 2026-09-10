@@ -1,5 +1,6 @@
 ---
 title: "Overview"
+description: "Help hub for BenchScope: troubleshooting common issues, reporting bugs and feature requests, and a guide to contributing."
 ---
 
 # Overview
@@ -12,11 +13,11 @@ Running into a problem or want to contribute? Start here.
 - **`http://127.0.0.1:8080` does not respond**: confirm the service is still running and the port is not taken (try a different `--port`).
 - **Many benchmark requests fail**: check `--base-url`, API key, `--timeout`, and concurrency settings; make sure the target service is reachable.
 - **Native mode is blocked**: install the optional dependency with `pip install benchscope[accuracy-native]` and retry.
-- **Cannot find a historical task**: make sure the data root directory was not cleaned / `BENCHSCOPE_DATA_DIR` was not changed, or restore via an imported backup.
+- **Cannot find a historical task**: make sure the data root directory was not cleaned / `BENCHSCOPE_DATA_DIR` was not changed, or restore it by importing a backup.
 
 <div class="tip">
 
-**tip**：
+**Tip:**
 
 For more specific issues, see the FAQ section of each feature page and the backup / import notes in [Datas](/en/docs/data/).
 

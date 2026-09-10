@@ -7,6 +7,13 @@ export interface Group { key: string; label: string; icon: string; children: Lin
 export const LABELS: Record<string, { zh: string; en: string }> = {
   quickstart: { zh: '快速开始', en: 'Quick Start' },
   install: { zh: '安装', en: 'Install' },
+  manual: { zh: '使用手册', en: 'User Manual' },
+  'manual/dashboard': { zh: 'Dashboard', en: 'Dashboard' },
+  'manual/performance': { zh: 'Performance', en: 'Performance' },
+  'manual/accuracy': { zh: 'Accuracy', en: 'Accuracy' },
+  'manual/sessions': { zh: 'Sessions', en: 'Sessions' },
+  'manual/datas': { zh: 'Datas', en: 'Datas' },
+  'manual/settings': { zh: 'Settings', en: 'Settings' },
   performance: { zh: '性能测试', en: 'Performance' },
   accuracy: { zh: '精度测试', en: 'Accuracy' },
   data: { zh: '数据分析', en: 'Data' },
@@ -21,6 +28,13 @@ export const LABELS: Record<string, { zh: string; en: string }> = {
 export const SECTION_ICONS: Record<string, string> = {
   quickstart: 'rocket',
   install: 'download',
+  manual: 'book',
+  'manual/dashboard': 'home',
+  'manual/performance': 'gauge',
+  'manual/accuracy': 'target',
+  'manual/sessions': 'chat',
+  'manual/datas': 'database',
+  'manual/settings': 'sliders',
   performance: 'gauge',
   accuracy: 'target',
   data: 'database',
@@ -31,13 +45,23 @@ export const SECTION_ICONS: Record<string, string> = {
   help: 'chat',
 }
 
-/** 副导航 / 侧栏的一级分区顺序（install 并入 quickstart，不作为一级分区） */
-export const ORDER = ['quickstart', 'performance', 'accuracy', 'data', 'tools', 'cli', 'api', 'releases', 'help']
+/** 使用手册子分组的顺序（按 Web 导航：Dashboard / Performance / Accuracy / Sessions / Datas / Settings） */
+export const MANUAL_SUBGROUPS = ['dashboard', 'performance', 'accuracy', 'sessions', 'datas', 'settings']
 
-/** 页面 section 目录 → 所属一级分组 key（install 归入 quickstart） */
+/** 副导航 / 侧栏的一级分区顺序（install 并入 quickstart，manual 紧随 quickstart 之后） */
+export const ORDER = ['quickstart', 'manual', 'performance', 'accuracy', 'data', 'tools', 'cli', 'api', 'releases', 'help']
+
+/** 页面 section 目录 → 所属一级分组 key（install 归入 quickstart，manual/* 归入 manual） */
 export const SECTION_GROUP: Record<string, string> = {
   quickstart: 'quickstart',
   install: 'quickstart',
+  manual: 'manual',
+  'manual/dashboard': 'manual',
+  'manual/performance': 'manual',
+  'manual/accuracy': 'manual',
+  'manual/sessions': 'manual',
+  'manual/datas': 'manual',
+  'manual/settings': 'manual',
   performance: 'performance',
   accuracy: 'accuracy',
   data: 'data',
@@ -107,6 +131,23 @@ export async function buildSidebar(lang: 'zh' | 'en') {
       const instItems = itemsFor(all, lang, 'install', isEn)
       const instChildren = instLanding ? [instLanding, ...instItems] : instItems
       subgroups.push({ label: LABELS.install[lang], icon: SECTION_ICONS.install, children: instChildren })
+    }
+    // 使用手册：children 只保留手册落地页（总览），子分组按 Web 导航（dashboard/performance/accuracy/sessions/datas/settings）展开
+    if (p === 'manual') {
+      const manualLanding = landingItem(all, lang, 'manual')
+      kids = manualLanding ? [manualLanding] : []
+      for (const sub of MANUAL_SUBGROUPS) {
+        const subLanding = landingItem(all, lang, `manual/${sub}`)
+        const subItems = itemsFor(all, lang, `manual/${sub}`, isEn)
+        const subChildren = subLanding ? [subLanding, ...subItems] : subItems
+        if (subChildren.length) {
+          subgroups.push({
+            label: LABELS[`manual/${sub}`][lang],
+            icon: SECTION_ICONS[`manual/${sub}`] ?? 'doc',
+            children: subChildren,
+          })
+        }
+      }
     }
     return {
       key: p,

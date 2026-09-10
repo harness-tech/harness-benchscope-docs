@@ -1,5 +1,6 @@
 ---
 title: "概述"
+description: "概述 BenchScope 性能测试的两种模式——并发压测与阈值探测，以及如何创建压测任务、查看实时指标并解读结果。"
 ---
 
 # 概述
@@ -21,6 +22,7 @@ title: "概述"
 
 ## 本页内容
 
+- [性能核心指标](/zh/docs/performance/metrics/) — 全部指标的完整口径（TTFT / TPOT / ITL / 吞吐 / 请求统计 / 导出列）
 - [并发压测](/zh/docs/performance/concurrency/) — 按并发级别逐档施压、解读结果，找到最佳工作区间
 - [阈值压测](/zh/docs/performance/threshold/) — 给定业务 SLA，自动搜索可承载的最大并发
 
@@ -45,7 +47,7 @@ title: "概述"
 
 **tip**：
 
-若使用带 Token 预估的能力，可在创建页看到消耗预估（见下图的 Token 展示）：
+若使用 Token 预估能力，创建页会显示消耗预估（见下图的 Token 展示）：
 
 ![BenchScope 创建任务 Token 展示](/images/benchscope-performance_create_token.png)
 
@@ -53,7 +55,7 @@ title: "概述"
 
 ## 并发压测（Concurrency Mode）
 
-按并发级别逐层施压，每个并发实时反馈到表格、曲线与进度，用于观察服务在负载下的变化曲线，找到**最佳工作区间**。分步操作见 [并发压测](/zh/docs/performance/concurrency/)。
+按并发级别逐档施压，各档指标实时反映在表格、曲线与进度中，便于观察服务在负载下的表现，找到**最佳工作区间**。分步操作见 [并发压测](/zh/docs/performance/concurrency/)。
 
 运行中的主界面：
 
@@ -94,6 +96,7 @@ title: "概述"
 
 ## 相关文档
 
+- [性能核心指标](/zh/docs/performance/metrics/) — 指标完整口径与导出列
 - [并发压测](/zh/docs/performance/concurrency/) — 分步操作
 - [阈值压测](/zh/docs/performance/threshold/) — 求最优并发
 - [perf 命令](/zh/docs/cli/perf/) — `perf` 命令完整参数

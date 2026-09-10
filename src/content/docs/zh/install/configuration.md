@@ -5,7 +5,7 @@ description: "数据根目录、默认子目录、settings.json 与内置配置�
 
 # 配置说明
 
-BenchScope 的配置遵循「数据落盘统一、网页可视化编辑、配置自动持久化」的原则。绝大部分配置都可以在网页的 **Settings** 页完成，其修改会自动持久化到本地的 `settings.json` 文件。
+BenchScope 的配置遵循「数据落盘统一、网页可视化编辑、配置自动持久化」的原则。绝大部分配置都可以在网页的 **Settings** 页完成，修改会自动持久化到本地的 `settings.json` 文件。
 
 本文介绍数据根目录、配置文件、默认子目录映射以及内置配置清单。
 
@@ -35,7 +35,7 @@ benchscope
 ├── settings.json       # 全局设置持久化文件
 ├── perfs/              # 性能测试任务产物
 ├── evals/              # 精度评测任务产物
-├── analysis/           # 数据分析（联动 Datas）
+├── analysys/           # 数据分析（联动 Datas）
 ├── logs/               # 运行日志 + 任务终端输出
 ├── sessions/           # 会话缓存
 ├── datasets/           # 数据集下载目录
@@ -51,7 +51,7 @@ benchscope
 | --- | --- | --- |
 | `perfs_dir` | `perfs` | 性能测试任务产物（`run.json`、日志等） |
 | `evals_dir` | `evals` | 精度评测任务产物（`eval-<时间>/` 目录） |
-| `analysis_dir` | `analysis` | 数据分析（联动 Datas 的 Analysis 面板） |
+| `analysis_dir` | `analysys` | 数据分析（联动 Datas 的 Analysis 面板；内置默认目录名为 `analysys`） |
 | `logs_dir` | `logs` | 运行日志 + 任务终端输出 |
 | `sessions_dir` | `sessions` | 会话缓存 |
 | `datasets_dir` | `datasets` | 数据集下载目录 |
@@ -82,18 +82,32 @@ benchscope
 
 ```json
 {
-  "perfs_dir": "perfs",
-  "evals_dir": "evals",
-  "analysis_dir": "analysis",
-  "logs_dir": "logs",
-  "sessions_dir": "sessions",
-  "datasets_dir": "datasets",
-  "models_dir": "models",
-  "plugins_dir": "plugins",
+  "framework": "vllm",
+  "api": {
+    "base_url": "http://127.0.0.1:8000",
+    "endpoint": "/v1/chat/completions",
+    "api_key": "",
+    "extra_headers": {}
+  },
   "providers": [],
-  "models": [],
-  "datasets": [],
-  "bench_engines": []
+  "active_provider": "",
+  "gpu": { "auto": true, "name": "", "count": 8 },
+  "data_dir": "~/.benchscope",
+  "perfs_dir": "~/.benchscope/perfs",
+  "evals_dir": "~/.benchscope/evals",
+  "analysis_dir": "~/.benchscope/analysys",
+  "logs_dir": "~/.benchscope/logs",
+  "sessions_dir": "~/.benchscope/sessions",
+  "models_dir": "~/.benchscope/models",
+  "datasets_dir": "~/.benchscope/datasets",
+  "plugins_dir": "~/.benchscope/plugins",
+  "tpot_threshold_ms": 100,
+  "request_rate": "inf",
+  "bench_commands": {
+    "vllm": "vllm bench serve",
+    "sglang": "python -m sglang.bench_serving"
+  },
+  "engine_mocks": {}
 }
 ```
 
@@ -112,14 +126,16 @@ BenchScope 内置了多份 YAML 配置文件，作为引擎、参数、数据集
 | 配置文件 | 说明 |
 | --- | --- |
 | `benchscope/configs/benchscope-default.yaml` | 自研引擎默认参数 |
-| `benchscope/configs/bench-params.yaml` | 压测参数描述 |
-| `benchscope/configs/benchs.yaml` | 引擎注册清单 |
-| `benchscope/configs/datasets.yaml` | 内置数据集定义 |
+| `benchscope/configs/vllm-default.yaml` | vLLM 引擎默认参数 |
+| `benchscope/configs/sglang-default.yaml` | SGLang 引擎默认参数 |
+| `benchscope/configs/bench-params.yaml` | 压测参数描述（含选项级说明文案，驱动创建页参数面板） |
+| `benchscope/configs/benchs.yaml` | 引擎注册清单 + 引擎对比表 |
+| `benchscope/configs/datasets.yaml` | 内置数据集定义（含精度评测元数据） |
 | `benchscope/configs/models.yaml` | 内置模型清单 |
-| `benchscope/configs/baselines.yaml` | 精度基线库 |
-| `benchscope/configs/token_estimates.yaml` | Token 预估参数 |
+| `benchscope/configs/baselines.yaml` | 精度基线库（10 个开源模型基线） |
+| `benchscope/configs/token_estimates.yaml` | Token 预估参数（数据集样本量与平均长度） |
 
-这些清单与网页 Settings 面板联动，例如 Settings → Datasets 展示的数据集即来自 `datasets.yaml`；`benchs.yaml` 中的引擎注册清单正是 Settings → Bench Engines 面板能识别自研 `benchscope` 引擎及上游 `vllm-*` / `sglang-*` 引擎的来源。
+这些清单与网页 Settings 面板联动：例如 Settings → Datasets 展示的数据集来自 `datasets.yaml`；`benchs.yaml` 中的引擎注册清单，是 Settings → Bench Engines 面板能识别自研 `benchscope` 引擎及上游 `vllm-*` / `sglang-*` 引擎的来源。
 
 ## 常见问题
 

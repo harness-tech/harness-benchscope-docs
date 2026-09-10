@@ -23,7 +23,7 @@ BenchScope 本身不托管模型，你需要一个待测试的推理服务：
 
 **info**：
 
-BenchScope 的 Web 前端完全内嵌在 Python 包中，安装后无需额外安装 Node.js 或前端依赖，一条命令即可启动完整平台。
+BenchScope 的 Web 前端完全内嵌在 Python 包中，无需额外安装 Node.js 或前端依赖，一条命令即可启动完整平台。
 
 </div>
 

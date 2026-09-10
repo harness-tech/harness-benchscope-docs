@@ -5,7 +5,7 @@ description: "几分钟内启动 BenchScope，对已部署的 vLLM / SGLang 或 
 
 # 概述
 
-BenchScope 是一个开源的大模型（LLM）推理测试平台，基于 Harness Coding 构建，为 LLM 的**性能与精度**提供可视化测试能力。它支持基于 **vLLM / SGLang** 的模型推理，以及所有兼容 **OpenAI 协议**的接口。
+BenchScope 是一个开源的大模型（LLM）推理测试平台，基于 Harness Coding 构建，为 LLM 的**性能与精度**提供可视化测试能力。它支持 **vLLM / SGLang** 提供的模型推理，以及所有兼容 **OpenAI 协议**的接口。
 
 无需在命令行手写 benchmark 脚本、再手动整理零散的日志文件——只需一条命令即可启动完整的 Web 平台，在几分钟内完成并发压测、阈值探测与精度评测。
 
@@ -44,14 +44,40 @@ graph LR
 pip install benchscope
 ```
 
-安装完成后验证版本与可用命令：
+安装完成后查看帮助（不带参数、或首参为选项时，CLI 进入 serve 兼容分支，显示启动服务选项）：
 
 ```console
-$ benchscope --version
-benchscope 1.1.0
 $ benchscope --help
-usage: benchscope [-h] [--version] {serve,perf,eval} ...
+usage: benchscope [-h] [--host HOST] [--port PORT] [--no-browser] [--debug]
+
+LLM inference performance testing tool. Supports vLLM, SGLang, and any
+OpenAI-compatible API.
+
+options:
+  -h, --help    show this help message and exit
+  --host HOST   监听地址（默认 0.0.0.0）
+  --port PORT   监听端口（默认 8080）
+  --no-browser  不自动打开浏览器
+  --debug       开启调试日志
 ```
+
+三个子命令及各自帮助：
+
+| 子命令 | 作用 | 查看帮助 |
+| --- | --- | --- |
+| `benchscope serve` | 启动 Web 服务（前后端统一入口） | `benchscope serve --help` |
+| `benchscope perf` | 执行一次自研引擎压测（并发 / 阈值双模式） | `benchscope perf --help` |
+| `benchscope eval` | 执行一次精度评测（Serving / Native / Mock） | `benchscope eval --help` |
+
+查看已安装版本：
+
+```console
+$ pip show benchscope
+Name: benchscope
+Version: 1.1.1
+```
+
+> CLI 未提供 `--version` 选项；版本也可在 Web 界面通过 `/api/version` 查看，或在 Settings 页查看。
 
 ## 本分区内容
 

@@ -1,5 +1,6 @@
 ---
 title: "并发压测"
+description: "演示如何对已部署的推理服务执行并发压测：确认服务可用、创建压测任务、多档并发对比与结果解读。"
 ---
 
 # 并发压测
@@ -74,11 +75,12 @@ done
 
 ### 步骤 4：解读结果
 
-观察输出指标：
+每个并发点输出一组指标（完整口径见[性能核心指标](/zh/docs/performance/metrics/)）：
 
-- **吞吐**（`output_mean` / `total_mean`）：**越高越好**；
-- **TTFT / TPOT / ITL**：**越低越好**，其中 TTFT 影响首字响应，TPOT / ITL 影响流式流畅度；
-- 关注实测值与**预期 SLA** 的差距，据此调整并发或服务配置。
+- **延迟**：`ttft_mean` / `tpot_mean` / `itl_mean`（另含 `median` 与 `p99` 统计量）——**越低越好**，其中 TTFT 影响首字响应，TPOT / ITL 影响流式流畅度；
+- **吞吐**：`output_mean`（输出吞吐）/ `peakoutput_mean`（峰值输出吞吐）/ `total_mean`（总 token 吞吐）/ `req_per_s`（请求吞吐）——**越高越好**；
+- **推导值**：`single_user` = `1000 / TPOT(mean)`，近似单用户生成速率；
+- **请求统计**：`successful_requests` / `failed_requests` / `benchmark_duration` 等。
 
 ```console
 Successful requests: 100
@@ -90,6 +92,8 @@ TTFT (mean):         92.5 ms
 TPOT (mean):         34.2 ms
 ITL  (mean):         33.9 ms
 ```
+
+关注实测值与**预期 SLA** 的差距，据此调整并发或服务配置。
 
 一个典型的并发增长规律：并发较低时吞吐随并发提升而上升，达到一定并发后进入饱和，随后因排队与争用，TTFT / TPOT 开始恶化——据此可找到系统的**最佳工作区间**。
 
@@ -104,5 +108,6 @@ ITL  (mean):         33.9 ms
 ## 相关文档
 
 - [性能测试](/zh/docs/performance/) — 双模式详解
+- [性能核心指标](/zh/docs/performance/metrics/) — 指标完整口径
 - [perf 命令](/zh/docs/cli/perf/) — `perf` 完整参数
 - [阈值压测](/zh/docs/performance/threshold/) — 自动求最优并发

@@ -1,5 +1,6 @@
 ---
 title: "eval 命令"
+description: "benchscope eval 命令：Serving / Native / Mock 三种精度评测模式的常用示例、参数与输出指标。"
 ---
 
 # eval 命令
@@ -66,16 +67,20 @@ benchscope eval --mode serving --engine mock --model mock-model --dataset gsm8k 
 
 ## 输出指标
 
+输出全部指标（完整口径见[精度核心指标](/zh/docs/accuracy/metrics/)）：
+
 | 指标 | 含义 |
 | --- | --- |
-| `accuracy` (%) | 整体正确率 |
-| `pass_rate` (%) | 通过率 |
+| `accuracy` (%) | 整体正确率（核心主指标） |
+| `pass_rate` (%) | 通过率（有效可解析样本占比） |
 | `total_samples` / `correct_samples` | 总样本数 / 正确数 |
 | `wrong_samples` / `invalid_samples` | 错误数 / 无效数 |
-| `dataset_metrics` | 数据集专项指标（`exact_match` / `math_accuracy` / `pass_at_1` / `compile_rate` / `mt_bench_score` 等） |
-| `tokens.total_tokens` | 消耗总 token |
-| `benchmark` | 基线对标（`baseline_used.name` / `diff_pp` / `grade` / `conclusion`） |
-| `conclusion` | 结论（合格 / 精度下跌 / 持平 / 优于基线等） |
+| `subjects` (%) | 分学科正确率（按数据集 `subject` 字段分组） |
+| `error_tag_summary` | 错因标签分布（错误样本归因） |
+| `dataset_metrics` | 判分器专项指标（math：`exact_match` / `math_accuracy` / `answer_parse_rate`；code：`pass_at_1` / `compile_rate` / `case_pass_rate`；judge：`mt_bench_score` / `first_turn_score` / `second_turn_score` / `dim_helpfulness` / `dim_truthfulness` / `dim_harmlessness`） |
+| `tokens.total_tokens` | 消耗总 token（Serving 模式；Native 模式为 null） |
+| `benchmark` | 基线对标（`baseline_used` / `diff_pp` / `grade` / `conclusion`） |
+| `conclusion` | 结论（合格 / 精度下跌 / 异常） |
 
 ## 运行示例
 
@@ -92,9 +97,9 @@ total_samples:       200
 correct_samples:     175
 wrong_samples:       25
 invalid_samples:     0
-dataset_metrics:     { "math_accuracy": 0.875 }
+dataset_metrics:     { "math_accuracy": 87.5 }
 tokens.total_tokens: 51200
-conclusion:          合格（优于基线）
+conclusion:          合格
 Saved -> ~/.benchscope/evals/eval-<时间>/ (task.json / result.json / samples.jsonl)
 ```
 
@@ -102,16 +107,16 @@ Saved -> ~/.benchscope/evals/eval-<时间>/ (task.json / result.json / samples.j
 
 产物落盘 `evals/eval-<月日时分秒>/`：
 
-- `task.json` — 任务主表，对齐 Web 精度任务结构；
+- `task.json` — 任务主文件，对齐 Web 精度任务结构；
 - `result.json` — 精度结果，含指标 / benchmark / conclusion；
 - `samples.jsonl` — 单样本溯源。
 
-另写终端日志 `logs/eval_<task_id>_<时间>.log`。所有产物可在网页 **Datas → Evals** 查看 / 打包导入。
+同时写入终端日志 `logs/eval_<task_id>_<时间>.log`。所有产物可在网页 **Accuracy 页面**查看与管理（任务列表 + 详情 + 样本查看）。
 
 ## 相关文档
 
 - [CLI 概述](/zh/docs/cli/) — 子命令总览与快速上手
 - [serve 命令](/zh/docs/cli/serve/) — 启动 Web 服务
 - [perf 命令](/zh/docs/cli/perf/) — 性能压测
-- [性能测试](/zh/docs/performance/) — 并发压测与阈值探测
-- [概述](/zh/docs/accuracy/) — 双模式评测
+- [精度核心指标](/zh/docs/accuracy/metrics/) — 输出指标完整口径
+- [概述](/zh/docs/accuracy/) — 三模式评测

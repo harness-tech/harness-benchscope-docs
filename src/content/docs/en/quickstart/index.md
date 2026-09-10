@@ -5,29 +5,29 @@ description: "Get BenchScope running in minutes and visually test the performanc
 
 # Overview
 
-BenchScope is an open-source LLM inference testing platform built on top of Harness Coding. It is a **visual testing platform for LLM performance and accuracy** that supports model inference based on **vLLM / SGLang**, as well as any **OpenAI-compatible** interface.
+BenchScope is an open-source LLM inference testing platform built on top of Harness Coding, providing **visual testing capabilities for LLM performance and accuracy**. It supports model inference provided by **vLLM / SGLang**, as well as all interfaces compatible with the **OpenAI protocol**.
 
-Instead of juggling raw `benchmark` scripts and scattered log files, BenchScope lets you start a complete Web platform with a single command and run concurrency stress tests, threshold probing, and accuracy evaluation in minutes.
+No more hand-writing benchmark scripts in the terminal and manually tidying up scattered log files — a single command starts the complete Web platform, letting you finish concurrency stress tests, threshold probing, and accuracy evaluation in minutes.
 
-![Performance testing main interface](/images/benchscope-performance_default.png)
+![BenchScope performance testing main interface](/images/benchscope-performance_default.png)
 
 <div class="tip">
 
-**tip**：
+**Tip**:
 
-BenchScope itself does **not** need a local GPU or an inference framework. What gets tested is the inference service you have already deployed (vLLM / SGLang, e.g. at `http://127.0.0.1:8000`); BenchScope sends the stress-test and evaluation requests, collects the data, and visualizes the results.
+BenchScope itself does **not** require a local GPU or an inference framework. What is tested is the inference service you have already deployed (vLLM / SGLang, etc., default address `http://127.0.0.1:8000`); BenchScope sends the stress-test and evaluation requests, collects the data, and visualizes the results.
 
 </div>
 
 ## What You Can Do
 
-Once running, BenchScope lets you:
+Once running, you can:
 
-- **Performance testing** — stress an inference service in two modes: *Concurrency Mode* (fixed concurrency levels) and *Threshold Mode* (automatic search for the maximum sustainable concurrency).
-- **Accuracy testing** — evaluate model outputs against built-in datasets and scorers, in *Native* (local weights) or *Serving* (deployed service) mode.
-- **Sessions** — an interactive, SSE-streaming chat-like workspace with Markdown rendering and sampling-parameter control.
-- **Datas** — persistent records of every performance and accuracy run, with import / export and analysis.
-- **Settings** — centralized configuration across multiple panels.
+- **Performance testing** — stress the inference service in two modes: *Concurrency Mode* (a fixed concurrency level) and *Threshold Mode* (automatically searches for the maximum concurrency that can be sustained long-term).
+- **Accuracy testing** — evaluate model outputs against built-in datasets and scorers, supporting *Native* (local weights) and *Serving* (deployed service) modes.
+- **Sessions** — an SSE-streaming interactive chat workspace with Markdown rendering and sampling-parameter control.
+- **Datas** — persistently saves every performance and accuracy run record, with import / export and analysis.
+- **Settings** — centralized configuration covering multiple panels.
 
 ```mermaid
 graph LR
@@ -38,51 +38,77 @@ graph LR
 
 ## Quick Install
 
-Install BenchScope from PyPI (preferably in a dedicated virtual environment):
+Install BenchScope from PyPI (recommended in a dedicated virtual environment):
 
 ```bash
 pip install benchscope
 ```
 
-After installation, verify the version and available commands:
+After installation, view the help (with no arguments, or when the first argument is an option, the CLI enters the serve-compatible branch and shows the service-startup options):
 
 ```console
-$ benchscope --version
-benchscope 1.1.0
 $ benchscope --help
-usage: benchscope [-h] [--version] {serve,perf,eval} ...
+usage: benchscope [-h] [--host HOST] [--port PORT] [--no-browser] [--debug]
+
+LLM inference performance testing tool. Supports vLLM, SGLang, and any
+OpenAI-compatible API.
+
+options:
+  -h, --help    show this help message and exit
+  --host HOST   listen address (default 0.0.0.0)
+  --port PORT   listen port (default 8080)
+  --no-browser  do not automatically open the browser
+  --debug       enable debug logging
 ```
+
+The three subcommands and their help:
+
+| Subcommand | Purpose | View help |
+| --- | --- | --- |
+| `benchscope serve` | Start the Web service (unified frontend/backend entry point) | `benchscope serve --help` |
+| `benchscope perf` | Run one stress test with the built-in engine (concurrency / threshold dual modes) | `benchscope perf --help` |
+| `benchscope eval` | Run one accuracy evaluation (Serving / Native / Mock) | `benchscope eval --help` |
+
+View the installed version:
+
+```console
+$ pip show benchscope
+Name: benchscope
+Version: 1.1.1
+```
+
+> The CLI does not provide a `--version` option; the version can also be viewed via `/api/version` in the Web interface, or on the Settings page.
 
 ## In This Section
 
-- [Requirements](/en/docs/quickstart/requirements/) — Python, the inference service under test, network / browser, and optional GPU
-- [Starting the Platform](/en/docs/quickstart/platform/) — launch the Web platform with one command and tour the Dashboard overview
+- [Requirements](/en/docs/quickstart/requirements/) — the Python, service under test, network / browser, and optional GPU required to run
+- [Starting the Platform](/en/docs/quickstart/platform/) — start the Web platform with one command, learn the common options and the Dashboard overview
 
-For a more detailed installation flow, see [Install](/en/docs/install/).
+For the detailed installation flow, see [Install](/en/docs/install/).
 
-## What Next?
+## Next Steps
 
-Once the platform is running:
+After a successful start, you can:
 
-1. Go to **Settings → Providers** and configure the inference service endpoint (Base URL and API key).
-2. Open **Performance** and create your first concurrency test — see the [Performance Testing](/en/docs/performance/) guide.
-3. Try the step-by-step walkthroughs in [Concurrency Testing](/en/docs/performance/concurrency/) and [Accuracy Evaluation](/en/docs/accuracy/guide/).
-4. Open **Sessions** to interact with the model directly in a chat-like workspace.
+1. Configure the inference service (Base URL and API Key) in **Settings → Providers**;
+2. Go to the **Performance Testing** page and run your first concurrency stress test against the service — see [Performance Testing](/en/docs/performance/);
+3. Follow the step-by-step tutorials to complete [Concurrency Testing](/en/docs/performance/concurrency/) and [Accuracy Evaluation](/en/docs/accuracy/guide/);
+4. Go to the **Sessions** page and chat interactively with the model directly.
 
 ## FAQ
 
-**Q: Does BenchScope require a GPU?**
-No. BenchScope only sends requests and collects results; a GPU is needed only by the inference service under test, or for Native accuracy evaluation.
+**Question: Does BenchScope need a GPU?**
+No. BenchScope only sends requests and collects results; the GPU is used only by the inference service under test, or for native accuracy evaluation.
 
-**Q: How do I update to the latest version / uninstall?**
+**Question: How do I update to the latest version / uninstall?**
 See [Update & Uninstall](/en/docs/install/update-uninstall/).
 
-**Q: Where can I learn about the data root and configuration?**
+**Question: Where can I view the data root directory and configuration?**
 See [Configuration](/en/docs/install/configuration/).
 
 ## Related Docs
 
-- [Install](/en/docs/install/) — requirements, configuration, update & uninstall
+- [Install](/en/docs/install/) — environment requirements, configuration, update & uninstall
 - [CLI](/en/docs/cli/) — overview of the `serve` / `perf` / `eval` subcommands
-- [Performance Testing](/en/docs/performance/) — concurrency and threshold modes
-- [Accuracy Testing](/en/docs/accuracy/) — Native / Serving dual-mode evaluation
+- [Performance Testing](/en/docs/performance/) — concurrency stress testing and threshold probing modes
+- [Overview](/en/docs/accuracy/) — Native / Serving dual-mode evaluation

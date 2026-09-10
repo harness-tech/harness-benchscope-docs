@@ -1,291 +1,403 @@
 {
-  "snapshot_version": "1.0",
+  "snapshot_version": "2.0",
   "project": "benchscope",
   "last_synced": "2026-09-09",
   "version": "1.1.1",
   "source_repo": "https://github.com/LABELNET/benchscope",
   "local_path": null,
   "modules": {
-    "core": {
-      "description": "核心引擎与调度",
+    "benchscope/(root)": {
       "files": [
-        "benchscope/core/engine.py",
-        "benchscope/core/scheduler.py",
-        "benchscope/core/config.py"
+        "benchscope/__init__.py",
+        "benchscope/__main__.py",
+        "benchscope/bench_params.py",
+        "benchscope/benchs.py",
+        "benchscope/builtin_datasets.py",
+        "benchscope/cli.py",
+        "benchscope/config.py",
+        "benchscope/constants.py",
+        "benchscope/datasets.py",
+        "benchscope/env_info.py",
+        "benchscope/gpu.py",
+        "benchscope/parser.py",
+        "benchscope/session_manager.py",
+        "benchscope/summary.py",
+        "benchscope/task_manager.py"
       ],
-      "features": [
-        "自研 bench 引擎",
-        "并发调度",
-        "配置管理"
-      ],
-      "doc_paths": {
-        "zh": [
-          "tools/bench-engine.md",
-          "install/configuration.md"
-        ],
-        "en": [
-          "tools/bench-engine.md",
-          "install/configuration.md"
-        ]
-      },
       "file_hashes": {
-        "benchscope/core/engine.py": "missing",
-        "benchscope/core/scheduler.py": "missing",
-        "benchscope/core/config.py": "missing"
+        "benchscope/__init__.py": "add621e153709ead",
+        "benchscope/__main__.py": "aa32322644d9933b",
+        "benchscope/bench_params.py": "c44e9449b5884e26",
+        "benchscope/benchs.py": "52ee2724584c9f18",
+        "benchscope/builtin_datasets.py": "655c0e57ff40087e",
+        "benchscope/cli.py": "844ca634ab2a42ad",
+        "benchscope/config.py": "b0711ed85c203e11",
+        "benchscope/constants.py": "1bd04c633d81a2e7",
+        "benchscope/datasets.py": "9df92e78515efba4",
+        "benchscope/env_info.py": "2c4683cff5dceadf",
+        "benchscope/gpu.py": "b4c1b126740f0929",
+        "benchscope/parser.py": "008386e398c75833",
+        "benchscope/session_manager.py": "252870665acc3156",
+        "benchscope/summary.py": "aaf3f1eef10ccda8",
+        "benchscope/task_manager.py": "0712c62a004e4f2c"
       }
     },
-    "performance": {
-      "description": "性能压测模块",
+    "benchscope/accuracy": {
       "files": [
-        "benchscope/perf/runner.py",
-        "benchscope/perf/metrics.py",
-        "benchscope/perf/threshold.py",
-        "benchscope/perf/concurrency.py"
-      ],
-      "features": [
-        "并发压测",
-        "阈值探测",
-        "实时指标",
-        "TTFT/TPOT/ITL"
-      ],
-      "doc_paths": {
-        "zh": [
-          "performance/index.md",
-          "performance/concurrency.md",
-          "performance/threshold.md",
-          "cli/perf.md"
-        ],
-        "en": [
-          "performance/index.md",
-          "performance/concurrency.md",
-          "performance/threshold.md",
-          "cli/perf.md"
-        ]
-      },
-      "file_hashes": {
-        "benchscope/perf/runner.py": "missing",
-        "benchscope/perf/metrics.py": "missing",
-        "benchscope/perf/threshold.py": "missing",
-        "benchscope/perf/concurrency.py": "missing"
-      }
-    },
-    "accuracy": {
-      "description": "精度评测模块",
-      "files": [
-        "benchscope/accuracy/evaluator.py",
-        "benchscope/accuracy/scorer.py",
+        "benchscope/accuracy/__init__.py",
+        "benchscope/accuracy/baselines.py",
+        "benchscope/accuracy/compare.py",
         "benchscope/accuracy/datasets.py",
-        "benchscope/accuracy/baseline.py"
+        "benchscope/accuracy/engines.py",
+        "benchscope/accuracy/estimator.py",
+        "benchscope/accuracy/executor.py",
+        "benchscope/accuracy/metrics.py",
+        "benchscope/accuracy/native_runner.py",
+        "benchscope/accuracy/scorers/__init__.py",
+        "benchscope/accuracy/scorers/base.py",
+        "benchscope/accuracy/scorers/choice.py",
+        "benchscope/accuracy/scorers/code.py",
+        "benchscope/accuracy/scorers/judge.py",
+        "benchscope/accuracy/scorers/math.py",
+        "benchscope/accuracy/task_manager.py"
       ],
-      "features": [
-        "Native 模式",
-        "Serving 模式",
-        "Mock 模式",
-        "基线对标",
-        "Token 预估"
-      ],
-      "doc_paths": {
-        "zh": [
-          "accuracy/index.md",
-          "accuracy/modes.md",
-          "accuracy/datasets.md",
-          "accuracy/scoring.md",
-          "accuracy/guide.md",
-          "cli/eval.md"
-        ],
-        "en": [
-          "accuracy/index.md",
-          "accuracy/modes.md",
-          "accuracy/datasets.md",
-          "accuracy/scoring.md",
-          "accuracy/guide.md",
-          "cli/eval.md"
-        ]
-      },
       "file_hashes": {
-        "benchscope/accuracy/evaluator.py": "missing",
-        "benchscope/accuracy/scorer.py": "missing",
+        "benchscope/accuracy/__init__.py": "6c19ecf3b172fa2c",
+        "benchscope/accuracy/baselines.py": "d4749caf1f231164",
+        "benchscope/accuracy/compare.py": "b3ba674bfe41379b",
         "benchscope/accuracy/datasets.py": "27a6195ec237f38f",
-        "benchscope/accuracy/baseline.py": "missing"
+        "benchscope/accuracy/engines.py": "47d549ada3ad83b6",
+        "benchscope/accuracy/estimator.py": "d89866d6839b69e1",
+        "benchscope/accuracy/executor.py": "092ad211fc89afa0",
+        "benchscope/accuracy/metrics.py": "c281ac027979a854",
+        "benchscope/accuracy/native_runner.py": "185fb67630a52455",
+        "benchscope/accuracy/scorers/__init__.py": "5310276c3d9f6d61",
+        "benchscope/accuracy/scorers/base.py": "55b8d05b90b588cf",
+        "benchscope/accuracy/scorers/choice.py": "f1e756d6c91567df",
+        "benchscope/accuracy/scorers/code.py": "95a1745aa72704c6",
+        "benchscope/accuracy/scorers/judge.py": "766d7bd4bc16b0e4",
+        "benchscope/accuracy/scorers/math.py": "195a1638fe4e2cdf",
+        "benchscope/accuracy/task_manager.py": "d54dabfd09d2baa6"
       }
     },
-    "sessions": {
-      "description": "交互式会话模块",
+    "benchscope/benches": {
       "files": [
-        "benchscope/sessions/chat.py",
-        "benchscope/sessions/sse.py",
-        "benchscope/sessions/storage.py"
+        "benchscope/benches/__init__.py",
+        "benchscope/benches/base.py",
+        "benchscope/benches/builtin_bench.py",
+        "benchscope/benches/runner.py",
+        "benchscope/benches/sglang_bench.py",
+        "benchscope/benches/vllm_bench.py"
       ],
-      "features": [
-        "SSE 流式对话",
-        "采样参数控制",
-        "Markdown 渲染",
-        "会话持久化"
-      ],
-      "doc_paths": {
-        "zh": [
-          "tools/sessions.md"
-        ],
-        "en": [
-          "tools/sessions.md"
-        ]
-      },
       "file_hashes": {
-        "benchscope/sessions/chat.py": "missing",
-        "benchscope/sessions/sse.py": "missing",
-        "benchscope/sessions/storage.py": "missing"
+        "benchscope/benches/__init__.py": "b4d20b9f73e23376",
+        "benchscope/benches/base.py": "2968ee79bf3251c5",
+        "benchscope/benches/builtin_bench.py": "3a5b7fddc88d342c",
+        "benchscope/benches/runner.py": "d6faf236e2628e49",
+        "benchscope/benches/sglang_bench.py": "2b1b317d9091a8b0",
+        "benchscope/benches/vllm_bench.py": "469c80c808804c12"
       }
     },
-    "data": {
-      "description": "数据管理模块",
+    "benchscope/server": {
       "files": [
-        "benchscope/data/storage.py",
-        "benchscope/data/importer.py",
-        "benchscope/data/exporter.py",
-        "benchscope/data/statistics.py"
+        "benchscope/server/__init__.py",
+        "benchscope/server/api_accuracy.py",
+        "benchscope/server/api_benchs.py",
+        "benchscope/server/api_config.py",
+        "benchscope/server/api_dashboard.py",
+        "benchscope/server/api_logs.py",
+        "benchscope/server/api_sessions.py",
+        "benchscope/server/api_skills.py",
+        "benchscope/server/api_tasks.py",
+        "benchscope/server/api_test.py",
+        "benchscope/server/app.py",
+        "benchscope/server/state.py",
+        "benchscope/server/status.py",
+        "benchscope/server/test_manager.py",
+        "benchscope/server/ws.py"
       ],
-      "features": [
-        "历史记录归档",
-        "导入/导出",
-        "统计分析"
-      ],
-      "doc_paths": {
-        "zh": [
-          "data/index.md"
-        ],
-        "en": [
-          "data/index.md"
-        ]
-      },
       "file_hashes": {
-        "benchscope/data/storage.py": "missing",
-        "benchscope/data/importer.py": "missing",
-        "benchscope/data/exporter.py": "missing",
-        "benchscope/data/statistics.py": "missing"
+        "benchscope/server/__init__.py": "907fde462249ff7b",
+        "benchscope/server/api_accuracy.py": "8a8316f0ed3f3d92",
+        "benchscope/server/api_benchs.py": "00b1b0fe91e97199",
+        "benchscope/server/api_config.py": "17860ac15d5cfabe",
+        "benchscope/server/api_dashboard.py": "ab5d21207730203c",
+        "benchscope/server/api_logs.py": "d932e984eb324664",
+        "benchscope/server/api_sessions.py": "ccc7f7ccbf63fa5b",
+        "benchscope/server/api_skills.py": "746e74b943984ab8",
+        "benchscope/server/api_tasks.py": "317339dfcba140f2",
+        "benchscope/server/api_test.py": "0596e90cd833988f",
+        "benchscope/server/app.py": "e5c06dc6abfd6a71",
+        "benchscope/server/state.py": "4cebcf0079a138e6",
+        "benchscope/server/status.py": "d87dfeb8d1af2f9d",
+        "benchscope/server/test_manager.py": "5329b14e6f3966a4",
+        "benchscope/server/ws.py": "426c52292f57402b"
       }
     },
-    "settings": {
-      "description": "全局设置模块",
+    "configs": {
       "files": [
-        "benchscope/settings/manager.py",
-        "benchscope/settings/providers.py",
-        "benchscope/settings/models.py"
+        "benchscope/configs/baselines.yaml",
+        "benchscope/configs/bench-params.yaml",
+        "benchscope/configs/benchs.yaml",
+        "benchscope/configs/benchscope-default.yaml",
+        "benchscope/configs/datasets.yaml",
+        "benchscope/configs/models.yaml",
+        "benchscope/configs/sglang-default.yaml",
+        "benchscope/configs/token_estimates.yaml",
+        "benchscope/configs/vllm-default.yaml"
       ],
-      "features": [
-        "Provider 管理",
-        "模型清单",
-        "数据集配置",
-        "引擎注册"
-      ],
-      "doc_paths": {
-        "zh": [
-          "tools/settings.md",
-          "install/configuration.md"
-        ],
-        "en": [
-          "tools/settings.md",
-          "install/configuration.md"
-        ]
-      },
       "file_hashes": {
-        "benchscope/settings/manager.py": "missing",
-        "benchscope/settings/providers.py": "missing",
-        "benchscope/settings/models.py": "missing"
+        "benchscope/configs/baselines.yaml": "4d6c51f99f470c47",
+        "benchscope/configs/bench-params.yaml": "1d7589dca9eb43f2",
+        "benchscope/configs/benchs.yaml": "30f21641c0f0eb22",
+        "benchscope/configs/benchscope-default.yaml": "c37258f06e1a9734",
+        "benchscope/configs/datasets.yaml": "ea06f8b6c0184fd2",
+        "benchscope/configs/models.yaml": "a3661169e53e62e1",
+        "benchscope/configs/sglang-default.yaml": "8658b00a3638064f",
+        "benchscope/configs/token_estimates.yaml": "50241fb14dc1ac88",
+        "benchscope/configs/vllm-default.yaml": "3b9bd7c088a123ce"
       }
     },
-    "api": {
-      "description": "HTTP API 模块",
+    "skills": {
       "files": [
-        "benchscope/api/routes.py",
-        "benchscope/api/schemas.py",
-        "benchscope/api/websocket.py"
+        "benchscope/skills/Readme.md",
+        "benchscope/skills/bs-engine-create/README.md",
+        "benchscope/skills/bs-engine-create/SKILL.md",
+        "benchscope/skills/bs-engine-create/references/engine-schema.md",
+        "benchscope/skills/bs-engine-create/references/import-checklist.md",
+        "benchscope/skills/bs-engine-create/references/mock-core.md",
+        "benchscope/skills/bs-engine-create/references/upstream-analysis.md",
+        "benchscope/skills/bs-engine-create/scripts/package.sh",
+        "benchscope/skills/bs-engine-create/scripts/validate.sh",
+        "benchscope/skills/bs-engine-create/templates/bench-params-section.yaml",
+        "benchscope/skills/bs-engine-create/templates/benchs-engine-entry.yaml",
+        "benchscope/skills/bs-perfs-concurrency/README.md",
+        "benchscope/skills/bs-perfs-concurrency/SKILL.md",
+        "benchscope/skills/bs-perfs-concurrency/scripts/package.sh",
+        "benchscope/skills/bs-perfs-concurrency/templates/bench-perfs-config.yaml",
+        "benchscope/skills/bs-perfs-threshold/README.md",
+        "benchscope/skills/bs-perfs-threshold/SKILL.md",
+        "benchscope/skills/bs-perfs-threshold/scripts/package.sh",
+        "benchscope/skills/bs-perfs-threshold/templates/bench-perfs-config.yaml"
       ],
-      "features": [
-        "OpenAI 兼容接口",
-        "REST API",
-        "WebSocket 实时推送"
-      ],
-      "doc_paths": {
-        "zh": [
-          "api/index.md"
-        ],
-        "en": [
-          "api/index.md"
-        ]
-      },
       "file_hashes": {
-        "benchscope/api/routes.py": "missing",
-        "benchscope/api/schemas.py": "missing",
-        "benchscope/api/websocket.py": "missing"
+        "benchscope/skills/Readme.md": "3efb0978e5f4f569",
+        "benchscope/skills/bs-engine-create/README.md": "c5e1ab9d222726ac",
+        "benchscope/skills/bs-engine-create/SKILL.md": "a0f7ea88ec64601c",
+        "benchscope/skills/bs-engine-create/references/engine-schema.md": "e255f9c4868ecb23",
+        "benchscope/skills/bs-engine-create/references/import-checklist.md": "ad97a65cdeb92775",
+        "benchscope/skills/bs-engine-create/references/mock-core.md": "62e889a02be42de1",
+        "benchscope/skills/bs-engine-create/references/upstream-analysis.md": "99a6125dd5f27c6c",
+        "benchscope/skills/bs-engine-create/scripts/package.sh": "86721565c2a10fea",
+        "benchscope/skills/bs-engine-create/scripts/validate.sh": "102b18ee8e738836",
+        "benchscope/skills/bs-engine-create/templates/bench-params-section.yaml": "805f74d44f930563",
+        "benchscope/skills/bs-engine-create/templates/benchs-engine-entry.yaml": "f5b5d5ebce9d8a6c",
+        "benchscope/skills/bs-perfs-concurrency/README.md": "d3b3cf51a5ce220b",
+        "benchscope/skills/bs-perfs-concurrency/SKILL.md": "993ef02c14bebcfa",
+        "benchscope/skills/bs-perfs-concurrency/scripts/package.sh": "d84e081f8b416619",
+        "benchscope/skills/bs-perfs-concurrency/templates/bench-perfs-config.yaml": "0bb70b84b87d48ba",
+        "benchscope/skills/bs-perfs-threshold/README.md": "4c2fdd0872a350f6",
+        "benchscope/skills/bs-perfs-threshold/SKILL.md": "bfc07214c44e456d",
+        "benchscope/skills/bs-perfs-threshold/scripts/package.sh": "0640b46a7a93e7de",
+        "benchscope/skills/bs-perfs-threshold/templates/bench-perfs-config.yaml": "2c931dc9d6e5c40b"
       }
     },
-    "cli": {
-      "description": "命令行工具",
+    "web/(root)": {
       "files": [
-        "benchscope/cli/main.py",
-        "benchscope/cli/serve.py",
-        "benchscope/cli/perf.py",
-        "benchscope/cli/eval.py"
+        "web/src/App.vue",
+        "web/src/main.js"
       ],
-      "features": [
-        "serve 子命令",
-        "perf 子命令",
-        "eval 子命令"
-      ],
-      "doc_paths": {
-        "zh": [
-          "cli/index.md",
-          "cli/serve.md",
-          "cli/perf.md",
-          "cli/eval.md"
-        ],
-        "en": [
-          "cli/index.md",
-          "cli/serve.md",
-          "cli/perf.md",
-          "cli/eval.md"
-        ]
-      },
       "file_hashes": {
-        "benchscope/cli/main.py": "missing",
-        "benchscope/cli/serve.py": "missing",
-        "benchscope/cli/perf.py": "missing",
-        "benchscope/cli/eval.py": "missing"
+        "web/src/App.vue": "254a84639232c232",
+        "web/src/main.js": "6ce159f19510ae96"
       }
     },
-    "ui_web": {
-      "description": "Web 前端（Vue）",
+    "web/api": {
       "files": [
-        "benchscope/web/src/views/Dashboard.vue",
-        "benchscope/web/src/views/Performance.vue",
-        "benchscope/web/src/views/Accuracy.vue",
-        "benchscope/web/src/views/Sessions.vue",
-        "benchscope/web/src/views/Datas.vue",
-        "benchscope/web/src/views/Settings.vue"
+        "web/src/api/index.js"
       ],
-      "features": [
-        "Dashboard 概览",
-        "性能测试页",
-        "精度评测页",
-        "会话页",
-        "数据页",
-        "设置页"
-      ],
-      "doc_paths": {
-        "zh": [
-          "quickstart/platform.md"
-        ],
-        "en": [
-          "quickstart/platform.md"
-        ]
-      },
       "file_hashes": {
-        "benchscope/web/src/views/Dashboard.vue": "missing",
-        "benchscope/web/src/views/Performance.vue": "missing",
-        "benchscope/web/src/views/Accuracy.vue": "missing",
-        "benchscope/web/src/views/Sessions.vue": "missing",
-        "benchscope/web/src/views/Datas.vue": "missing",
-        "benchscope/web/src/views/Settings.vue": "missing"
+        "web/src/api/index.js": "3fecd9faf1967eb4"
+      }
+    },
+    "web/components": {
+      "files": [
+        "web/src/components/AnalysisBlock.vue",
+        "web/src/components/ConcurrencyEditor.vue",
+        "web/src/components/FreeArgsEditor.vue",
+        "web/src/components/LivePanels.vue",
+        "web/src/components/MetricsCharts.vue",
+        "web/src/components/MetricsTable.vue",
+        "web/src/components/RealtimeResultPanel.vue",
+        "web/src/components/RunChartsPanel.vue",
+        "web/src/components/RunDataPanel.vue",
+        "web/src/components/RunDetailPanel.vue",
+        "web/src/components/RunSummaryBlock.vue",
+        "web/src/components/StatusBadge.vue",
+        "web/src/components/TopBar.vue",
+        "web/src/components/performance/BaseEnvPanel.vue",
+        "web/src/components/performance/ConditionPanel.vue",
+        "web/src/components/performance/ParamGroupPanel.vue",
+        "web/src/components/performance/TaskCreateForm.vue"
+      ],
+      "file_hashes": {
+        "web/src/components/AnalysisBlock.vue": "9a0144d016a1c279",
+        "web/src/components/ConcurrencyEditor.vue": "4c036b0ae3630999",
+        "web/src/components/FreeArgsEditor.vue": "592be15888081412",
+        "web/src/components/LivePanels.vue": "c67826149034484a",
+        "web/src/components/MetricsCharts.vue": "769187f662dd3a65",
+        "web/src/components/MetricsTable.vue": "1705f7bfaa89373a",
+        "web/src/components/RealtimeResultPanel.vue": "199e51999a4439b4",
+        "web/src/components/RunChartsPanel.vue": "99ac604f1d858836",
+        "web/src/components/RunDataPanel.vue": "ed7b7b2b345ac098",
+        "web/src/components/RunDetailPanel.vue": "979188e01cf9098a",
+        "web/src/components/RunSummaryBlock.vue": "e5de8b43695bfb48",
+        "web/src/components/StatusBadge.vue": "422b7a58ef63c704",
+        "web/src/components/TopBar.vue": "7d52146e400c1b82",
+        "web/src/components/performance/BaseEnvPanel.vue": "6fb69624dd8e72f9",
+        "web/src/components/performance/ConditionPanel.vue": "f9fb14f4bf37fce8",
+        "web/src/components/performance/ParamGroupPanel.vue": "18a93cef818760aa",
+        "web/src/components/performance/TaskCreateForm.vue": "d689de0f21ae0fc9"
+      }
+    },
+    "web/data": {
+      "files": [
+        "web/src/data/modelCatalog.js"
+      ],
+      "file_hashes": {
+        "web/src/data/modelCatalog.js": "5179f562a4544ee0"
+      }
+    },
+    "web/i18n": {
+      "files": [
+        "web/src/i18n/en.js",
+        "web/src/i18n/index.js",
+        "web/src/i18n/zh.js"
+      ],
+      "file_hashes": {
+        "web/src/i18n/en.js": "685cd514dbcdab3a",
+        "web/src/i18n/index.js": "2c7db0144a91dc58",
+        "web/src/i18n/zh.js": "6861f92110cae4f1"
+      }
+    },
+    "web/router": {
+      "files": [
+        "web/src/router/index.js"
+      ],
+      "file_hashes": {
+        "web/src/router/index.js": "4afdd032045e4b6e"
+      }
+    },
+    "web/store": {
+      "files": [
+        "web/src/store/accuracy.js",
+        "web/src/store/config.js",
+        "web/src/store/form.js",
+        "web/src/store/test.js"
+      ],
+      "file_hashes": {
+        "web/src/store/accuracy.js": "49ca963e7ff3a1f1",
+        "web/src/store/config.js": "a197550f8be81be6",
+        "web/src/store/form.js": "9e36568bead14fea",
+        "web/src/store/test.js": "f96e235162b2cb08"
+      }
+    },
+    "web/views": {
+      "files": [
+        "web/src/views/AccuracyCreateView.vue",
+        "web/src/views/AccuracyView.vue",
+        "web/src/views/DashboardView.vue",
+        "web/src/views/DatasAnalysisView.vue",
+        "web/src/views/DatasEvalsView.vue",
+        "web/src/views/DatasPerfsView.vue",
+        "web/src/views/DatasView.vue",
+        "web/src/views/PerfCreateView.vue",
+        "web/src/views/PerformanceView.vue",
+        "web/src/views/SessionsView.vue",
+        "web/src/views/SettingsView.vue"
+      ],
+      "file_hashes": {
+        "web/src/views/AccuracyCreateView.vue": "51c984d8c5c50864",
+        "web/src/views/AccuracyView.vue": "4243a5ab0f027a26",
+        "web/src/views/DashboardView.vue": "df4b36c04a88c16e",
+        "web/src/views/DatasAnalysisView.vue": "6b1d394972324612",
+        "web/src/views/DatasEvalsView.vue": "ebd15c5065d332ed",
+        "web/src/views/DatasPerfsView.vue": "095311e2333f09d7",
+        "web/src/views/DatasView.vue": "50b633b5ceb17dac",
+        "web/src/views/PerfCreateView.vue": "c945609f025cb33e",
+        "web/src/views/PerformanceView.vue": "3998de66627dd213",
+        "web/src/views/SessionsView.vue": "01f0c328f816aa8b",
+        "web/src/views/SettingsView.vue": "fac738e8c479cbd0"
+      }
+    },
+    "tests": {
+      "files": [
+        "tests/__init__.py",
+        "tests/api/__init__.py",
+        "tests/api/test_accuracy_datasets.py",
+        "tests/api/test_accuracy_engines.py",
+        "tests/api/test_accuracy_estimate_baselines.py",
+        "tests/api/test_accuracy_scorers.py",
+        "tests/api/test_accuracy_tasks.py",
+        "tests/api/test_benchs.py",
+        "tests/api/test_builtin_bench.py",
+        "tests/api/test_config.py",
+        "tests/api/test_dashboard.py",
+        "tests/api/test_logs.py",
+        "tests/api/test_sessions.py",
+        "tests/api/test_skills.py",
+        "tests/api/test_tasks.py",
+        "tests/api/test_test.py",
+        "tests/conftest.py",
+        "tests/helpers.py",
+        "tests/webui/__init__.py",
+        "tests/webui/test_ui.py"
+      ],
+      "file_hashes": {
+        "tests/__init__.py": "735469839c842bc3",
+        "tests/api/__init__.py": "d82478732e9981fa",
+        "tests/api/test_accuracy_datasets.py": "5be6b0106f36a5f8",
+        "tests/api/test_accuracy_engines.py": "2c69fd0007a619b4",
+        "tests/api/test_accuracy_estimate_baselines.py": "ac0f4d3a64a33e1c",
+        "tests/api/test_accuracy_scorers.py": "bb86463f68f28869",
+        "tests/api/test_accuracy_tasks.py": "5518425eab3d4afa",
+        "tests/api/test_benchs.py": "9f4dd809653273e9",
+        "tests/api/test_builtin_bench.py": "0ce0e9cd28ebca07",
+        "tests/api/test_config.py": "088e90f4b0d6e47b",
+        "tests/api/test_dashboard.py": "062617cf8b8855e9",
+        "tests/api/test_logs.py": "1f1ccfa1bdc8eea1",
+        "tests/api/test_sessions.py": "66b212fdee6929c6",
+        "tests/api/test_skills.py": "6165bd058438f349",
+        "tests/api/test_tasks.py": "17e101d803871ffa",
+        "tests/api/test_test.py": "296604853921e7d8",
+        "tests/conftest.py": "968fcf7e3b0164d5",
+        "tests/helpers.py": "b0fbc3d65f38ba2d",
+        "tests/webui/__init__.py": "d976b9982cd30d55",
+        "tests/webui/test_ui.py": "e51baa8db22130d5"
+      }
+    },
+    "mocks": {
+      "files": [
+        "mocks/__init__.py",
+        "mocks/bench_outputs.py",
+        "mocks/cli.py",
+        "mocks/openai_server.py"
+      ],
+      "file_hashes": {
+        "mocks/__init__.py": "7779def61ff126b5",
+        "mocks/bench_outputs.py": "7ecd036a13c8222c",
+        "mocks/cli.py": "02bfd0fa7b8843b7",
+        "mocks/openai_server.py": "82a50e1e259d69ba"
+      }
+    },
+    "root": {
+      "files": [
+        "README.md",
+        "pyproject.toml"
+      ],
+      "file_hashes": {
+        "pyproject.toml": "d83ab0cd240016de",
+        "README.md": "32298e6569765b9c"
       }
     }
   },

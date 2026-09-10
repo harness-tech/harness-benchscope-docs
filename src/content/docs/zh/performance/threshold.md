@@ -1,10 +1,11 @@
 ---
 title: "阈值压测"
+description: "介绍阈值压测模式：定义 SLA 阈值与搜索上限，自动搜索满足全部阈值条件的最大并发（best_concurrency）。"
 ---
 
 # 阈值压测
 
-在**已知业务 SLA** 时，用阈值探测自动找到满足条件的**最大并发**（`best_concurrency`），回答「这套配置最多能扛住多少并发且不超 SLA」。相比手动猜测固定并发档位，阈值模式会自动搜索。
+在**已知业务 SLA** 时，用阈值探测自动找到满足条件的**最大并发**（`best_concurrency`），回答「这套配置最多能扛住多少并发且不超 SLA」。相比手动逐档试错，阈值模式自动完成搜索。
 
 ## 定义 SLA
 
@@ -64,9 +65,17 @@ best_concurrency = 10
 
 ## 解读结果
 
-- **`best_concurrency`** 即满足**全部阈值条件**的最大并发；
+- **`best_concurrency`** 即满足**全部阈值条件**的最大并发（指标口径见[性能核心指标](/zh/docs/performance/metrics/)）；
 - 若取到**搜索上限**仍满足，说明系统在该上限下仍达标（可放大搜索上限进一步探测）；
 - 可调整判定统计量（`--ttft-statistic p99` 等）以适配**不同的业务口径**——例如严格 SLA 可改用 `p99` 而非 `mean`。
+
+<div class="info">
+
+**info**：
+
+阈值模式下每个已测并发同样输出完整指标组（TTFT / TPOT / ITL 的 mean / median / p99 + 吞吐 + 请求统计），运行结果会列出「concurrency → output / total / ttft / tpot」对照，便于复核搜索过程。
+
+</div>
 
 | 判定统计量 | 含义 | 适用 |
 | --- | --- | --- |
@@ -76,13 +85,13 @@ best_concurrency = 10
 
 ## 网页操作
 
-在 **性能测试** 页创建阈值为模式的压测任务：选择 Threshold 模式，填入 TTFT / TPOT 阈值、判定统计量与搜索上限，预览命令后启动；运行结果自动给出 `best_concurrency`。
+在 **性能测试** 页创建阈值模式的压测任务：选择 Threshold 模式，填入 TTFT / TPOT 阈值、判定统计量与搜索上限，预览命令后启动；运行结果自动给出 `best_concurrency`。
 
 <div class="tip">
 
 **tip**：
 
-阈值模式很高效——先翻倍探测到首个失败点，再二分收敛，即使搜索上限很大，实际压测轮次也保持很少。
+阈值模式搜索高效——先翻倍找到首个失败点，再二分收敛，即使搜索上限很大，实际压测轮次也很少。
 
 </div>
 
@@ -97,5 +106,6 @@ best_concurrency = 10
 ## 相关文档
 
 - [性能测试](/zh/docs/performance/) — 阈值模式原理与判定条件
+- [性能核心指标](/zh/docs/performance/metrics/) — 指标完整口径（含 best_concurrency）
 - [perf 命令](/zh/docs/cli/perf/) — 阈值模式专属参数
 - [并发压测](/zh/docs/performance/concurrency/) — 手动逐档压测

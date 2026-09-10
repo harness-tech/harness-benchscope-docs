@@ -1,5 +1,6 @@
 ---
 title: "概述"
+description: "BenchScope 帮助入口：常见故障排查、Bug 反馈与需求提交、参与贡献指南。"
 ---
 
 # 概述

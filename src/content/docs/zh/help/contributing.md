@@ -1,10 +1,11 @@
 ---
 title: "参与贡献"
+description: "BenchScope 贡献指南：本地开发环境说明、测试运行方法、贡献流程与提交前检查清单。"
 ---
 
 # 参与贡献
 
-欢迎通过 **Issue / PR** 参与 BenchScope 开源贡献 —— 无论是修复 Bug、新增功能、完善文档，还是补充测试，都非常欢迎。
+欢迎通过 **Issue / PR** 参与 BenchScope 开源贡献 —— 修复 Bug、新增功能、完善文档、补充测试都可以。
 
 ## 相关链接
 
@@ -69,4 +70,4 @@ pytest
 
 - [架构介绍](/zh/docs/tools/architecture/) — 了解代码结构
 - [Bench 引擎](/zh/docs/tools/bench-engine/) — 引擎抽象与自定义
-- [快速入门](/zh/docs/quickstart/) — 安装使用
+- [快速开始](/zh/docs/quickstart/) — 安装使用

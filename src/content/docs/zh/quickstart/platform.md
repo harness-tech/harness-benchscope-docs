@@ -13,7 +13,7 @@ description: "一条命令启动 BenchScope Web 平台，了解常用选项与�
 benchscope
 ```
 
-数秒后平台会在默认浏览器中打开 `http://127.0.0.1:8080`。如果浏览器不可用（例如无界面的服务器），可加上 `--no-browser` 不自动打开：
+数秒后，默认浏览器会打开 `http://127.0.0.1:8080`。如果浏览器不可用（例如无界面的服务器），可加上 `--no-browser` 跳过自动打开：
 
 ```bash
 benchscope --port 8080 --no-browser
@@ -53,15 +53,17 @@ INFO  Browsing http://127.0.0.1:8080 ...
 
 ## 首次启动：总览 Dashboard
 
-浏览器访问 `http://127.0.0.1:8080`，首先看到的是**总览 Dashboard**：
+用浏览器访问 `http://127.0.0.1:8080`，首先看到的是**总览 Dashboard**：
 
 ![BenchScope Dashboard 总览](/images/benchscope-dashboard.png)
 
 Dashboard 会展示：
 
-- **计数面板** — 性能 / 精度 / Sessions / Skills / Models / Datasets / Providers 的快捷数量。
-- **环境信息** — 网络接口（MAC / IP / 子网 / 掩码）、框架版本、硬件与操作系统详情。
-- **最近记录** — 最近的性能与精度运行，带各页面的快捷入口。
+- **统计概览（Overview）** — 性能 / 精度 / Sessions / 内置技能 / Models / Datasets 的快捷计数，底部为 Providers 整行（Provider 数量 + Provider 模型数）。
+- **环境信息（Envs info）** — 硬件（Host / CPU / 内存 / GPU）、操作系统（系统 / 版本 / 内核）、网络（按网口的 MAC / IP / 子网 / 掩码）、框架版本（Python / PyTorch / vLLM / SGLang / benchscope）。
+- **性能测试记录** — 最新 8 条性能压测记录（Run ID / 模型 / 框架 / 状态 / 时间），点击 Detail 跳转 Datas → Perfs。
+
+各面板的详细字段说明见 [Dashboard 概览](/zh/docs/tools/dashboard/)。
 
 使用顶部导航栏可在 **Dashboard · Performance · Accuracy · Sessions · Datas · Settings** 之间切换。
 
@@ -82,3 +84,4 @@ Dashboard 会展示：
 - [环境要求](/zh/docs/quickstart/requirements/) — 运行前置条件
 - [安装](/zh/docs/install/) — 安装与启动细节
 - [配置说明](/zh/docs/install/configuration/) — 数据根目录与 settings.json
+- [Dashboard 概览](/zh/docs/tools/dashboard/) — 首页各面板详解

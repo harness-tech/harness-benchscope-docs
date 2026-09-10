@@ -9,7 +9,7 @@ This page lists the environment prerequisites for running BenchScope. Once you m
 
 ## Python and pip
 
-- **Python** 3.9+ (3.10+ recommended; 3.9 / 3.11 / 3.12 are also supported). The package is pure Python.
+- **Python**: 3.10 or later recommended (3.9 / 3.11 / 3.12 also supported). The package is pure Python.
 - **pip** — keep it reasonably recent so dependencies resolve correctly (`pip install --upgrade pip`).
 
 ## The Inference Service Under Test
@@ -17,13 +17,13 @@ This page lists the environment prerequisites for running BenchScope. Once you m
 BenchScope does not host models itself — you need an inference service to test:
 
 - a local **vLLM / SGLang** server (for example at `http://127.0.0.1:8000`), or
-- any **OpenAI-compatible** remote endpoint (provider Base URL + API key).
+- any **OpenAI-compatible** remote endpoint (Base URL + API Key).
 
 <div class="info">
 
-**info**：
+**Info:**
 
-BenchScope's Web frontend is fully bundled inside the Python package, so there is no need to install Node.js or any frontend dependencies — a single command starts the whole platform.
+BenchScope's Web frontend is fully bundled inside the Python package, so you do not need to install Node.js or any frontend dependencies — a single command starts the whole platform.
 
 </div>
 
@@ -38,21 +38,21 @@ A GPU is only required if you plan to use **Native accuracy** evaluation (offlin
 
 <div class="tip">
 
-**tip**：
+**Tip:**
 
-If you plan to use **Native accuracy** evaluation, install the optional extra as well: `pip install benchscope[accuracy-native]`.
+If you plan to use **Native accuracy** evaluation, install the optional extra: `pip install benchscope[accuracy-native]`.
 
 </div>
 
 ## FAQ
 
-**Q: Can I run BenchScope without a GPU?**
+**Question: Can I run BenchScope without a GPU?**
 Yes. BenchScope only sends requests and collects results; a GPU is needed only by the inference service under test, or for Native accuracy evaluation.
 
-**Q: Do I need to install vLLM / SGLang myself?**
+**Question: Do I need to install vLLM / SGLang myself?**
 No. You deploy the inference service under test yourself (locally or remotely); BenchScope only runs the stress tests and evaluations against it.
 
-**Q: Do I need Node.js or frontend dependencies?**
+**Question: Do I need Node.js or frontend dependencies?**
 No. The Web frontend is fully embedded in the Python package.
 
 ## Related Docs

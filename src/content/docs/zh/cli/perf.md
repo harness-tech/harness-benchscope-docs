@@ -1,10 +1,11 @@
 ---
 title: "perf 命令"
+description: "benchscope perf 命令：并发与阈值两种压测模式的常用示例、参数、探测策略与输出指标。"
 ---
 
 # perf 命令
 
-对 OpenAI 兼容推理服务执行一次自研引擎压测，输出吞吐与延迟指标。
+使用自研引擎对 OpenAI 兼容推理服务执行一次压测，输出吞吐与延迟指标。
 
 ```bash
 benchscope perf --model MODEL [选项]
@@ -12,8 +13,8 @@ benchscope perf --model MODEL [选项]
 
 **模式（`--mode`）** 有两种：
 
-- `concurrency`（默认）：单并发压测一次；
-- `threshold`：从 1 并发起以 2 的次方递增 + 二分，找到满足阈值的最大并发（`best_concurrency`）。
+- `concurrency`（默认）：按指定并发压测一次；
+- `threshold`：从 1 并发起按 2 的幂递增，再二分收敛，找到满足阈值的最大并发（`best_concurrency`）。
 
 ## 常用示例
 
@@ -31,7 +32,7 @@ benchscope perf --model Qwen2.5-7B --mode threshold \
 
 | 参数 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
-| `--engine` | str | `benchscope` | 引擎 id（默认自研引擎 benchscope） |
+| `--engine` | str | `benchscope` | 引擎 id（默认自研引擎 `benchscope`） |
 | `--model` | str | **必填** | 被测模型名 |
 | `--base-url` | str | `http://127.0.0.1:8000` | 被测推理服务地址 |
 | `--api-key` | str | 空 | 被测服务 API Key（可选） |
@@ -63,19 +64,21 @@ benchscope perf --model Qwen2.5-7B --mode threshold \
 | `--output-threshold` | float | `0.0` | 输出吞吐阈值（tok/s），**低于**该值判为不满足，`0` = 不判定 |
 | `--ttft-statistic` | str | `mean` | TTFT 阈值判定的统计量：`mean` / `median` / `p99` |
 | `--tpot-statistic` | str | `mean` | TPOT 阈值判定的统计量：`mean` / `median` / `p99` |
-| `--max-concurrency-search` | int | `4096` | 阈值搜索上限：达到仍满足阈值则取上限为最佳并发 |
+| `--max-concurrency-search` | int | `4096` | 阈值搜索上限：达到上限仍满足阈值时，取上限为最佳并发 |
 | `--max-requests` | int | `4096` | 阈值探测中并发数超过该上限则强制结束（Finish） |
 
 ## 阈值探测策略
 
-1. 从 **1 并发** 开始，以 **2 的次方递增**（1, 2, 4, 8, …）逐步压测；
+1. 从 **1 并发** 开始，按 **2 的幂递增**（1, 2, 4, 8, …）逐步压测；
 2. 若 1 并发已不满足阈值 → 最佳并发为 1，结束；
 3. 若执行到 `hi = 2^k` 不满足（`lo = 2^(k-1)` 满足）→ 在 `(lo, hi]` 内**二分**，直到相邻两个值，`lo` 即满足阈值的最大并发；
-4. 达到搜索上限仍满足 → 上限并发为最佳（正常结束）。
+4. 达到搜索上限仍满足 → 取上限为最佳并发（正常结束）。
 
 输出每个已测并发的指标（吞吐 / TTFT / TPOT / ITL）与 `best_concurrency`。
 
 ## 输出指标
+
+每个并发点输出一组指标（完整口径见[性能核心指标](/zh/docs/performance/metrics/)）：
 
 | 指标 | 含义 |
 | --- | --- |
@@ -83,10 +86,15 @@ benchscope perf --model Qwen2.5-7B --mode threshold \
 | `failed_requests` | 失败请求数 |
 | `benchmark_duration` | 压测墙钟时长 |
 | `output_mean` (tok/s) | 输出吞吐（均值） |
+| `peakoutput_mean` (tok/s) | 峰值输出吞吐（vLLM 口径提供；引擎不支持时记 N/A） |
 | `total_mean` (tok/s) | 总吞吐（均值） |
-| `ttft_mean` (ms) | 首 token 延迟（均值） |
-| `tpot_mean` (ms) | 每输出 token 延迟（均值） |
-| `itl_mean` (ms) | 令牌间隔延迟（均值） |
+| `req_per_s` (req/s) | 请求吞吐（每秒完成请求数） |
+| `single_user` (tok/s) | 单用户吞吐（按 `1000 / TPOT(mean)` 推导） |
+| `ttft_mean` / `ttft_median` / `ttft_p99` (ms) | 首 token 延迟（均值 / 中位数 / 99 分位） |
+| `tpot_mean` / `tpot_median` / `tpot_p99` (ms) | 每输出 token 延迟（均值 / 中位数 / 99 分位） |
+| `itl_mean` / `itl_median` / `itl_p99` (ms) | 令牌间隔延迟（均值 / 中位数 / 99 分位） |
+
+阈值模式额外输出 `best_concurrency`（满足全部阈值条件的最大并发）。
 
 ## 运行示例
 
@@ -111,7 +119,7 @@ Saved run.json -> ~/.benchscope/perfs/run_<id>.json
 ## 产物与导入
 
 - 落盘 `run.json`（含 `task_id` / `kind: perf` / `summary`）+ 日志 `perf_<run_id>_*.log`（写入 `perfs_dir` / `logs_dir`）。
-- 打包为**扁平 zip**（含 `run.json` + 日志 + 可选 `metrics.json`），可在网页 **Datas → Perfs → 导入备份** 导入。
+- 打包为**扁平 zip**（`run.json` + 终端日志，文件直接位于 zip 根目录），可在网页 **Datas → Perfs → 导入备份** 处导入。
 
 <div class="tip">
 
@@ -127,4 +135,5 @@ CLI 生成的 `run.json`（含完整 summary）可直接打包后在网页 **Dat
 - [serve 命令](/zh/docs/cli/serve/) — 启动 Web 服务
 - [eval 命令](/zh/docs/cli/eval/) — 精度评测
 - [性能测试](/zh/docs/performance/) — 并发压测与阈值探测
-- [概述](/zh/docs/accuracy/) — 双模式评测
+- [性能核心指标](/zh/docs/performance/metrics/) — 输出指标完整口径
+- [概述](/zh/docs/accuracy/) — 三模式评测

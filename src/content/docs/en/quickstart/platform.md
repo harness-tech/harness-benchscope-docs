@@ -1,11 +1,11 @@
 ---
 title: "Starting the Platform"
-description: "Launch the BenchScope Web platform with one command, learn common options, and tour the first Dashboard overview."
+description: "Start the BenchScope Web platform with one command, and learn the common options and the first Dashboard overview."
 ---
 
 # Starting the Platform
 
-Once you have met the [Requirements](/en/docs/quickstart/requirements/) and finished the [Quick Install](/en/docs/quickstart/), start the entire Web platform with a single command.
+Once you have confirmed the [Requirements](/en/docs/quickstart/requirements/) are met and the [installation](/en/docs/quickstart/) is complete, start the entire Web platform with a single command.
 
 ## Start Command
 
@@ -13,7 +13,7 @@ Once you have met the [Requirements](/en/docs/quickstart/requirements/) and fini
 benchscope
 ```
 
-After a few seconds the platform opens your default browser at `http://127.0.0.1:8080`. If the browser is not available (for example on a headless server), start it without auto-opening:
+A few seconds later, your default browser opens `http://127.0.0.1:8080`. If no browser is available (for example, on a headless server), add `--no-browser` to skip auto-opening:
 
 ```bash
 benchscope --port 8080 --no-browser
@@ -23,18 +23,18 @@ benchscope --port 8080 --no-browser
 
 | Option | Default | Description |
 | --- | --- | --- |
-| `--host` | `0.0.0.0` | Listening address (use `127.0.0.1` to restrict to local access) |
-| `--port` | `8080` | Listening port |
-| `--no-browser` | off | Do not automatically open the browser when starting |
+| `--host` | `0.0.0.0` | Listen address; listens on all network interfaces by default for LAN access, and can be restricted to localhost with `127.0.0.1` |
+| `--port` | `8080` | Listen port |
+| `--no-browser` | off | Do not automatically open the browser at startup |
 | `--debug` | off | Enable debug logging |
 
-You can also pass the same options through the explicit `serve` subcommand:
+The same options can also be passed through the explicit `serve` subcommand:
 
 ```bash
 benchscope serve --host 127.0.0.1 --port 8080 --no-browser
 ```
 
-When the platform starts, the console prints the access address and logs, for example:
+After startup the console prints the access address and logs, for example:
 
 ```console
 INFO  BenchScope server started
@@ -44,41 +44,44 @@ INFO  Browsing http://127.0.0.1:8080 ...
 
 <div class="warning">
 
-**warning**：
+**Warning**:
 
-- The default `--host 0.0.0.0` makes the platform reachable from other machines on your LAN. If you only use it locally, consider adding `--host 127.0.0.1`.
-- On first launch, BenchScope creates a data root directory under `~/.benchscope` — see [Configuration](/en/docs/install/configuration/).
+- The default listen address is `0.0.0.0`, meaning other machines on the LAN can also access the platform. If you only use it locally, add `--host 127.0.0.1`.
+- The first startup creates the data root directory under `~/.benchscope`; see [Configuration](/en/docs/install/configuration/) for details.
 
 </div>
 
-## First Launch: the Dashboard
+## First Start: the Overview Dashboard
 
-Open `http://127.0.0.1:8080` in your browser. You first land on the **Dashboard** overview:
+Open `http://127.0.0.1:8080` in your browser; the first thing you see is the **Overview Dashboard**:
 
 ![BenchScope Dashboard overview](/images/benchscope-dashboard.png)
 
-From the Dashboard you can see:
+The Dashboard shows:
 
-- **Count panels** — quick numbers for Performance / Accuracy / Sessions / Skills / Models / Datasets / Providers.
-- **Environment info** — network interfaces (MAC / IP / subnet / mask), framework version, hardware, and operating-system details.
-- **Recent records** — latest performance and accuracy runs, with quick links into each page.
+- **Overview** — quick counts for Performance / Accuracy / Sessions / built-in skills / Models / Datasets, with a Providers row at the bottom (number of Providers + number of Provider models).
+- **Envs info** — hardware (Host / CPU / memory / GPU), operating system (system / version / kernel), network (MAC / IP / subnet / mask per interface), framework versions (Python / PyTorch / vLLM / SGLang / benchscope).
+- **Test Records** — the 8 most recent performance stress-test records (Run ID / model / framework / status / time); clicking Detail jumps to Datas → Perfs.
 
-Use the top navigation bar to jump between **Dashboard · Performance · Accuracy · Sessions · Datas · Settings**.
+Detailed field descriptions for each panel are in [Dashboard Overview](/en/docs/tools/dashboard/).
+
+Use the top navigation bar to switch between **Dashboard · Performance · Accuracy · Sessions · Datas · Settings**.
 
 ## FAQ
 
-**Q: The browser does not open automatically after starting.**
-Make sure you did not pass `--no-browser`; you can also manually open the address printed in the console.
+**Question: The browser did not open automatically after startup?**
+Make sure you did not use `--no-browser`; you can also manually open the address printed in the console in a browser.
 
-**Q: Nothing responds at http://127.0.0.1:8080.**
-Confirm the server process is still running and the port is not occupied (try a different `--port`).
+**Question: http://127.0.0.1:8080 does not respond?**
+Confirm the service process is still running and the port is not occupied (you can switch to another port with `--port`).
 
-**Q: How do I restrict access to local only?**
-Add `--host 127.0.0.1` when starting.
+**Question: How do I restrict access to the local machine only?**
+Add `--host 127.0.0.1` at startup.
 
 ## Related Docs
 
 - [Quick Start](/en/docs/quickstart/) — feature overview and installation
-- [Requirements](/en/docs/quickstart/requirements/) — environment prerequisites
+- [Requirements](/en/docs/quickstart/requirements/) — prerequisites for running
 - [Install](/en/docs/install/) — installation and startup details
 - [Configuration](/en/docs/install/configuration/) — data root directory and settings.json
+- [Dashboard Overview](/en/docs/tools/dashboard/) — detailed breakdown of each panel on the home page

@@ -228,7 +228,7 @@ font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont,
   - **Col 1**（左）：金色 Logo + BenchScope + 介绍文字，上下居中。
   - **Col 2**（左）：超链接（HarnessTek / BenchScope / BenchScope Docs），上下居中 + 左对齐。HarnessTek 用网站 Logo 小图标（`logo-ht-dark.png` / `logo-ht-light.png`，13px，无内边距），BenchScope / Docs 用 GitHub SVG 图标。图标颜色 = 文字颜色（`var(--ft-text)`），hover 时图标 + 文字均变为金色。
   - **Col 3**：弹性空白（`flex: 1`），撑开左右间距。
-  - **Col 4**（右）：自上而下——语言下拉选框（默认简体中文，含国旗 emoji）→ 空白间距（8px）→ `BenchScope v1.1.1` → `BenchScope Docs v1.0.0`。版本文字更小（`10.5px`），右对齐。
+  - **Col 4**（右）：自上而下——语言下拉选框（默认简体中文，含国旗 emoji）→ 空白间距（8px）→ `BenchScope v1.1.1`（产品版本）→ `BenchScope Docs v1.1.2`（站点版本）。版本文字更小（`10.5px`），右对齐。
 - **Row2**：版权 `© 2026 HarnessTek. All rights reserved.` 靠右 + 上下居中。
 - **颜色**：Footer 所有文字使用 `var(--ft-text)`（比页面文字更暗，与导航/内容区区分）。hover 统一金色 `var(--gold-text)`。
 - **响应式**：`≤880px` 隐藏 Col3 空白列，Col4 左对齐；`≤560px` 单列。

@@ -1,61 +1,64 @@
 ---
 title: "Overview"
+description: "Overview of the BenchScope accuracy testing module: quantitative evaluation of model output correctness, native and serving modes, 9 built-in evaluation datasets with dedicated scorers, plus token estimation and open-source baseline benchmarking."
 ---
 
 # Overview
 
-The accuracy testing module performs **quantitative evaluation of model outputs**, supporting both **Native** and **Serving** modes, and ships with **9 built-in evaluation datasets** (GSM8K / MMLU / CMMLU / C-Eval / MATH / HumanEval / MBPP / MT-Bench / GAOKAO-Bench) with dedicated scorers. It answers the question: *how correct is my model on a given task?*
+The accuracy testing module performs **quantitative evaluation** of model outputs, supports both **native (Native)** and **serving (Serving)** modes, ships with **9 built-in evaluation datasets** (GSM8K / MMLU / CMMLU / C-Eval / MATH / HumanEval / MBPP / MT-Bench / GAOKAO-Bench) and dedicated scorers, and provides token estimation and open-source baseline benchmarking. It answers *how accurately the model performs on a given task*.
 
-![Accuracy testing main interface](/images/benchscope-accuracy_default.png)
+![BenchScope accuracy testing default screen](/images/benchscope-accuracy_default.png)
 
 <div class="tip">
 
-**tip**：
+**Tip:**
 
-Accuracy focuses on **whether the model output is correct**, complementing [Performance testing](/en/docs/performance/): performance answers *how fast*, accuracy answers *how accurate*.
+Accuracy testing focuses on *whether the model output is correct*, complementing [Performance testing](/en/docs/performance/): performance answers *how fast it runs*, accuracy answers *how accurately it answers*.
 
 </div>
 
-## In This Section
+## What's on This Page
 
-- [Evaluation Modes](/en/docs/accuracy/modes/) — Native / Serving / Mock modes and token estimation
-- [Datasets](/en/docs/accuracy/datasets/) — built-in datasets and picking one
-- [Scorers and Metrics](/en/docs/accuracy/scoring/) — scorers, metrics, and baseline comparison
-- [Accuracy Guide](/en/docs/accuracy/guide/) — step-by-step tutorial
+- [Accuracy Core Metrics](/en/docs/accuracy/metrics/) — the complete definition of every metric (accuracy / sample statistics / per-scorer metrics / Token / baseline benchmark / conclusion)
+- [Evaluation Modes](/en/docs/accuracy/modes/) — Native / Serving / Mock modes and Token estimation
+- [Evaluation Datasets](/en/docs/accuracy/datasets/) — the built-in dataset catalog and selection
+- [Scorers and Metrics](/en/docs/accuracy/scoring/) — scorers, metrics, and baseline benchmarking
+- [Accuracy Evaluation](/en/docs/accuracy/guide/) — step-by-step operations
 
 ## Mode Overview
 
 | Mode | Description | Dependencies |
 | --- | --- | --- |
-| **Native** | Loads local model weights directly (transformers / HF id) for offline evaluation | Optional dependency `accuracy-native` |
-| **Serving** | Evaluates a deployed service through an OpenAI-compatible pipeline | None |
-| **Mock** (integration testing) | No real service; verifies the correctness of the evaluation pipeline | None |
+| Native | Loads local model weights directly (transformers / HF id) for offline evaluation | Optional dependency `accuracy-native` |
+| Serving | Evaluates a deployed service through an OpenAI-compatible pipeline | None |
+| Mock (integration) | No real service; verifies pipeline correctness | None |
 
 <div class="info">
 
-**info**：
+**Info:**
 
-How to choose? Pick **Native** to evaluate a local checkpoint offline without starting a server, **Serving** to evaluate the exact behavior of your deployed service (including its serving stack), and **Mock** to validate the pipeline wiring first.
+How do you choose a mode? Pick **Native** to evaluate local weights offline (no server needed); pick **Serving** to evaluate real online service performance (including the serving stack); use **Mock** to get the pipeline working first.
 
 </div>
 
-## Common Questions
+## FAQ
 
-**Q: Native or Serving — which should I use?**
-Use **Native** for offline evaluation of a local checkpoint (no server), **Serving** to evaluate the real deployed pipeline (including its serving stack), and **Mock** just to verify the pipeline wiring.
+**Question: How do I choose between Native mode and Serving mode?**
+Use Native to evaluate local weights offline (without starting a service); use Serving to evaluate a real online deployment pipeline (including the serving stack); use Mock if you only want to verify the pipeline.
 
-**Q: Native Mode is blocked at startup?**
-`torch` / `transformers` / `peft` were not detected. Run `pip install benchscope[accuracy-native]` and retry.
+**Question: Native mode startup is blocked?**
+torch / transformers / peft were not detected. Run `pip install benchscope[accuracy-native]` and retry.
 
-**Q: What is `conclusion`?**
-`conclusion` is the verdict comparing the run against a baseline (pass / accuracy drop / flat / better than baseline, and so on), determined together with `diff_pp` and `grade`.
+**Question: What is `conclusion` in the evaluation result?**
+`conclusion` is the final evaluation conclusion, with exactly three possible values: **Pass / Accuracy Drop / Anomaly**. Total samples is 0 or the invalid ratio is > 20% → Anomaly; the main metric drops more than 5pp from the baseline (`diff_pp` < -5) → Accuracy Drop; otherwise → Pass. See [Accuracy Core Metrics](/en/docs/accuracy/metrics/) for details.
 
-**Q: How do I locate individual wrong samples?**
-Open `samples.jsonl` and inspect each sample's input, output, and scoring result — this enables sample-level traceability for error analysis.
+**Question: How do I locate individual error samples?**
+Open `samples.jsonl` and inspect each sample's input, output, and scoring result to achieve sample-level traceability.
 
 ## Related
 
-- [eval command](/en/docs/cli/eval/) — the `benchscope eval` command
-- [Accuracy Guide](/en/docs/accuracy/guide/) — step-by-step tutorial
-- [Datas](/en/docs/data/) — where accuracy records are stored
-- [Settings](/en/docs/tools/settings/) — providers, models, datasets, and baselines
+- [Accuracy Core Metrics](/en/docs/accuracy/metrics/) — the complete definition of metrics
+- [eval command](/en/docs/cli/eval/) — complete parameters of the `eval` command
+- [Accuracy Evaluation](/en/docs/accuracy/guide/) — step-by-step operations
+- [Data and Statistics (Datas)](/en/docs/data/) — viewing and importing results
+- [Settings](/en/docs/tools/settings/) — configuring Providers and Datasets

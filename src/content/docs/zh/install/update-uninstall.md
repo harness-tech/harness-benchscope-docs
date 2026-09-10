@@ -26,18 +26,21 @@ benchscope
 
 **tip**：
 
-升级前建议先查看[更新日志](/zh/docs/releases/v1-1-0/)，了解新版本的特性与可能的破坏性变更，尤其关注数据目录与配置结构是否有迁移。若跳过多版本升级，请逐个查看中间版本说明。
+升级前建议先查看[更新日志](/zh/docs/releases/v1-1-0/)，了解新版本的特性与可能的破坏性变更，尤其关注数据目录与配置结构是否有迁移。若跨多个版本升级，请逐个查看中间版本的说明。
 
 </div>
 
 ### 验证升级
 
-升级后可确认版本号：
+升级后可确认版本号（CLI 未提供 `--version` 选项）：
 
 ```console
-$ benchscope --version
-benchscope 1.1.0
+$ pip show benchscope
+Name: benchscope
+Version: 1.1.1
 ```
+
+> 版本也可在 Web 界面通过 `/api/version` 查看，或在 Settings 页查看。
 
 ## 卸载
 
@@ -120,7 +123,7 @@ tar -czf benchscope-results.tar.gz -C ~/.benchscope perfs evals
 ## 常见问题
 
 **问题：升级后启动报错？**
-先确认版本号；再查看是否出现配置迁移相关提示。确认 Python 与依赖环境没有被系统其他工具改动。
+先确认版本号，再查看是否出现配置迁移相关提示，并确认 Python 与依赖环境没有被系统其他工具改动。
 
 **问题：如何完全重置平台？**
 停止服务、备份需要的数据、删除 `~/.benchscope` 后重新启动即得到全新环境。
