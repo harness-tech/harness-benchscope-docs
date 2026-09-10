@@ -2,13 +2,28 @@
 
 本站（BenchScope 官网 + 文档站）版本记录。**最新更新在文档最上面。**
 
-> **当前版本定位：`1.1.2`**（`package.json`）—— 版本号约定 **`x.y.z`**。
+> **当前版本定位：`1.2.0`**（`package.json`）—— 版本号约定 **`x.y.z`**。
 > - **z（patch）**：只打 tag + 推送代码。
 > - **x.y（minor / major）**：打 tag + 推送 release + 总结 release notes + 发布（发布流程**暂未定义**）。
 > - 发布命令：`pnpm release <patch|minor|major>`，详见 [AGENTS.md](./AGENTS.md) 第 8 节。
 >
 > 版本号说明：`Site x.y.z` 为文档站 / 仓库自身的版本；括号内为对应的 BenchScope 产品版本。
 > 文末附产品版本速查，完整产品更新说明见文档中心「更新说明」与 [/zh/docs/releases/](/zh/docs/releases/)。
+
+---
+
+## [1.2.0] — 2026-09-10
+
+**1.2.0 正式发布：文档全面重构 + 润色 + 中英结构对齐（Site v1.2.0）。**
+
+### 文档内容（继承 v1.1.2 全面重构）
+- **全量 132 篇文档润色**（中英双语）：改进措辞、降低 AI 味（此外 / Furthermore / 值得注意的是 / In summary 等模式）、补齐 frontmatter `description`。
+- **中英结构不对称对齐**（12 个手册页）：以中文版为基准，将英文版 `## ` 主章节与 `### ` 子章节调整为与中文完全一致（删除与详情页重复的冗余章节、合并被拆分的章节、唯一内容不丢失）。
+- **准确性校验**：9 条准确性红线全部保全（结论枚举、输出阈值方向、`analysys` 目录名等）；`pnpm test:links` + `pnpm build` + 覆盖度检查全部通过（132 文档 / 135 页，覆盖率 1.0）。
+
+### 版本发布
+- 创建 GitHub Release（英文 + 中文 release notes）。
+- 部署到 Netlify 生产环境（https://benchscope-docs.netlify.app）。
 
 ---
 

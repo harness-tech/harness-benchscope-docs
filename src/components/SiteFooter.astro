@@ -1,6 +1,6 @@
 ---
 interface Props { lang: 'zh' | 'en'; version?: string }
-const { lang, version = '1.0.0' } = Astro.props
+const { lang, version = '1.2.0' } = Astro.props
 const other = lang === 'zh' ? 'en' : 'zh'
 
 let url = Astro.url.pathname
@@ -61,7 +61,7 @@ const copyright = lang === 'zh' ? '© 2026 模力有方. All rights reserved.' :
       </select>
       <span class="fc-col4-gap"></span>
       <p class="ver-line">BenchScope <span class="ver-num">v1.1.1</span></p>
-      <p class="ver-line">BenchScope Docs <span class="ver-num">v1.1.2</span></p>
+      <p class="ver-line">BenchScope Docs <span class="ver-num">v1.2.0</span></p>
     </div>
   </div>
 
